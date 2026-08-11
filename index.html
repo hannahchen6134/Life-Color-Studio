@@ -124,7 +124,8 @@ button{touch-action:manipulation}
 .lightfield-object::before{content:'';position:absolute;left:50%;top:50%;width:var(--hit-diameter,170px);height:var(--hit-diameter,170px);transform:translate(-50%,-50%);border-radius:50%}
 .lightfield-object.active{cursor:grabbing}
 .lightfield-canvas{position:absolute;width:170px;height:170px;left:50%;top:50%;transform:translate(-50%,-50%);display:block;pointer-events:none;mix-blend-mode:screen;transition:filter .18s ease,opacity .22s ease}
-.lightfield-object.active .lightfield-canvas{filter:brightness(1.07)}
+.lightfield-object.active .lightfield-canvas{filter:brightness(1.18);opacity:1}
+.lightfield-object.active .object-caption{color:rgba(255,249,239,.94);text-shadow:0 1px 10px rgba(0,0,0,.72)}
 .lightfield-object.parked .lightfield-canvas{opacity:.68;filter:brightness(.84)}
 .object-caption{position:absolute;z-index:3;left:50%;top:50%;min-width:132px;max-width:176px;text-align:center;color:rgba(255,249,239,.68);pointer-events:none;transform-origin:top center;text-shadow:0 1px 8px rgba(0,0,0,.5)}
 .object-caption strong{display:block;font-size:.66rem;font-weight:500;line-height:1.45;letter-spacing:.07em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -187,9 +188,16 @@ button{touch-action:manipulation}
 .segment.active{background:rgba(255,255,255,.72);color:#2E2114;box-shadow:0 3px 12px rgba(70,45,15,.08)}
 .result-workspace{position:relative;width:100%;height:min(62vh,560px);min-height:430px;overflow:hidden;border-radius:18px;background:var(--workspace);isolation:isolate}
 .result-object{position:absolute;left:50%;top:50%;width:112px;height:112px;transform-origin:center;pointer-events:none}
-.result-label{position:absolute;color:rgba(255,249,239,.62);font-size:.56rem;letter-spacing:.06em;white-space:nowrap;transform:translate(14px,8px)}
+.result-label{position:absolute;z-index:3;left:50%;top:50%;min-width:132px;max-width:176px;text-align:center;color:rgba(255,249,239,.68);pointer-events:none;transform-origin:top center;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.result-label strong{display:block;font-size:.66rem;font-weight:500;line-height:1.45;letter-spacing:.07em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.result-label span{display:block;margin-top:2px;font-size:.54rem;font-weight:300;line-height:1.45;letter-spacing:.035em;color:rgba(255,249,239,.48);white-space:nowrap}
 .result-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:20px}
-.result-share-note{margin:16px auto 0;max-width:420px;text-align:center;font-size:.68rem;font-weight:300;line-height:1.85;letter-spacing:.045em;color:#786953}
+.result-prompts{margin:22px auto 0;max-width:470px;padding:20px 0;border-top:1px solid rgba(154,112,48,.14);border-bottom:1px solid rgba(154,112,48,.14)}
+.result-prompts-kicker{text-align:center;font-size:.62rem;font-weight:500;letter-spacing:.16em;color:#9A7030}
+.result-prompts ol{list-style:none;counter-reset:result-question;display:grid;gap:10px;margin-top:15px}
+.result-prompts li{counter-increment:result-question;position:relative;padding-left:28px;font-size:.72rem;font-weight:400;line-height:1.75;letter-spacing:.035em;color:#493723}
+.result-prompts li::before{content:counter(result-question);position:absolute;left:0;top:.1em;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:rgba(154,112,48,.1);color:#8B672F;font:400 .56rem/1 'EB Garamond',serif}
+.result-prompts-note{margin-top:14px;text-align:center;font-size:.62rem;font-weight:300;line-height:1.7;letter-spacing:.035em;color:#8B7A66}
 .result-reflection{margin:24px auto 4px;max-width:480px;padding:24px 0;border-top:1px solid rgba(154,112,48,.16);border-bottom:1px solid rgba(154,112,48,.16)}
 .result-reflection p{font-size:.78rem;font-weight:300;line-height:2;letter-spacing:.055em;color:#4E3C28;text-align:left}
 .result-reflection p+p{margin-top:5px}
@@ -353,7 +361,15 @@ button{touch-action:manipulation}
       <button class="segment" data-view="before">現在的樣子</button>
       <button class="segment active" data-view="after">想靠近的樣子</button>
     </div>
-    <p class="result-share-note">先看看前後有什麼不同。<br>活動中，分享一個妳最有感覺的變化就好。</p>
+    <section class="result-prompts" aria-labelledby="resultPromptsTitle">
+      <p class="result-prompts-kicker" id="resultPromptsTitle">帶回活動裡分享</p>
+      <ol>
+        <li>一開始和整理後，最大的差別是什麼？</li>
+        <li>如果今天只留下一個發現，你最想留下什麼？</li>
+        <li>接下來七天，你想先做哪一個小調整？</li>
+      </ol>
+      <p class="result-prompts-note">不用在網站裡填寫，直接和大家分享就好。</p>
+    </section>
     <div class="result-reflection" id="resultReflection" hidden></div>
     <div class="result-actions">
       <button class="btn-primary" id="exportBtn">儲存我的色彩整理</button>
@@ -506,7 +522,8 @@ function applyObject(object){const rect=document.getElementById('workspace').get
 function animateDesk(now=4200){deskObjects.forEach(object=>renderGlow(object.canvas,object.item.colorIds,now));deskRAF=requestAnimationFrame(time=>animateDesk(time))}
 function showObjectLabel(object){const label=document.getElementById('objectLabel'),workspace=document.getElementById('workspace').getBoundingClientRect(),element=object.element.getBoundingClientRect();label.querySelector('strong').textContent=object.item.name;label.querySelector('span').textContent=colorNames(object.item.colorIds);label.style.left=`${element.left+element.width/2-workspace.left}px`;label.style.top=`${element.top-workspace.top}px`;label.classList.add('visible');clearTimeout(labelTimer);labelTimer=setTimeout(hideObjectLabel,2800)}
 function hideObjectLabel(){document.getElementById('objectLabel').classList.remove('visible')}
-document.getElementById('workspace').addEventListener('pointerdown',event=>{if(event.pointerType==='touch'&&activeGestureObject?.pointers.size&&!activeGestureObject.pointers.has(event.pointerId)){objectPointerDown(activeGestureObject,event);return}if(event.target.id==='workspace')hideObjectLabel()},{passive:false});
+function nearestDeskObject(clientX,clientY){const rect=document.getElementById('workspace').getBoundingClientRect(),centerX=rect.left+rect.width/2,centerY=rect.top+rect.height/2;return deskObjects.map(object=>{const layout=object.item.layout,dx=clientX-(centerX+layout.x),dy=clientY-(centerY+layout.y),hitRadius=Math.max(34,72*layout.scale);return{object,distance:Math.hypot(dx,dy),hitRadius,z:layout.z}}).filter(entry=>entry.distance<=entry.hitRadius).sort((a,b)=>b.z-a.z||a.distance-b.distance)[0]?.object||null}
+document.getElementById('workspace').addEventListener('pointerdown',event=>{if(event.pointerType==='touch'&&activeGestureObject?.pointers.size&&!activeGestureObject.pointers.has(event.pointerId)){objectPointerDown(activeGestureObject,event);return}if(event.target.id==='workspace'){const nearby=nearestDeskObject(event.clientX,event.clientY);if(nearby){objectPointerDown(nearby,event);return}hideObjectLabel()}},{passive:false});
 document.getElementById('undoBtn').addEventListener('click',()=>{const action=undoStack.pop();if(!action)return;const item=session.items.find(candidate=>candidate.id===action.itemId);if(item){item.layout=clone(action.layout);const object=deskObjects.find(candidate=>candidate.item.id===item.id);if(object)applyObject(object);saveSession()}updateUndo()});
 function updateUndo(){document.getElementById('undoBtn').disabled=!undoStack.length}
 document.getElementById('saveStageBtn').addEventListener('click',()=>{if(session.step==='before'){session.before=captureSnapshot();session.beforeReflection=blankBeforeReflection();session.step='reflection';undoStack=[];saveSession();render()}else{session.after=captureSnapshot();session.afterReflection=null;session.step='result';session.resultView='after';saveSession();render()}});
@@ -516,10 +533,11 @@ function ensureBeforeReflection(){session.beforeReflection={...blankBeforeReflec
 function reflectionItemButton(item,selected,handler){const button=document.createElement('button'),entry=card(item.colorIds[0]);button.type='button';button.className=`reflection-chip item-chip${selected?' selected':''}`;button.innerHTML=`<span class="reflection-color-dot" style="color:${entry?.hex||'#B8A890'};background:${entry?.hex||'#B8A890'}"></span><span>${escapeHtml(item.name)}</span>`;button.addEventListener('click',handler);return button}
 function reflectionChip(label,selected,handler){const button=document.createElement('button');button.type='button';button.className=`reflection-chip${selected?' selected':''}`;button.textContent=label;button.addEventListener('click',handler);return button}
 function reflectionProgress(step){return `<div class="reflection-dots" aria-label="三個觀察提示">${[1,2,3].map(index=>`<span class="reflection-dot${index===Math.min(step,3)?' active':''}"></span>`).join('')}</div>`}
+function prepareResultLabel(label,saved,visualScale){const name=document.createElement('strong'),colors=document.createElement('span'),safeScale=Math.max(.01,visualScale);name.textContent=saved.name;colors.textContent=colorNames(saved.colorIds);label.replaceChildren(name,colors);label.style.top=`calc(50% + ${62+12/safeScale}px)`;label.style.transform=`translateX(-50%) scale(${1/safeScale})`}
 function renderReflectionSnapshot(){
   const area=document.getElementById('reflectionWorkspace'),snapshot=session.before;area.innerHTML='';if(!snapshot)return;
   cancelAnimationFrame(resultRAF);resultRAF=0;const generation=++resultRenderGeneration;
-  resultRAF=requestAnimationFrame(()=>{if(generation!==resultRenderGeneration)return;const rect=area.getBoundingClientRect(),scale=Math.min(rect.width/snapshot.width,rect.height/snapshot.height),rendered=[];snapshot.items.forEach(saved=>{const element=document.createElement('div'),canvas=document.createElement('canvas'),label=document.createElement('span');element.className='result-object';canvas.className='lightfield-canvas';label.className='result-label';label.textContent=saved.name;element.append(canvas,label);element.style.transform=`translate(-50%,-50%) translate3d(${saved.layout.x*scale}px,${saved.layout.y*scale}px,0) scale(${saved.layout.scale*scale})`;element.style.zIndex=saved.layout.z;area.appendChild(element);rendered.push({canvas,ids:saved.colorIds})});const loop=time=>{if(generation!==resultRenderGeneration)return;rendered.forEach(entry=>renderGlow(entry.canvas,entry.ids,time));resultRAF=requestAnimationFrame(loop)};loop(4200)})
+  resultRAF=requestAnimationFrame(()=>{if(generation!==resultRenderGeneration)return;const rect=area.getBoundingClientRect(),scale=Math.min(rect.width/snapshot.width,rect.height/snapshot.height),rendered=[];snapshot.items.forEach(saved=>{const element=document.createElement('div'),canvas=document.createElement('canvas'),label=document.createElement('span'),visualScale=saved.layout.scale*scale;element.className='result-object';canvas.className='lightfield-canvas';label.className='result-label';prepareResultLabel(label,saved,visualScale);element.append(canvas,label);element.style.transform=`translate(-50%,-50%) translate3d(${saved.layout.x*scale}px,${saved.layout.y*scale}px,0) scale(${visualScale})`;element.style.zIndex=saved.layout.z;area.appendChild(element);rendered.push({canvas,ids:saved.colorIds})});const loop=time=>{if(generation!==resultRenderGeneration)return;rendered.forEach(entry=>renderGlow(entry.canvas,entry.ids,time));resultRAF=requestAnimationFrame(loop)};loop(4200)})
 }
 function waitReflection(ms,token){return new Promise(resolve=>setTimeout(()=>resolve(token===reflectionTypeToken),ms))}
 function makeReflectionChunks(text){const sizes=[1,2,1,1,2,1],chunks=[];let cursor=0,index=0;while(cursor<text.length){const size=sizes[index%sizes.length];chunks.push(text.slice(cursor,cursor+size));cursor+=size;index++}return chunks}
@@ -544,7 +562,7 @@ function ensureAfterReflection(){session.afterReflection={...blankAfterReflectio
 function renderAfterReflectionSnapshot(){
   cancelAnimationFrame(resultRAF);resultRAF=0;const generation=++resultRenderGeneration;
   const area=document.getElementById('afterReflectionWorkspace'),snapshot=afterReflectionView==='before'?session.before:session.after;area.innerHTML='';if(!snapshot)return;
-  resultRAF=requestAnimationFrame(()=>{if(generation!==resultRenderGeneration)return;const rect=area.getBoundingClientRect(),sx=rect.width/snapshot.width,sy=rect.height/snapshot.height,rendered=[];snapshot.items.forEach(saved=>{const element=document.createElement('div'),canvas=document.createElement('canvas'),label=document.createElement('span');element.className='result-object';canvas.className='lightfield-canvas';label.className='result-label';label.textContent=saved.name;element.append(canvas,label);element.style.transform=`translate(-50%,-50%) translate3d(${saved.layout.x*sx}px,${saved.layout.y*sy}px,0) scale(${saved.layout.scale*Math.min(sx,sy)})`;element.style.zIndex=saved.layout.z;area.appendChild(element);rendered.push({canvas,ids:saved.colorIds})});const loop=time=>{if(generation!==resultRenderGeneration)return;rendered.forEach(entry=>renderGlow(entry.canvas,entry.ids,time));resultRAF=requestAnimationFrame(loop)};loop(4200)})
+  resultRAF=requestAnimationFrame(()=>{if(generation!==resultRenderGeneration)return;const rect=area.getBoundingClientRect(),sx=rect.width/snapshot.width,sy=rect.height/snapshot.height,rendered=[];snapshot.items.forEach(saved=>{const element=document.createElement('div'),canvas=document.createElement('canvas'),label=document.createElement('span'),visualScale=saved.layout.scale*Math.min(sx,sy);element.className='result-object';canvas.className='lightfield-canvas';label.className='result-label';prepareResultLabel(label,saved,visualScale);element.append(canvas,label);element.style.transform=`translate(-50%,-50%) translate3d(${saved.layout.x*sx}px,${saved.layout.y*sy}px,0) scale(${visualScale})`;element.style.zIndex=saved.layout.z;area.appendChild(element);rendered.push({canvas,ids:saved.colorIds})});const loop=time=>{if(generation!==resultRenderGeneration)return;rendered.forEach(entry=>renderGlow(entry.canvas,entry.ids,time));resultRAF=requestAnimationFrame(loop)};loop(4200)})
 }
 function setAfterReflectionStep(step){const data=ensureAfterReflection(),screen=document.getElementById('afterReflectionScreen'),panel=document.getElementById('afterReflectionPanel');data.uiStep=step;saveSession();renderAfterReflectionQuestion();screen.scrollTo({top:Math.max(0,panel.offsetTop-24),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}
 function renderAfterReflectionQuestion(){
@@ -565,7 +583,7 @@ function renderResult(){showScreen('resultScreen');document.querySelectorAll('#r
 function renderResultWorkspace(){
   cancelAnimationFrame(resultRAF);resultRAF=0;const generation=++resultRenderGeneration;
   const area=document.getElementById('resultWorkspace');area.innerHTML='';const snapshot=session.resultView==='before'?session.before:session.after;if(!snapshot)return;
-  resultRAF=requestAnimationFrame(()=>{if(generation!==resultRenderGeneration)return;const rect=area.getBoundingClientRect(),sx=rect.width/snapshot.width,sy=rect.height/snapshot.height;const rendered=[];snapshot.items.forEach(saved=>{const element=document.createElement('div');element.className='result-object';const canvas=document.createElement('canvas');canvas.className='lightfield-canvas';const label=document.createElement('span');label.className='result-label';label.textContent=saved.name;element.append(canvas,label);const x=saved.layout.x*sx,y=saved.layout.y*sy,scale=saved.layout.scale*Math.min(sx,sy);element.style.transform=`translate(-50%,-50%) translate3d(${x}px,${y}px,0) scale(${scale})`;element.style.zIndex=saved.layout.z;area.appendChild(element);rendered.push({canvas,ids:saved.colorIds})});const loop=time=>{if(generation!==resultRenderGeneration)return;rendered.forEach(entry=>renderGlow(entry.canvas,entry.ids,time));resultRAF=requestAnimationFrame(loop)};loop(4200)})
+  resultRAF=requestAnimationFrame(()=>{if(generation!==resultRenderGeneration)return;const rect=area.getBoundingClientRect(),sx=rect.width/snapshot.width,sy=rect.height/snapshot.height;const rendered=[];snapshot.items.forEach(saved=>{const element=document.createElement('div');element.className='result-object';const canvas=document.createElement('canvas');canvas.className='lightfield-canvas';const label=document.createElement('span');label.className='result-label';element.append(canvas,label);const x=saved.layout.x*sx,y=saved.layout.y*sy,scale=saved.layout.scale*Math.min(sx,sy);prepareResultLabel(label,saved,scale);element.style.transform=`translate(-50%,-50%) translate3d(${x}px,${y}px,0) scale(${scale})`;element.style.zIndex=saved.layout.z;area.appendChild(element);rendered.push({canvas,ids:saved.colorIds})});const loop=time=>{if(generation!==resultRenderGeneration)return;rendered.forEach(entry=>renderGlow(entry.canvas,entry.ids,time));resultRAF=requestAnimationFrame(loop)};loop(4200)})
 }
 document.querySelectorAll('#resultScreen .segment').forEach(button=>button.addEventListener('click',()=>{session.resultView=button.dataset.view;saveSession();renderResult()}));
 document.getElementById('continueEditBtn').addEventListener('click',()=>{restoreSnapshot(session.after);session.step='after';saveSession();render()});
