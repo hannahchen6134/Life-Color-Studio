@@ -135,9 +135,12 @@ button{touch-action:manipulation}
 /* Before Reflection：網站只幫使用者先看見，深入整理留給主持人。 */
 #reflectionScreen{overflow-y:auto}
 .reflection-content{width:100%;max-width:620px;margin:0 auto;padding-bottom:calc(18px + env(safe-area-inset-bottom))}
+.reflection-home{position:fixed;z-index:50;top:calc(8px + env(safe-area-inset-top));left:32px;min-width:72px;min-height:44px;border:0;background:transparent;color:#82715C;font-size:.65rem;letter-spacing:.06em;cursor:pointer}
 .reflection-opening{text-align:center;min-height:72px;margin:2px auto 14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#2A1B0E;cursor:pointer}
 .reflection-opening p{font-size:clamp(.92rem,4vw,1.08rem);font-weight:500;line-height:1.8;letter-spacing:.08em;min-height:1.8em}
 .reflection-opening p:last-child{color:#5D4932;font-weight:300}
+.handwritten-chunk{display:inline-block;opacity:0;filter:blur(1.2px);transform:translate(var(--ink-x,0),var(--ink-y,3px)) rotate(var(--ink-r,0deg));animation:handwrittenReveal .46s cubic-bezier(.16,1,.3,1) forwards;will-change:opacity,transform,filter}
+@keyframes handwrittenReveal{58%{opacity:.78;filter:blur(.25px)}100%{opacity:1;filter:blur(0);transform:translate(0,0) rotate(0)}}
 .reflection-workspace{position:relative;width:100%;height:min(48dvh,420px);min-height:320px;overflow:hidden;border-radius:18px;background:var(--workspace);isolation:isolate;box-shadow:0 14px 38px rgba(55,34,12,.08)}
 .reflection-panel{padding:30px 0 4px}
 .reflection-dots{display:flex;justify-content:center;gap:8px;margin-bottom:20px}
@@ -158,6 +161,19 @@ button{touch-action:manipulation}
 .reflection-feeling:focus{border-color:rgba(154,112,48,.58);box-shadow:0 0 0 3px rgba(154,112,48,.07)}
 .reflection-count{display:block;max-width:460px;margin:5px auto 0;text-align:right;font-size:.58rem;color:#94836E}
 
+/* After Reflection：只收束使用者自己的發現，不替主持人完成深入整理。 */
+#afterReflectionScreen{overflow-y:auto}
+.after-reflection-content{width:100%;max-width:620px;margin:0 auto;padding-bottom:calc(22px + env(safe-area-inset-bottom))}
+.after-reflection-head{text-align:center;margin:8px auto 18px}
+.after-reflection-head .page-title{margin-top:5px}
+.after-reflection-head .lead{margin-top:10px}
+.after-reflection-workspace{position:relative;width:100%;height:min(48dvh,420px);min-height:320px;overflow:hidden;border-radius:18px;background:var(--workspace);isolation:isolate;box-shadow:0 14px 38px rgba(55,34,12,.08)}
+.after-reflection-segmented{margin-top:12px}
+.after-reflection-panel{padding:30px 0 4px}
+.after-reflection-field{display:block;width:100%;max-width:460px;min-height:104px;margin:18px auto 0;resize:none;border:1px solid rgba(136,105,60,.2);border-radius:16px;padding:15px 16px;background:rgba(255,255,255,.5);color:var(--ink);font:300 .8rem/1.85 'Noto Serif TC',serif;letter-spacing:.04em;outline:none}
+.after-reflection-field:focus{border-color:rgba(154,112,48,.58);box-shadow:0 0 0 3px rgba(154,112,48,.07)}
+.after-reflection-field::placeholder{color:#A49582}
+
 /* ⑫ 結果 */
 #resultScreen{overflow-y:auto}
 .result-content{width:100%;max-width:620px;margin:auto}
@@ -168,6 +184,10 @@ button{touch-action:manipulation}
 .result-object{position:absolute;left:50%;top:50%;width:112px;height:112px;transform-origin:center;pointer-events:none}
 .result-label{position:absolute;color:rgba(255,249,239,.62);font-size:.56rem;letter-spacing:.06em;white-space:nowrap;transform:translate(14px,8px)}
 .result-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:20px}
+.result-reflection{margin:24px auto 4px;max-width:480px;padding:24px 0;border-top:1px solid rgba(154,112,48,.16);border-bottom:1px solid rgba(154,112,48,.16)}
+.result-reflection p{font-size:.78rem;font-weight:300;line-height:2;letter-spacing:.055em;color:#4E3C28;text-align:left}
+.result-reflection p+p{margin-top:5px}
+.result-reflection strong{font-weight:600;color:#291B0E}
 
 /* LINE 內建瀏覽器不可靠支援 download；成果先成為可長按的真實圖片。 */
 .export-overlay{position:fixed;z-index:10000;inset:0;display:none;align-items:flex-end;justify-content:center;padding:22px 18px calc(22px + env(safe-area-inset-bottom));background:rgba(18,12,7,.48);backdrop-filter:blur(8px)}
@@ -202,9 +222,10 @@ button{touch-action:manipulation}
 
 @media(max-width:380px){.warm-screen,.color-head,.palette-scroll,.color-footer{padding-left:32px;padding-right:32px}.color-grid{gap:9px}.lightfield-canvas{width:158px;height:158px}.desk-footer{gap:6px}.desk-footer .btn-primary{padding-left:24px;padding-right:24px}}
 @media(max-width:380px){.reflection-workspace{min-height:300px}.reflection-panel{padding-top:26px}.reflection-options{gap:8px}.reflection-chip{padding-left:14px;padding-right:14px}}
+@media(max-width:380px){.after-reflection-workspace{min-height:300px}.after-reflection-panel{padding-top:26px}}
 @media(max-height:700px){.desk-head{padding-top:calc(8px + env(safe-area-inset-top));padding-bottom:6px}.desk-wrap{padding-left:16px;padding-right:16px}.workspace{min-height:390px}.lightfield-canvas{width:154px;height:154px}.desk-footer{padding-top:8px}}
 @media(min-width:700px){.color-grid{grid-template-columns:repeat(10,minmax(0,1fr));gap:12px}.desk-wrap{max-width:660px;align-self:center}.lightfield-canvas{width:184px;height:184px}.export-overlay{align-items:center}}
-@media(prefers-reduced-motion:reduce){.reflection-opening *{animation:none!important;transition:none!important}}
+@media(prefers-reduced-motion:reduce){.reflection-opening *{animation:none!important;transition:none!important;opacity:1!important;filter:none!important;transform:none!important}}
 </style>
 </head>
 <body>
@@ -226,7 +247,7 @@ button{touch-action:manipulation}
   <header class="color-head">
     <div class="eyebrow" id="colorProgress">01 / 03</div>
     <h1 class="color-prompt" id="colorPrompt"></h1>
-    <p class="color-mode" id="colorMode">先選一個最有感覺的顏色</p>
+    <p class="color-mode" id="colorMode">哪個顏色現在最像這件事？</p>
   </header>
   <div class="palette-scroll"><div class="color-grid" id="colorGrid"></div></div>
   <div class="selection-preview">
@@ -282,6 +303,7 @@ button{touch-action:manipulation}
 </section>
 
 <section class="screen warm-screen" id="reflectionScreen">
+  <button class="reflection-home" id="reflectionHomeBtn">回到首頁</button>
   <div class="reflection-content">
     <div class="reflection-opening" id="reflectionOpening" aria-label="點一下可跳過開場動畫">
       <p id="reflectionLineOne"></p>
@@ -289,6 +311,23 @@ button{touch-action:manipulation}
     </div>
     <div class="reflection-workspace" id="reflectionWorkspace" aria-label="你剛剛保存的現在的樣子"></div>
     <div class="reflection-panel" id="reflectionPanel"></div>
+  </div>
+</section>
+
+<section class="screen warm-screen" id="afterReflectionScreen">
+  <button class="reflection-home" id="afterReflectionHomeBtn">回到首頁</button>
+  <div class="after-reflection-content">
+    <header class="after-reflection-head">
+      <div class="eyebrow">After Reflection</div>
+      <h1 class="page-title">看看整理後的畫面</h1>
+      <p class="lead">來回看看一開始與現在。<br>只留下妳自己看見的變化。</p>
+    </header>
+    <div class="after-reflection-workspace" id="afterReflectionWorkspace" aria-label="現在的樣子與想靠近的樣子"></div>
+    <div class="segmented after-reflection-segmented" id="afterReflectionSegments">
+      <button class="segment" data-after-view="before">現在的樣子</button>
+      <button class="segment active" data-after-view="after">想靠近的樣子</button>
+    </div>
+    <div class="after-reflection-panel" id="afterReflectionPanel"></div>
   </div>
 </section>
 
@@ -304,11 +343,12 @@ button{touch-action:manipulation}
       <button class="segment" data-view="before">現在的樣子</button>
       <button class="segment active" data-view="after">想靠近的樣子</button>
     </div>
+    <div class="result-reflection" id="resultReflection" hidden></div>
     <div class="result-actions">
       <button class="btn-primary" id="exportBtn">儲存我的色彩整理</button>
       <button class="btn-secondary" id="continueEditBtn">繼續調整想靠近的樣子</button>
     </div>
-    <div class="actions"><button class="btn-text" id="restartResultBtn">重新開始</button></div>
+    <div class="actions"><button class="btn-text" id="restartResultBtn">回到首頁</button></div>
   </div>
 </section>
 
@@ -327,10 +367,10 @@ button{touch-action:manipulation}
 
 <div class="confirm-overlay" id="confirmOverlay">
   <div class="confirm-pop">
-    <p>確定重新開始嗎？目前的整理會被清除。</p>
+    <p>確定回到首頁嗎？目前的整理會被清除。</p>
     <div class="actions">
       <button class="btn-text" id="cancelRestartBtn">先不要</button>
-      <button class="btn-secondary" id="confirmRestartBtn">確定重新開始</button>
+      <button class="btn-secondary" id="confirmRestartBtn">回到首頁</button>
     </div>
   </div>
 </div>
@@ -356,11 +396,13 @@ const STORAGE_KEY='lifeColorStudio.session.v3';
 const MIN_SCALE=.18,MAX_SCALE=4.2,OBJECT_SIZE=170,MIN_HIT_SIZE=44;
 let textureId=0,deskRAF=0,resultRAF=0,resultRenderGeneration=0,deskObjects=[],undoStack=[],topLayer=20,labelTimer=0,activeGestureObject=null,latestExport=null;
 let reflectionTypeToken=0,reflectionTyping=false;
+let afterReflectionView='after';
 
 const blankBeforeReflection=()=>({introSeen:false,uiStep:0,firstNotice:null,unexpectedItem:null,unexpectedObservation:null,relatedItem:null,wantToLookAgain:null,firstFeeling:'',completedAt:null});
-const blankSession=()=>({step:'input',draftNames:['',''],items:[],currentIndex:0,colorDraft:{first:null,second:null,choosingSecond:false,returnToReview:false},before:null,beforeReflection:null,after:null,afterFinalReflection:null,resultView:'after'});
+const blankAfterReflection=()=>({uiStep:1,biggestDifference:'',finalDiscovery:'',nextSevenDays:'',completedAt:null});
+const blankSession=()=>({step:'input',draftNames:['',''],items:[],currentIndex:0,colorDraft:{first:null,second:null,choosingSecond:false,returnToReview:false},before:null,beforeReflection:null,after:null,afterReflection:null,resultView:'after'});
 let session=loadSession();
-function loadSession(){try{return {...blankSession(),...JSON.parse(localStorage.getItem(STORAGE_KEY)||'null')}}catch(error){return blankSession()}}
+function loadSession(){try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null')||{};if(!saved.afterReflection&&saved.afterFinalReflection)saved.afterReflection=saved.afterFinalReflection;return {...blankSession(),...saved}}catch(error){return blankSession()}}
 function saveSession(){localStorage.setItem(STORAGE_KEY,JSON.stringify(session))}
 function clone(value){return JSON.parse(JSON.stringify(value))}
 function card(id){return CARD_BY_ID.get(id)}
@@ -404,13 +446,13 @@ function selectColor(id){if(session.colorDraft.choosingSecond){if(id===session.c
 function renderColor(){showScreen('colorScreen');const item=session.items[session.currentIndex];document.getElementById('colorProgress').textContent=`${String(session.currentIndex+1).padStart(2,'0')} / ${String(session.items.length).padStart(2,'0')}`;document.getElementById('colorPrompt').textContent=`想到「${item.name}」，現在最想替它選哪個顏色？`;buildPalette();updateColorSelection()}
 function updateColorSelection(){
   const draft=session.colorDraft,first=card(draft.first),second=card(draft.second),canvas=document.getElementById('selectionGlow');document.querySelectorAll('.cc').forEach(tile=>tile.classList.toggle('sel',tile.dataset.id===draft.first||tile.dataset.id===draft.second));
-  document.getElementById('colorMode').textContent=draft.choosingSecond?(second?'已放進第二個顏色':'再選一個想一起放進來的顏色'):'先選一個最有感覺的顏色';
+  document.getElementById('colorMode').textContent=!first?'哪個顏色現在最像這件事？':draft.choosingSecond?(second?'這兩個顏色會一起成為它的光。':'再選一個想一起放進來的顏色'):(second?'這兩個顏色會一起成為它的光。':'還想再放進一個顏色嗎？');
   if(first){canvas.classList.add('visible');renderGlow(canvas,[draft.first,draft.second].filter(Boolean));document.getElementById('selectedCopy').innerHTML=`<strong>${colorNames([draft.first,draft.second].filter(Boolean))}</strong><br>${second?'兩個顏色會自然交會':'可以只用這一色'}`}else{canvas.classList.remove('visible');document.getElementById('selectedCopy').textContent='不需要想太久，先讓眼睛替你選。'}
   const footer=document.getElementById('colorFooter');footer.innerHTML='';
   if(!first){const back=makeButton('返回修改事情','btn-text',()=>{session.step='input';saveSession();render()});footer.appendChild(back);return}
-  if(!draft.choosingSecond&&!second)footer.appendChild(makeButton('＋ 再放進一個顏色','btn-secondary',()=>{draft.choosingSecond=true;saveSession();updateColorSelection()}));
-  if(draft.choosingSecond)footer.appendChild(makeButton('只用第一個','btn-text',()=>{draft.second=null;draft.choosingSecond=false;saveSession();updateColorSelection()}));
-  footer.appendChild(makeButton('完成這一顆','btn-primary',commitCurrentColors));
+  if(!draft.choosingSecond&&!second)footer.appendChild(makeButton('＋ 再選一色','btn-secondary',()=>{draft.choosingSecond=true;saveSession();updateColorSelection()}));
+  if(draft.choosingSecond)footer.appendChild(makeButton('就用第一個顏色','btn-text',()=>{draft.second=null;draft.choosingSecond=false;saveSession();updateColorSelection()}));
+  footer.appendChild(makeButton(second?'就用這兩個顏色':'就用這個顏色','btn-primary',commitCurrentColors));
 }
 function makeButton(text,className,handler){const button=document.createElement('button');button.className=className;button.textContent=text;button.addEventListener('click',handler);return button}
 
@@ -458,7 +500,7 @@ function hideObjectLabel(){document.getElementById('objectLabel').classList.remo
 document.getElementById('workspace').addEventListener('pointerdown',event=>{if(event.target.id==='workspace')hideObjectLabel()});
 document.getElementById('undoBtn').addEventListener('click',()=>{const action=undoStack.pop();if(!action)return;const item=session.items.find(candidate=>candidate.id===action.itemId);if(item){item.layout=clone(action.layout);const object=deskObjects.find(candidate=>candidate.item.id===item.id);if(object)applyObject(object);saveSession()}updateUndo()});
 function updateUndo(){document.getElementById('undoBtn').disabled=!undoStack.length}
-document.getElementById('saveStageBtn').addEventListener('click',()=>{if(session.step==='before'){session.before=captureSnapshot();session.beforeReflection=blankBeforeReflection();session.step='reflection';undoStack=[];saveSession();render()}else{session.after=captureSnapshot();session.step='result';session.resultView='after';saveSession();render()}});
+document.getElementById('saveStageBtn').addEventListener('click',()=>{if(session.step==='before'){session.before=captureSnapshot();session.beforeReflection=blankBeforeReflection();session.step='reflection';undoStack=[];saveSession();render()}else{session.after=captureSnapshot();session.afterReflection=blankAfterReflection();afterReflectionView='after';session.step='afterReflection';session.resultView='after';saveSession();render()}});
 document.getElementById('startAfterBtn').addEventListener('click',()=>{session.step='after';undoStack=[];saveSession();render()});
 
 function ensureBeforeReflection(){session.beforeReflection={...blankBeforeReflection(),...(session.beforeReflection||{})};return session.beforeReflection}
@@ -471,11 +513,12 @@ function renderReflectionSnapshot(){
   resultRAF=requestAnimationFrame(()=>{if(generation!==resultRenderGeneration)return;const rect=area.getBoundingClientRect(),scale=Math.min(rect.width/snapshot.width,rect.height/snapshot.height),rendered=[];snapshot.items.forEach(saved=>{const element=document.createElement('div'),canvas=document.createElement('canvas'),label=document.createElement('span');element.className='result-object';canvas.className='lightfield-canvas';label.className='result-label';label.textContent=saved.name;element.append(canvas,label);element.style.transform=`translate(-50%,-50%) translate3d(${saved.layout.x*scale}px,${saved.layout.y*scale}px,0) scale(${saved.layout.scale*scale})`;element.style.zIndex=saved.layout.z;area.appendChild(element);rendered.push({canvas,ids:saved.colorIds})});const loop=time=>{if(generation!==resultRenderGeneration)return;rendered.forEach(entry=>renderGlow(entry.canvas,entry.ids,time));resultRAF=requestAnimationFrame(loop)};loop(4200)})
 }
 function waitReflection(ms,token){return new Promise(resolve=>setTimeout(()=>resolve(token===reflectionTypeToken),ms))}
-async function typeReflectionLine(element,text,token){for(const char of text){if(token!==reflectionTypeToken)return false;element.textContent+=char;if(!await waitReflection(100,token))return false}return true}
+function makeReflectionChunks(text){const sizes=[1,2,1,1,2,1],chunks=[];let cursor=0,index=0;while(cursor<text.length){const size=sizes[index%sizes.length];chunks.push(text.slice(cursor,cursor+size));cursor+=size;index++}return chunks}
+async function typeReflectionLine(element,text,token){element.textContent='';const cadence=[145,90,185,110,155,95,205],offsets=[[-.4,3,-.12],[.3,2,.08],[0,4,-.05],[.5,2.5,.1],[-.2,3.5,-.08]];for(const [index,chunk] of makeReflectionChunks(text).entries()){if(token!==reflectionTypeToken)return false;const span=document.createElement('span'),[x,y,r]=offsets[index%offsets.length];span.className='handwritten-chunk';span.textContent=chunk;span.style.setProperty('--ink-x',`${x}px`);span.style.setProperty('--ink-y',`${y}px`);span.style.setProperty('--ink-r',`${r}deg`);element.appendChild(span);const punctuation=/[，。！？]$/.test(chunk)?220:0;if(!await waitReflection(cadence[index%cadence.length]+punctuation,token))return false}return true}
 function finishReflectionIntro(){const data=ensureBeforeReflection();reflectionTypeToken++;reflectionTyping=false;document.getElementById('reflectionLineOne').textContent='先不要急著改。';document.getElementById('reflectionLineTwo').textContent='看看你剛剛排出的畫面。';data.introSeen=true;data.uiStep=Math.max(1,data.uiStep||0);saveSession();renderReflectionQuestion()}
 async function animateReflectionIntro(){const data=ensureBeforeReflection(),lineOne=document.getElementById('reflectionLineOne'),lineTwo=document.getElementById('reflectionLineTwo');lineOne.textContent='';lineTwo.textContent='';document.getElementById('reflectionPanel').innerHTML='';if(matchMedia('(prefers-reduced-motion: reduce)').matches){finishReflectionIntro();return}const token=++reflectionTypeToken;reflectionTyping=true;if(!await typeReflectionLine(lineOne,'先不要急著改。',token))return;if(!await waitReflection(600,token))return;if(!await typeReflectionLine(lineTwo,'看看你剛剛排出的畫面。',token))return;if(!await waitReflection(600,token))return;if(token!==reflectionTypeToken)return;reflectionTyping=false;data.introSeen=true;data.uiStep=1;saveSession();renderReflectionQuestion()}
 function renderReflection(){showScreen('reflectionScreen');const data=ensureBeforeReflection();renderReflectionSnapshot();if(data.introSeen){document.getElementById('reflectionLineOne').textContent='先不要急著改。';document.getElementById('reflectionLineTwo').textContent='看看你剛剛排出的畫面。';data.uiStep=Math.max(1,data.uiStep||0);renderReflectionQuestion()}else animateReflectionIntro()}
-function setReflectionStep(step){const data=ensureBeforeReflection();data.uiStep=step;saveSession();renderReflectionQuestion();document.getElementById('reflectionPanel').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})}
+function setReflectionStep(step){const data=ensureBeforeReflection(),screen=document.getElementById('reflectionScreen'),panel=document.getElementById('reflectionPanel');data.uiStep=step;saveSession();renderReflectionQuestion();screen.scrollTo({top:Math.max(0,panel.offsetTop-24),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}
 function addReflectionNext(panel,label,enabled,handler){const actions=document.createElement('div'),button=document.createElement('button');actions.className='reflection-actions';button.type='button';button.className='btn-primary';button.textContent=label;button.disabled=!enabled;button.addEventListener('click',handler);actions.appendChild(button);panel.appendChild(actions)}
 function renderReflectionQuestion(){
   const data=ensureBeforeReflection(),panel=document.getElementById('reflectionPanel'),step=Math.max(1,data.uiStep||1);panel.innerHTML=reflectionProgress(step);
@@ -496,13 +539,34 @@ function renderReflectionQuestion(){
 }
 document.getElementById('reflectionScreen').addEventListener('click',event=>{if(reflectionTyping){event.preventDefault();finishReflectionIntro()}},true);
 
-function renderResult(){showScreen('resultScreen');document.querySelectorAll('.segment').forEach(button=>button.classList.toggle('active',button.dataset.view===session.resultView));renderResultWorkspace()}
+function ensureAfterReflection(){session.afterReflection={...blankAfterReflection(),...(session.afterReflection||{})};return session.afterReflection}
+function renderAfterReflectionSnapshot(){
+  cancelAnimationFrame(resultRAF);resultRAF=0;const generation=++resultRenderGeneration;
+  const area=document.getElementById('afterReflectionWorkspace'),snapshot=afterReflectionView==='before'?session.before:session.after;area.innerHTML='';if(!snapshot)return;
+  resultRAF=requestAnimationFrame(()=>{if(generation!==resultRenderGeneration)return;const rect=area.getBoundingClientRect(),sx=rect.width/snapshot.width,sy=rect.height/snapshot.height,rendered=[];snapshot.items.forEach(saved=>{const element=document.createElement('div'),canvas=document.createElement('canvas'),label=document.createElement('span');element.className='result-object';canvas.className='lightfield-canvas';label.className='result-label';label.textContent=saved.name;element.append(canvas,label);element.style.transform=`translate(-50%,-50%) translate3d(${saved.layout.x*sx}px,${saved.layout.y*sy}px,0) scale(${saved.layout.scale*Math.min(sx,sy)})`;element.style.zIndex=saved.layout.z;area.appendChild(element);rendered.push({canvas,ids:saved.colorIds})});const loop=time=>{if(generation!==resultRenderGeneration)return;rendered.forEach(entry=>renderGlow(entry.canvas,entry.ids,time));resultRAF=requestAnimationFrame(loop)};loop(4200)})
+}
+function setAfterReflectionStep(step){const data=ensureAfterReflection(),screen=document.getElementById('afterReflectionScreen'),panel=document.getElementById('afterReflectionPanel');data.uiStep=step;saveSession();renderAfterReflectionQuestion();screen.scrollTo({top:Math.max(0,panel.offsetTop-24),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}
+function renderAfterReflectionQuestion(){
+  const data=ensureAfterReflection(),panel=document.getElementById('afterReflectionPanel'),step=Math.min(3,Math.max(1,data.uiStep||1));panel.innerHTML=reflectionProgress(step);
+  const title=document.createElement('h2'),helper=document.createElement('p'),textarea=document.createElement('textarea'),count=document.createElement('span');title.className='reflection-question';helper.className='reflection-helper';textarea.className='after-reflection-field';textarea.rows=3;textarea.maxLength=60;count.className='reflection-count';
+  const config=step===1?{key:'biggestDifference',title:'看著一開始和整理後的畫面，最大的差別是什麼？',helper:'不用分析原因，只寫下妳最先看見的變化。',placeholder:'例如：休息靠近我一點了。',button:'留下這個差別'}:step===2?{key:'finalDiscovery',title:'如果今天只能留下一個發現，你最想留下什麼？',helper:'這是妳自己的發現，網站不替妳解讀。',placeholder:'例如：我其實很需要留一點空間。',button:'留下這個發現'}:{key:'nextSevenDays',title:'接下來七天，我想先＿＿＿＿。',helper:'寫一個小而具體、由妳自己決定的開始。',placeholder:'例如：每天留十分鐘不安排事情。',button:'完成我的色彩整理'};
+  title.textContent=config.title;helper.textContent=config.helper;textarea.placeholder=config.placeholder;textarea.value=data[config.key]||'';count.textContent=`${textarea.value.length} / 60`;panel.append(title,helper,textarea,count);
+  const actions=document.createElement('div'),button=document.createElement('button');actions.className='reflection-actions';button.type='button';button.className='btn-primary';button.textContent=config.button;button.disabled=!textarea.value.trim();actions.appendChild(button);panel.appendChild(actions);
+  textarea.addEventListener('input',()=>{data[config.key]=textarea.value;count.textContent=`${textarea.value.length} / 60`;button.disabled=!textarea.value.trim();saveSession()});
+  button.addEventListener('click',()=>{data[config.key]=textarea.value.trim();if(step<3){setAfterReflectionStep(step+1);return}data.completedAt=new Date().toISOString();session.step='result';session.resultView='after';saveSession();render()});
+}
+function renderAfterReflection(){showScreen('afterReflectionScreen');ensureAfterReflection();document.querySelectorAll('#afterReflectionSegments .segment').forEach(button=>button.classList.toggle('active',button.dataset.afterView===afterReflectionView));renderAfterReflectionSnapshot();renderAfterReflectionQuestion()}
+document.querySelectorAll('#afterReflectionSegments .segment').forEach(button=>button.addEventListener('click',()=>{afterReflectionView=button.dataset.afterView;renderAfterReflection()}));
+
+function itemName(itemId){return session.items.find(item=>item.id===itemId)?.name||''}
+function renderResultReflection(){const area=document.getElementById('resultReflection'),before=session.beforeReflection,after=session.afterReflection;if(!after?.completedAt){area.hidden=true;area.innerHTML='';return}const first=itemName(before?.firstNotice)||'一個原本沒注意到的地方';area.innerHTML=`<p>我一開始注意到<strong>「${escapeHtml(first)}」</strong>。</p><p>我最後發現<strong>「${escapeHtml(after.finalDiscovery)}」</strong>。</p><p>接下來七天，我想先<strong>「${escapeHtml(after.nextSevenDays)}」</strong>。</p>`;area.hidden=false}
+function renderResult(){showScreen('resultScreen');document.querySelectorAll('#resultScreen .segment').forEach(button=>button.classList.toggle('active',button.dataset.view===session.resultView));renderResultWorkspace();renderResultReflection()}
 function renderResultWorkspace(){
   cancelAnimationFrame(resultRAF);resultRAF=0;const generation=++resultRenderGeneration;
   const area=document.getElementById('resultWorkspace');area.innerHTML='';const snapshot=session.resultView==='before'?session.before:session.after;if(!snapshot)return;
   resultRAF=requestAnimationFrame(()=>{if(generation!==resultRenderGeneration)return;const rect=area.getBoundingClientRect(),sx=rect.width/snapshot.width,sy=rect.height/snapshot.height;const rendered=[];snapshot.items.forEach(saved=>{const element=document.createElement('div');element.className='result-object';const canvas=document.createElement('canvas');canvas.className='lightfield-canvas';const label=document.createElement('span');label.className='result-label';label.textContent=saved.name;element.append(canvas,label);const x=saved.layout.x*sx,y=saved.layout.y*sy,scale=saved.layout.scale*Math.min(sx,sy);element.style.transform=`translate(-50%,-50%) translate3d(${x}px,${y}px,0) scale(${scale})`;element.style.zIndex=saved.layout.z;area.appendChild(element);rendered.push({canvas,ids:saved.colorIds})});const loop=time=>{if(generation!==resultRenderGeneration)return;rendered.forEach(entry=>renderGlow(entry.canvas,entry.ids,time));resultRAF=requestAnimationFrame(loop)};loop(4200)})
 }
-document.querySelectorAll('.segment').forEach(button=>button.addEventListener('click',()=>{session.resultView=button.dataset.view;saveSession();renderResult()}));
+document.querySelectorAll('#resultScreen .segment').forEach(button=>button.addEventListener('click',()=>{session.resultView=button.dataset.view;saveSession();renderResult()}));
 document.getElementById('continueEditBtn').addEventListener('click',()=>{restoreSnapshot(session.after);session.step='after';saveSession();render()});
 
 function drawExportGlow(ctx,x,y,radius,colorIds){ctx.globalCompositeOperation='screen';colorIds.map(card).filter(Boolean).forEach((entry,index)=>{const cx=x+(colorIds.length>1?(index===0?-radius*.2:radius*.2):0);const gradient=ctx.createRadialGradient(cx,y,0,cx,y,radius);[[0,1],[.12,.96],[.24,.91],[.35,.82],[.46,.69],[.56,.53],[.66,.38],[.76,.22],[.86,.094],[.94,.031],[1,0]].forEach(([stop,a])=>gradient.addColorStop(stop,rgba(entry.hex,a)));ctx.fillStyle=gradient;ctx.fillRect(cx-radius,y-radius,radius*2,radius*2)})}
@@ -518,9 +582,9 @@ function roundRect(ctx,x,y,width,height,radius){ctx.beginPath();ctx.roundRect(x,
 
 function requestRestart(){document.getElementById('confirmOverlay').classList.add('visible')}
 function closeRestart(){document.getElementById('confirmOverlay').classList.remove('visible')}
-document.getElementById('restartDeskBtn').addEventListener('click',requestRestart);document.getElementById('restartResultBtn').addEventListener('click',requestRestart);document.getElementById('cancelRestartBtn').addEventListener('click',closeRestart);document.getElementById('confirmRestartBtn').addEventListener('click',()=>{localStorage.removeItem(STORAGE_KEY);session=blankSession();closeRestart();render()});
+document.getElementById('restartDeskBtn').addEventListener('click',requestRestart);document.getElementById('restartResultBtn').addEventListener('click',requestRestart);document.getElementById('reflectionHomeBtn').addEventListener('click',requestRestart);document.getElementById('afterReflectionHomeBtn').addEventListener('click',requestRestart);document.getElementById('cancelRestartBtn').addEventListener('click',closeRestart);document.getElementById('confirmRestartBtn').addEventListener('click',()=>{localStorage.removeItem(STORAGE_KEY);session=blankSession();closeRestart();render()});
 
-function render(){cancelAnimationFrame(deskRAF);cancelAnimationFrame(resultRAF);resultRAF=0;resultRenderGeneration++;reflectionTypeToken++;reflectionTyping=false;if(session.step==='confirm')session.step='color';if(session.step==='input')renderInput();else if(session.step==='color')renderColor();else if(session.step==='review')renderReview();else if(session.step==='before'||session.step==='between'||session.step==='after')renderDesk();else if(session.step==='reflection')renderReflection();else if(session.step==='result')renderResult();else{session=blankSession();renderInput()}window.__ready=true}
+function render(){cancelAnimationFrame(deskRAF);cancelAnimationFrame(resultRAF);resultRAF=0;resultRenderGeneration++;reflectionTypeToken++;reflectionTyping=false;if(session.step==='confirm')session.step='color';if(session.step==='input')renderInput();else if(session.step==='color')renderColor();else if(session.step==='review')renderReview();else if(session.step==='before'||session.step==='between'||session.step==='after')renderDesk();else if(session.step==='reflection')renderReflection();else if(session.step==='afterReflection')renderAfterReflection();else if(session.step==='result')renderResult();else{session=blankSession();renderInput()}window.__ready=true}
 window.__studio={getState:()=>clone(session),reset:()=>{localStorage.removeItem(STORAGE_KEY);session=blankSession();render()},setStep:step=>{session.step=step;saveSession();render()},getAnimationDebug:()=>({resultRAF,resultRenderGeneration,resultObjects:document.querySelectorAll('.result-object').length})};
 addEventListener('resize',()=>{if(session.step==='before'||session.step==='after')deskObjects.forEach(applyObject)});
 render();
