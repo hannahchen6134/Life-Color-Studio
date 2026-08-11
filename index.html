@@ -23,7 +23,7 @@ body{
   background:linear-gradient(158deg,#FAF6F0 0%,#F5EDE0 35%,#F8F3EA 65%,#F2EBE0 100%);
 }
 button,input{font:inherit}
-button{touch-action:manipulation}
+button{touch-action:manipulation;white-space:nowrap}
 .screen{position:fixed;inset:0;height:100dvh;display:none}
 .screen.active{display:flex}
 .warm-screen{overflow-y:auto;overscroll-behavior:contain;padding:calc(28px + env(safe-area-inset-top)) 32px calc(28px + env(safe-area-inset-bottom));flex-direction:column;align-items:center}
@@ -79,6 +79,7 @@ button{touch-action:manipulation}
 .mini-glow{width:72px;height:72px;display:none;flex:0 0 auto}
 .mini-glow.visible{display:block}
 .selected-copy{font-size:.7rem;line-height:1.8;color:#5C4B37;letter-spacing:.05em;min-width:0}
+.selected-copy strong,.selected-copy span{display:block}
 .selected-copy strong{font-weight:400;color:#2F2113}
 .palette-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:14px 32px 18px;-webkit-overflow-scrolling:touch}
 .color-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;width:100%;max-width:312px;margin:0 auto}
@@ -105,7 +106,7 @@ button{touch-action:manipulation}
 .mix-copy{position:absolute;z-index:2;left:32px;right:32px;bottom:clamp(34px,7dvh,70px);text-align:center;opacity:0;transform:translateY(10px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
 .mix-copy.visible{opacity:1;transform:none}
 .mix-title{font-size:clamp(1.05rem,4.6vw,1.28rem);font-weight:500;line-height:1.7;letter-spacing:.075em}
-.mix-note{margin-top:8px;font-size:.66rem;font-weight:300;line-height:1.8;letter-spacing:.045em;color:rgba(255,249,239,.56)}
+.mix-note{display:none}
 .mix-actions{flex:0 0 auto;padding:12px 32px calc(18px + env(safe-area-inset-bottom));display:flex;justify-content:center;background:var(--workspace);opacity:0;pointer-events:none;transition:opacity .7s ease}
 .mix-actions.visible{opacity:1;pointer-events:auto}
 
@@ -243,13 +244,19 @@ button{touch-action:manipulation}
 .result-label strong{display:block;font-size:.66rem;font-weight:500;line-height:1.45;letter-spacing:.07em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .result-label span{display:block;margin-top:2px;font-size:.54rem;font-weight:300;line-height:1.45;letter-spacing:.035em;color:rgba(255,249,239,.48);white-space:nowrap}
 .result-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:20px}
-/* 活動分享題獨立成一題一頁，避免與成果畫面擠在一起。 */
+/* 活動問題獨立成一題一頁，避免與成果畫面擠在一起。 */
 #promptScreen{overflow-y:auto}
 .prompt-content{width:100%;max-width:520px;margin:auto;text-align:center}
 .prompt-progress{font-family:'EB Garamond',serif;font-size:.66rem;letter-spacing:.35em;color:#9A7030}
-.prompt-question{margin:26px auto 0;max-width:430px;font-size:clamp(1.05rem,4.6vw,1.28rem);font-weight:600;line-height:1.8;letter-spacing:.055em;text-wrap:balance}
+.prompt-question{margin:24px auto 0;max-width:100%;font-size:clamp(.98rem,4.1vw,1.12rem);font-weight:600;line-height:1.85;letter-spacing:.03em;line-break:strict;text-wrap:pretty}
+.prompt-phrase{display:inline-block;white-space:nowrap}
 .prompt-note{margin:16px auto 0;max-width:360px;font-size:.68rem;font-weight:300;line-height:1.9;letter-spacing:.04em;color:#786953}
 .prompt-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:34px}
+.activity-next{margin:22px auto 2px;max-width:470px;padding:22px 18px 20px;border-top:1px solid rgba(154,112,48,.17);border-bottom:1px solid rgba(154,112,48,.17);text-align:center}
+.activity-next-kicker{font-family:'EB Garamond','Noto Serif TC',serif;font-size:.62rem;letter-spacing:.18em;color:#9A7030}
+.activity-next h2{margin-top:8px;font-size:.88rem;font-weight:600;line-height:1.75;letter-spacing:.055em;color:#2B1C0E}
+.activity-next p:last-of-type{margin:6px auto 0;max-width:360px;font-size:.65rem;font-weight:300;line-height:1.8;letter-spacing:.025em;color:#7A6A57}
+.activity-next .btn-primary{margin-top:16px}
 .result-reflection{margin:24px auto 4px;max-width:480px;padding:24px 0;border-top:1px solid rgba(154,112,48,.16);border-bottom:1px solid rgba(154,112,48,.16)}
 .result-reflection p{font-size:.78rem;font-weight:300;line-height:2;letter-spacing:.055em;color:#4E3C28;text-align:left}
 .result-reflection p+p{margin-top:5px}
@@ -258,10 +265,17 @@ button{touch-action:manipulation}
 /* LINE 內建瀏覽器不可靠支援 download；成果先成為可長按的真實圖片。 */
 .export-overlay{position:fixed;z-index:10000;inset:0;display:none;align-items:flex-end;justify-content:center;padding:22px 18px calc(22px + env(safe-area-inset-bottom));background:rgba(18,12,7,.48);backdrop-filter:blur(8px)}
 .export-overlay.visible{display:flex}
-.export-sheet{width:min(100%,520px);max-height:92dvh;overflow-y:auto;padding:20px;border-radius:22px;background:#F8F3EA;box-shadow:0 24px 80px rgba(20,12,5,.28);text-align:center}
+.export-sheet{width:min(100%,540px);max-height:94dvh;overflow-y:auto;padding:20px;border-radius:22px;background:#F8F3EA;box-shadow:0 24px 80px rgba(20,12,5,.28);text-align:center}
 .export-sheet h2{font-size:1.02rem;font-weight:600;letter-spacing:.1em}
 .export-sheet p{margin:8px auto 14px;max-width:360px;font-size:.7rem;font-weight:300;line-height:1.85;letter-spacing:.04em;color:#665541}
-.export-image{display:block;width:100%;max-height:62dvh;object-fit:contain;border-radius:14px;background:#0D0A07;box-shadow:0 8px 28px rgba(35,22,8,.12);-webkit-touch-callout:default;user-select:auto}
+.wallpaper-field{margin:16px auto 18px;max-width:430px;text-align:left}
+.wallpaper-field label{display:block;margin-bottom:8px;font-size:.68rem;font-weight:500;letter-spacing:.065em;color:#483520}
+.wallpaper-quote{display:block;width:100%;min-height:104px;resize:vertical;border:1px solid rgba(145,105,50,.22);border-radius:15px;padding:14px 15px;background:rgba(255,255,255,.52);color:#2B1C0E;font:300 .78rem/1.8 'Noto Serif TC',serif;letter-spacing:.035em;outline:none}
+.wallpaper-quote:focus{border-color:rgba(154,112,48,.58);box-shadow:0 0 0 3px rgba(154,112,48,.07)}
+.wallpaper-quote::placeholder{color:#A0917D}
+.wallpaper-field-meta{display:flex;justify-content:space-between;gap:12px;margin-top:7px;font-size:.58rem;line-height:1.6;letter-spacing:.025em;color:#8A7A66}
+.wallpaper-preview-label{margin:2px auto 9px;font-size:.6rem;letter-spacing:.14em;color:#92734A}
+.export-image{display:block;width:auto;max-width:100%;height:auto;max-height:52dvh;margin:auto;object-fit:contain;border-radius:12px;background:#0D0A07;box-shadow:0 8px 28px rgba(35,22,8,.12);-webkit-touch-callout:default;user-select:auto}
 .export-sheet .actions{margin-top:16px}
 
 /* 全部選色完成後，只出現一次的總覽儀式。 */
@@ -330,11 +344,10 @@ button{touch-action:manipulation}
 
 <section class="screen" id="mixScreen">
   <div class="mix-stage" id="mixStage">
-    <canvas id="mixCanvas" aria-label="剛才選過的情緒色彩正在交會"></canvas>
+    <canvas id="mixCanvas" aria-label="剛才選過的色彩正在沉澱"></canvas>
     <div class="mix-vignette"></div>
     <div class="mix-copy" id="mixCopy">
-      <h1 class="mix-title">讓剛才的感受，先在這裡相遇。</h1>
-      <p class="mix-note">不需要解釋，先看著它們慢慢靠近。</p>
+      <h1 class="mix-title">沉澱一下。</h1>
     </div>
   </div>
   <div class="mix-actions" id="mixActions">
@@ -351,7 +364,7 @@ button{touch-action:manipulation}
     <p class="lead">接下來可以改變每件事情的大小、距離與位置，排出它們此刻在生活裡的樣子。</p>
     <div class="review-grid" id="reviewGrid"></div>
     <div class="actions">
-      <button class="btn-primary" id="enterDeskBtn">開始排出現在的樣子</button>
+      <button class="btn-primary" id="enterDeskBtn">開始排出現在的生活順序</button>
     </div>
   </div>
 </section>
@@ -359,7 +372,7 @@ button{touch-action:manipulation}
 <section class="screen" id="deskTutorialScreen">
   <div class="desk-tutorial-content">
     <div class="eyebrow">How to Arrange</div>
-    <h1 class="desk-tutorial-title">把它們排成現在的樣子。</h1>
+    <h1 class="desk-tutorial-title">把它們排成現在的生活順序。</h1>
     <p class="desk-tutorial-ops">拖曳移動・雙指縮放・靠近或拉遠・可以重疊</p>
     <div class="tutorial-demo-grid" aria-label="整理桌操作示範">
       <div class="tutorial-demo">
@@ -402,9 +415,9 @@ button{touch-action:manipulation}
       <div class="object-label" id="objectLabel"><strong></strong><span></span></div>
       <div class="between-panel" id="betweenPanel">
         <div class="between-inner">
-          <h2 class="between-title">現在的樣子，已經留下來了。</h2>
-          <p class="between-copy">接著，不需要變得完美。<br>只看看怎麼安排，會比現在舒服一點。</p>
-          <button class="btn-primary" id="startAfterBtn">看看想靠近的樣子</button>
+          <h2 class="between-title">現在的生活順序，已經留下來了。</h2>
+          <p class="between-copy">接著，不需要變得完美。只看看怎麼安排，會比現在舒服一點。</p>
+          <button class="btn-primary" id="startAfterBtn">排出理想的生活順序</button>
         </div>
       </div>
     </div>
@@ -423,7 +436,7 @@ button{touch-action:manipulation}
       <p id="reflectionLineOne"></p>
       <p id="reflectionLineTwo"></p>
     </div>
-    <div class="reflection-workspace" id="reflectionWorkspace" aria-label="你剛剛保存的現在的樣子"></div>
+    <div class="reflection-workspace" id="reflectionWorkspace" aria-label="你剛剛保存的現在生活順序"></div>
     <div class="fixed-legend warm" id="reflectionLegend" aria-label="色彩註記"></div>
     <div class="reflection-panel" id="reflectionPanel"></div>
   </div>
@@ -435,12 +448,12 @@ button{touch-action:manipulation}
     <header class="after-reflection-head">
       <div class="eyebrow">After Reflection</div>
       <h1 class="page-title">看看整理後的畫面</h1>
-      <p class="lead">來回看看一開始與現在。<br>只留下妳自己看見的變化。</p>
+      <p class="lead">來回看看現在與理想的生活順序，只留下妳自己看見的變化。</p>
     </header>
-    <div class="after-reflection-workspace" id="afterReflectionWorkspace" aria-label="現在的樣子與想靠近的樣子"></div>
+    <div class="after-reflection-workspace" id="afterReflectionWorkspace" aria-label="現在的生活順序與理想的生活順序"></div>
     <div class="segmented after-reflection-segmented" id="afterReflectionSegments">
-      <button class="segment" data-after-view="before">現在的樣子</button>
-      <button class="segment active" data-after-view="after">想靠近的樣子</button>
+      <button class="segment" data-after-view="before">現在的生活順序</button>
+      <button class="segment active" data-after-view="after">理想的生活順序</button>
     </div>
     <div class="after-reflection-panel" id="afterReflectionPanel"></div>
   </div>
@@ -456,22 +469,27 @@ button{touch-action:manipulation}
     <div class="result-workspace" id="resultWorkspace"></div>
     <div class="fixed-legend warm" id="resultLegend" aria-label="色彩註記"></div>
     <div class="segmented">
-      <button class="segment" data-view="before">現在的樣子</button>
-      <button class="segment active" data-view="after">想靠近的樣子</button>
+      <button class="segment" data-view="before">現在的生活順序</button>
+      <button class="segment active" data-view="after">理想的生活順序</button>
     </div>
     <div class="result-reflection" id="resultReflection" hidden></div>
+    <section class="activity-next" aria-labelledby="activityNextTitle">
+      <p class="activity-next-kicker">活動中的最後一步</p>
+      <h2 id="activityNextTitle">帶著這張圖，看看 3 個活動問題</h2>
+      <p>不用在網站裡填寫，等一下直接和大家分享。</p>
+      <button class="btn-primary" id="openPromptsBtn">開始看 3 個問題</button>
+    </section>
     <div class="result-actions">
-      <button class="btn-primary" id="exportBtn">儲存我的色彩整理</button>
-      <button class="btn-secondary" id="continueEditBtn">繼續調整想靠近的樣子</button>
+      <button class="btn-secondary" id="exportBtn">製作我的色彩桌布</button>
+      <button class="btn-text" id="continueEditBtn">繼續調整理想的生活順序</button>
     </div>
-    <div class="actions"><button class="btn-secondary" id="openPromptsBtn">帶著畫面，看看分享題</button></div>
     <div class="actions"><button class="btn-text" id="restartResultBtn">回到首頁</button></div>
   </div>
 </section>
 
 <section class="screen warm-screen" id="promptScreen">
   <div class="prompt-content">
-    <p class="prompt-progress" id="promptProgress">01 / 03</p>
+    <p class="prompt-progress" id="promptProgress">活動問題 01 / 03</p>
     <h1 class="prompt-question" id="promptQuestion"></h1>
     <p class="prompt-note">不用在網站裡填寫。停一下想想，活動中直接分享就好。</p>
     <div class="prompt-actions">
@@ -483,12 +501,19 @@ button{touch-action:manipulation}
 
 <div class="export-overlay" id="exportOverlay" role="dialog" aria-modal="true" aria-labelledby="exportTitle">
   <div class="export-sheet">
-    <h2 id="exportTitle">你的色彩整理完成了</h2>
-    <p id="exportGuide">長按下方圖片，選擇「儲存圖片」即可保留到手機。</p>
-    <img class="export-image" id="exportImage" alt="生活色彩整理桌成果圖">
+    <h2 id="exportTitle">寫下一句想帶走的話</h2>
+    <p>桌布會使用妳最後留下的顏色與主次比例，重新交融成一張圖。</p>
+    <div class="wallpaper-field">
+      <label for="wallpaperQuote">我的一句話</label>
+      <textarea class="wallpaper-quote" id="wallpaperQuote" maxlength="80" rows="3" placeholder="例如：先把自己&#10;放回最重要的位置"></textarea>
+      <div class="wallpaper-field-meta"><span>妳輸入的換行會保留</span><span id="wallpaperQuoteCount">0 / 80</span></div>
+    </div>
+    <div class="wallpaper-preview-label">桌布預覽・1080 × 1920</div>
+    <img class="export-image" id="exportImage" alt="生活色彩整理桌桌布預覽">
+    <p id="exportGuide">輸入一句話後，就可以儲存桌布。</p>
     <div class="actions">
       <button class="btn-primary" id="shareExportBtn">分享／儲存圖片</button>
-      <button class="btn-secondary" id="downloadExportBtn">下載圖片</button>
+      <button class="btn-secondary" id="downloadExportBtn">下載 1080 × 1920 PNG</button>
       <button class="btn-text" id="closeExportBtn">關閉</button>
     </div>
   </div>
@@ -524,17 +549,17 @@ if(MVP_COLOR_IDS.length!==60||new Set(MVP_COLOR_IDS).size!==60||MVP_COLOR_IDS.so
 const STORAGE_KEY='lifeColorStudio.session.v3';
 const MIN_SCALE=.18,MAX_SCALE=4.2,OBJECT_SIZE=170,MIN_HIT_SIZE=44,PINCH_GROW_SENSITIVITY=1.25,PINCH_SHRINK_SENSITIVITY=1.58;
 const ACTIVITY_PROMPTS=[
-  '一開始和整理後，最大的差別是什麼？',
-  '如果今天只留下一個發現，你最想留下什麼？',
-  '接下來七天，你想先做哪一個小調整？'
+  ['一開始和整理後，','最大的差別是什麼？'],
+  ['如果今天只留下一個發現，','你最想留下什麼？'],
+  ['接下來七天，','你想先做哪一個小調整？']
 ];
-let textureId=0,deskRAF=0,resultRAF=0,mixRAF=0,mixGeneration=0,resultRenderGeneration=0,deskObjects=[],undoStack=[],pendingUndoRestore=null,topLayer=20,labelTimer=0,activeGestureObject=null,latestExport=null;
+let textureId=0,deskRAF=0,resultRAF=0,mixRAF=0,mixGeneration=0,resultRenderGeneration=0,deskObjects=[],undoStack=[],pendingUndoRestore=null,topLayer=20,labelTimer=0,activeGestureObject=null,latestExport=null,wallpaperPreviewTimer=0;
 let reflectionTypeToken=0,reflectionTyping=false;
 let afterReflectionView='after';
 
 const blankBeforeReflection=()=>({introSeen:false,uiStep:1,wantsAdjustment:null,firstNotice:null,unexpectedItem:null,unexpectedObservation:null,relatedItem:null,wantToLookAgain:null,firstFeeling:'',completedAt:null});
 const blankAfterReflection=()=>({uiStep:1,biggestDifference:'',finalDiscovery:'',nextSevenDays:'',completedAt:null});
-const blankSession=()=>({step:'input',draftNames:['',''],items:[],currentIndex:0,colorDraft:{first:null,second:null,choosingSecond:false,returnToReview:false},before:null,beforeReflection:null,after:null,afterReflection:null,resultView:'after',promptIndex:0,deskTutorialSeen:false,tutorialReturnStep:'before'});
+const blankSession=()=>({step:'input',draftNames:['',''],items:[],currentIndex:0,colorDraft:{first:null,second:null,choosingSecond:false,returnToReview:false},before:null,beforeReflection:null,after:null,afterReflection:null,resultView:'after',promptIndex:0,wallpaperQuote:'',deskTutorialSeen:false,tutorialReturnStep:'before'});
 let session=loadSession();
 function loadSession(){try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null')||{};if(!saved.afterReflection&&saved.afterFinalReflection)saved.afterReflection=saved.afterFinalReflection;if(saved.step==='afterReflection')saved.step='result';return {...blankSession(),...saved}}catch(error){return blankSession()}}
 function saveSession(){localStorage.setItem(STORAGE_KEY,JSON.stringify(session))}
@@ -582,7 +607,7 @@ function renderColor(){showScreen('colorScreen');const item=session.items[sessio
 function updateColorSelection(){
   const draft=session.colorDraft,first=card(draft.first),second=card(draft.second),canvas=document.getElementById('selectionGlow');document.querySelectorAll('.cc').forEach(tile=>tile.classList.toggle('sel',tile.dataset.id===draft.first||tile.dataset.id===draft.second));
   document.getElementById('colorMode').textContent=!first?'不是替它上色，只選一個最貼近你感受的顏色。':second?'已選兩種感受色；再點一次可取消。':'如果還有另一種感受，可以直接再選一色。';
-  if(first){canvas.classList.add('visible');renderGlow(canvas,[draft.first,draft.second].filter(Boolean));document.getElementById('selectedCopy').innerHTML=`<strong>${colorNames([draft.first,draft.second].filter(Boolean))}</strong><br>${second?'兩個顏色會自然交會':'可以只用這一色'}`}else{canvas.classList.remove('visible');document.getElementById('selectedCopy').textContent='不需要想太久，先讓眼睛替你選。'}
+  if(first){canvas.classList.add('visible');renderGlow(canvas,[draft.first,draft.second].filter(Boolean));document.getElementById('selectedCopy').innerHTML=`<strong>${colorNames([draft.first,draft.second].filter(Boolean))}</strong><span>${second?'兩個顏色會自然交會':'可以只用這一色'}</span>`}else{canvas.classList.remove('visible');document.getElementById('selectedCopy').textContent='不需要想太久，先讓眼睛替你選。'}
   const footer=document.getElementById('colorFooter');footer.innerHTML='';
   if(!first){const back=makeButton('返回修改事情','btn-text',()=>{session.step='input';saveSession();render()});footer.appendChild(back);return}
   footer.appendChild(makeButton(second?'就用這兩個顏色':'就用這個顏色','btn-primary',commitCurrentColors));
@@ -620,7 +645,7 @@ function initialLayout(count,width,height,index){const patterns={2:[[-.2,-.1],[.
 function captureSnapshot(){const rect=document.getElementById('workspace').getBoundingClientRect();return{width:rect.width,height:rect.height,items:session.items.map(item=>({id:item.id,name:item.name,colorIds:[...item.colorIds],layout:clone(item.layout)}))}}
 function restoreSnapshot(snapshot){snapshot.items.forEach(saved=>{const item=session.items.find(candidate=>candidate.id===saved.id);if(item)item.layout=clone(saved.layout)})}
 function renderDesk(){
-  showScreen('deskScreen');renderFixedLegend('deskLegend');cancelAnimationFrame(deskRAF);deskObjects=[];undoStack=pendingUndoRestore||[];pendingUndoRestore=null;const after=session.step==='after',between=session.step==='between';document.getElementById('deskPhase').textContent=after?'想靠近的樣子':'現在的樣子';document.getElementById('deskGuide').textContent=after?'如果只是比現在舒服一點，你希望它們怎麼存在？':'把它們排成現在的樣子。';document.getElementById('parkingZone').classList.toggle('visible',after);document.getElementById('parkingZone').classList.remove('drag-over');document.getElementById('betweenPanel').classList.toggle('visible',between);document.querySelector('.desk-footer').classList.toggle('hidden',between);document.getElementById('undoBtn').style.display=between?'none':'block';document.getElementById('saveStageBtn').textContent=after?'完成整理':'留下現在的樣子';document.getElementById('gestureHint').classList.toggle('hidden',between);document.getElementById('objectLabel').classList.remove('visible');
+  showScreen('deskScreen');renderFixedLegend('deskLegend');cancelAnimationFrame(deskRAF);deskObjects=[];undoStack=pendingUndoRestore||[];pendingUndoRestore=null;const after=session.step==='after',between=session.step==='between';document.getElementById('deskPhase').textContent=after?'理想的生活順序':'現在的生活順序';document.getElementById('deskGuide').textContent=after?'如果只是比現在舒服一點，你希望它們怎麼存在？':'把它們排成現在的生活順序。';document.getElementById('parkingZone').classList.toggle('visible',after);document.getElementById('parkingZone').classList.remove('drag-over');document.getElementById('betweenPanel').classList.toggle('visible',between);document.querySelector('.desk-footer').classList.toggle('hidden',between);document.getElementById('undoBtn').style.display=between?'none':'block';document.getElementById('saveStageBtn').textContent=after?'完成整理':'留下現在的生活順序';document.getElementById('gestureHint').classList.toggle('hidden',between);document.getElementById('objectLabel').classList.remove('visible');
   const workspace=document.getElementById('workspace');workspace.querySelectorAll('.lightfield-object').forEach(element=>element.remove());requestAnimationFrame(()=>{const rect=workspace.getBoundingClientRect();session.items.forEach((item,index)=>{if(!item.layout)item.layout=initialLayout(session.items.length,rect.width,rect.height,index);const object=createDeskObject(item,index);if(between)object.element.style.pointerEvents='none'});saveSession();updateUndo();if(!between)setTimeout(()=>document.getElementById('gestureHint').classList.add('hidden'),3600);animateDesk()});
 }
 function createDeskObject(item,index){
@@ -673,7 +698,7 @@ function renderReflectionQuestion(){
   const data=ensureBeforeReflection(),panel=document.getElementById('reflectionPanel');panel.innerHTML='';
   const title=document.createElement('h2'),helper=document.createElement('p'),actions=document.createElement('div'),adjust=document.createElement('button'),keep=document.createElement('button');
   title.className='reflection-question';helper.className='reflection-helper';actions.className='reflection-actions';adjust.type='button';keep.type='button';adjust.className='btn-primary';keep.className='btn-secondary';
-  title.textContent='看完這張圖，你想重新調整嗎？';helper.textContent='不需要在網站裡回答。活動中，直接分享你看見的地方就好。';adjust.textContent='想，回到整理桌';keep.textContent='先保留現在的樣子';
+  title.textContent='看完這張圖，你想重新調整嗎？';helper.textContent='不需要在網站裡回答。活動中，直接分享你看見的地方就好。';adjust.textContent='想，回到整理桌';keep.textContent='先保留現在的生活順序';
   adjust.addEventListener('click',()=>{data.wantsAdjustment=true;data.completedAt=new Date().toISOString();session.step='after';undoStack=[];saveSession();render()});
   keep.addEventListener('click',()=>{data.wantsAdjustment=false;data.completedAt=new Date().toISOString();session.after=clone(session.before);session.afterReflection=null;session.step='result';session.resultView='after';saveSession();render()});
   actions.append(adjust,keep);panel.append(title,helper,actions)
@@ -712,19 +737,70 @@ document.getElementById('continueEditBtn').addEventListener('click',()=>{restore
 function renderPromptScreen(){
   showScreen('promptScreen');
   session.promptIndex=clamp(Number(session.promptIndex)||0,0,ACTIVITY_PROMPTS.length-1);
-  document.getElementById('promptProgress').textContent=`${String(session.promptIndex+1).padStart(2,'0')} / ${String(ACTIVITY_PROMPTS.length).padStart(2,'0')}`;
-  document.getElementById('promptQuestion').textContent=ACTIVITY_PROMPTS[session.promptIndex];
+  document.getElementById('promptProgress').textContent=`活動問題 ${String(session.promptIndex+1).padStart(2,'0')} / ${String(ACTIVITY_PROMPTS.length).padStart(2,'0')}`;
+  const question=document.getElementById('promptQuestion');question.replaceChildren();
+  ACTIVITY_PROMPTS[session.promptIndex].forEach((phrase,index)=>{if(index)question.appendChild(document.createTextNode('\u200B'));const span=document.createElement('span');span.className='prompt-phrase';span.textContent=phrase;question.appendChild(span)});
   document.getElementById('promptNextBtn').textContent=session.promptIndex===ACTIVITY_PROMPTS.length-1?'回到整理結果':'下一題';
 }
 document.getElementById('openPromptsBtn').addEventListener('click',()=>{session.promptIndex=0;session.step='prompts';saveSession();render()});
 document.getElementById('promptBackBtn').addEventListener('click',()=>{session.step='result';saveSession();render()});
 document.getElementById('promptNextBtn').addEventListener('click',()=>{if(session.promptIndex<ACTIVITY_PROMPTS.length-1){session.promptIndex++;saveSession();renderPromptScreen()}else{session.step='result';saveSession();render()}});
 
-function drawExportGlow(ctx,x,y,radius,colorIds){ctx.globalCompositeOperation='screen';colorIds.map(card).filter(Boolean).forEach((entry,index)=>{const cx=x+(colorIds.length>1?(index===0?-radius*.2:radius*.2):0);const gradient=ctx.createRadialGradient(cx,y,0,cx,y,radius);[[0,1],[.12,.96],[.24,.91],[.35,.82],[.46,.69],[.56,.53],[.66,.38],[.76,.22],[.86,.094],[.94,.031],[1,0]].forEach(([stop,a])=>gradient.addColorStop(stop,rgba(entry.hex,a)));ctx.fillStyle=gradient;ctx.fillRect(cx-radius,y-radius,radius*2,radius*2)})}
-function createExportCanvas(){const snapshot=session.after,width=1200,height=1600,canvas=document.createElement('canvas');if(!snapshot)return null;canvas.width=width;canvas.height=height;const ctx=canvas.getContext('2d');ctx.fillStyle='#F8F3EA';ctx.fillRect(0,0,width,height);ctx.fillStyle='#1C1208';ctx.textAlign='center';ctx.font='300 48px "Noto Serif TC",serif';ctx.fillText('生活色彩整理桌',width/2,78);ctx.font='italic 25px "Cormorant Garamond",serif';ctx.fillStyle='#6C5940';ctx.fillText('Life Color Studio',width/2,118);ctx.font='22px "Noto Serif TC",serif';ctx.fillText(new Date().toLocaleDateString('zh-TW'),width/2,148);const wx=70,wy=185,ww=1060,wh=1330;ctx.fillStyle='#0D0A07';roundRect(ctx,wx,wy,ww,wh,28);ctx.fill();const sx=ww/snapshot.width,sy=wh/snapshot.height;snapshot.items.slice().sort((a,b)=>a.layout.z-b.layout.z).forEach(saved=>{const x=wx+ww/2+saved.layout.x*sx,y=wy+wh/2+saved.layout.y*sy,radius=62*saved.layout.scale*Math.min(sx,sy);drawExportGlow(ctx,x,y,radius,saved.colorIds)});ctx.globalCompositeOperation='source-over';ctx.textAlign='center';ctx.font='300 20px "Noto Serif TC",serif';ctx.fillStyle='rgba(255,249,239,.76)';snapshot.items.forEach(saved=>{const rawX=wx+ww/2+saved.layout.x*sx,rawY=wy+wh/2+saved.layout.y*sy,label=`${saved.name}｜${colorNames(saved.colorIds)}`,half=Math.min(210,ctx.measureText(label).width/2),x=clamp(rawX,wx+half+24,wx+ww-half-24),y=clamp(rawY-16,wy+34,wy+wh-28);ctx.fillText(label,x,y)});return canvas}
-function triggerExportDownload(){if(!latestExport)return;const link=document.createElement('a');link.download=latestExport.name;link.href=latestExport.url;document.body.appendChild(link);link.click();link.remove()}
+const WALLPAPER_WIDTH=1080,WALLPAPER_HEIGHT=1920,WALLPAPER_TEXT_MIN=40,WALLPAPER_TEXT_MAX=64,WALLPAPER_TEXT_WIDTH=800;
+function wallpaperColors(snapshot){
+  const all=snapshot?.items||[],active=all.filter(item=>!item.layout?.inParking),items=active.length?active:all,weights=new Map();
+  items.forEach(item=>{const ids=(item.colorIds||[]).filter(id=>card(id)),itemWeight=clamp(Number(item.layout?.scale)||1,MIN_SCALE,MAX_SCALE),each=itemWeight/Math.max(1,ids.length);ids.forEach(id=>weights.set(id,(weights.get(id)||0)+each))});
+  return [...weights].map(([id,weight])=>({id,hex:card(id).hex,weight})).sort((a,b)=>b.weight-a.weight)
+}
+function paintWallpaperGlow(ctx,cx,cy,rx,ry,hex,alpha){
+  ctx.save();ctx.translate(cx,cy);ctx.scale(rx,ry);ctx.globalCompositeOperation='screen';ctx.globalAlpha=alpha;
+  const gradient=ctx.createRadialGradient(0,0,0,0,0,1);
+  [[0,1],[.1,.97],[.22,.9],[.36,.75],[.5,.55],[.64,.34],[.77,.17],[.88,.065],[.96,.016],[1,0]].forEach(([stop,a])=>gradient.addColorStop(stop,rgba(hex,a)));
+  ctx.fillStyle=gradient;ctx.fillRect(-1,-1,2,2);ctx.restore()
+}
+function paintWallpaperBlend(ctx,colors){
+  const base=ctx.createLinearGradient(0,0,0,WALLPAPER_HEIGHT);base.addColorStop(0,'#0B0806');base.addColorStop(.58,'#100B08');base.addColorStop(1,'#17100B');ctx.fillStyle=base;ctx.fillRect(0,0,WALLPAPER_WIDTH,WALLPAPER_HEIGHT);
+  const positions=[[.34,.2],[.68,.27],[.27,.43],[.67,.48],[.43,.64],[.75,.68],[.22,.73],[.58,.79],[.83,.4],[.42,.34],[.18,.55],[.7,.16]],maxWeight=Math.max(...colors.map(entry=>entry.weight),1);
+  colors.forEach((entry,index)=>{const point=positions[index%positions.length],dominance=Math.sqrt(entry.weight/maxWeight),cx=WALLPAPER_WIDTH*point[0],cy=WALLPAPER_HEIGHT*point[1],rx=330+280*dominance,ry=390+360*dominance,alpha=.22+.28*dominance;paintWallpaperGlow(ctx,cx,cy,rx,ry,entry.hex,alpha);paintWallpaperGlow(ctx,cx+rx*.13,cy-ry*.08,rx*.58,ry*.55,entry.hex,alpha*.48)});
+  if(colors[0])paintWallpaperGlow(ctx,WALLPAPER_WIDTH*.48,WALLPAPER_HEIGHT*.38,560,670,colors[0].hex,.16);
+  const air=ctx.createLinearGradient(0,0,0,WALLPAPER_HEIGHT);air.addColorStop(0,'rgba(255,248,235,.025)');air.addColorStop(.64,'rgba(255,248,235,0)');air.addColorStop(1,'rgba(8,5,3,.18)');ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;ctx.fillStyle=air;ctx.fillRect(0,0,WALLPAPER_WIDTH,WALLPAPER_HEIGHT)
+}
+function wallpaperTokens(text){
+  if(typeof Intl!=='undefined'&&Intl.Segmenter)return [...new Intl.Segmenter('zh-TW',{granularity:'word'}).segment(text)].map(entry=>entry.segment);
+  return Array.from(text)
+}
+function wrapWallpaperParagraph(ctx,text,maxWidth){
+  if(text==='')return [''];const rawTokens=wallpaperTokens(text),tokens=[];for(let index=0;index<rawTokens.length;index++){const token=rawTokens[index],next=rawTokens[index+1];if(/^\p{Script=Han}$/u.test(token)&&/^\p{Script=Han}$/u.test(next)){tokens.push(token+next);index++}else tokens.push(token)}const lines=[];let line='';
+  tokens.forEach((token,index)=>{const candidate=line+token,next=tokens[index+1]||'',fits=ctx.measureText(candidate).width<=maxWidth,singleHan=/^\p{Script=Han}$/u.test(token),nextStartsHan=/^\p{Script=Han}/u.test(next),wouldOrphan=Boolean(line&&fits&&singleHan&&nextStartsHan&&ctx.measureText(candidate+next).width>maxWidth);if(wouldOrphan){lines.push(line.trimEnd());line=token;return}if(!line||fits){line=candidate;return}if(/^[，。！？、；：）》」』】]/.test(token)){line+=token;return}lines.push(line.trimEnd());line=token.trimStart()});
+  if(line||!lines.length)lines.push(line.trimEnd());
+  for(let index=1;index<lines.length;index++){if(!/^[的了著過和與或但而]/.test(lines[index])||!lines[index-1])continue;const previousTokens=wallpaperTokens(lines[index-1]);let moveIndex=previousTokens.length-1;while(moveIndex>0&&/^\s+$/.test(previousTokens[moveIndex]))moveIndex--;if(moveIndex>0&&/^\p{Script=Han}$/u.test(previousTokens[moveIndex])&&/^\p{Script=Han}$/u.test(previousTokens[moveIndex-1]))moveIndex--;const moved=previousTokens.splice(moveIndex).join('');if(moved){lines[index-1]=previousTokens.join('').trimEnd();lines[index]=moved+lines[index]}}
+  return lines
+}
+function layoutWallpaperQuote(ctx,text){
+  const paragraphs=String(text||'').replace(/\r\n?/g,'\n').split('\n');let fontSize=WALLPAPER_TEXT_MAX,lines=[],lineHeight=0;
+  for(;fontSize>=WALLPAPER_TEXT_MIN;fontSize-=2){ctx.font=`300 ${fontSize}px "Noto Serif TC",serif`;lines=paragraphs.flatMap(paragraph=>wrapWallpaperParagraph(ctx,paragraph,WALLPAPER_TEXT_WIDTH));lineHeight=Math.round(fontSize*1.6);if(lines.length*lineHeight<=570&&lines.every(line=>ctx.measureText(line).width<=WALLPAPER_TEXT_WIDTH+1))break}
+  fontSize=Math.max(WALLPAPER_TEXT_MIN,fontSize);ctx.font=`300 ${fontSize}px "Noto Serif TC",serif`;return{lines,lineHeight:Math.round(fontSize*1.6),fontSize}
+}
+function sampleWallpaperLuminance(ctx,x,y,width,height){
+  const pixels=ctx.getImageData(x,y,width,height).data;let total=0,count=0;for(let index=0;index<pixels.length;index+=4*24){const r=pixels[index]/255,g=pixels[index+1]/255,b=pixels[index+2]/255;total+=(.2126*r+.7152*g+.0722*b);count++}return count?total/count:0
+}
+function createWallpaperCanvas(quote=session.wallpaperQuote||''){
+  const snapshot=session.after,canvas=document.createElement('canvas');if(!snapshot)return null;canvas.width=WALLPAPER_WIDTH;canvas.height=WALLPAPER_HEIGHT;const ctx=canvas.getContext('2d',{alpha:false}),colors=wallpaperColors(snapshot);paintWallpaperBlend(ctx,colors);
+  const layout=layoutWallpaperQuote(ctx,quote),totalHeight=layout.lines.length*layout.lineHeight,quoteTop=clamp(790-totalHeight/2,410,960-totalHeight),quoteLum=sampleWallpaperLuminance(ctx,130,Math.max(250,quoteTop-90),820,Math.min(760,totalHeight+180)),lightText=quoteLum<.48;
+  ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`300 ${layout.fontSize}px "Noto Serif TC",serif`;ctx.fillStyle=lightText?'rgba(255,250,243,.92)':'rgba(28,20,14,.88)';ctx.shadowColor=lightText?'rgba(8,5,3,.28)':'rgba(255,250,243,.18)';ctx.shadowBlur=12;ctx.shadowOffsetY=2;
+  layout.lines.forEach((line,index)=>{if(line)ctx.fillText(line,WALLPAPER_WIDTH/2,quoteTop+layout.lineHeight*(index+.5),WALLPAPER_TEXT_WIDTH)});ctx.shadowColor='transparent';ctx.shadowBlur=0;
+  const brandLum=sampleWallpaperLuminance(ctx,280,1700,520,160),brandLight=brandLum<.5,brandColor=brandLight?'rgba(255,249,240,.43)':'rgba(36,25,16,.43)';ctx.fillStyle=brandColor;ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.font='300 24px "Noto Serif TC",serif';ctx.fillText('生活色彩整理桌',WALLPAPER_WIDTH/2,1784);ctx.font='italic 32px "Cormorant Garamond",serif';ctx.fillText('Life Color Studio',WALLPAPER_WIDTH/2,1830);
+  canvas.wallpaperMeta={width:canvas.width,height:canvas.height,fontSize:layout.fontSize,lineCount:layout.lines.length,lines:layout.lines,quoteTop,quoteBottom:quoteTop+totalHeight,brandBottom:1830,colors:colors.map(entry=>entry.id)};return canvas
+}
+function updateWallpaperPreview(){
+  const quoteInput=document.getElementById('wallpaperQuote'),quote=quoteInput.value,shareButton=document.getElementById('shareExportBtn'),downloadButton=document.getElementById('downloadExportBtn'),guide=document.getElementById('exportGuide');session.wallpaperQuote=quote;saveSession();document.getElementById('wallpaperQuoteCount').textContent=`${quote.length} / 80`;const canvas=createWallpaperCanvas(quote);if(!canvas)return;
+  const name=`生活色彩桌布-${new Date().toISOString().slice(0,10)}.png`,url=canvas.toDataURL('image/png'),hasQuote=Boolean(quote.trim()),isLine=/\bLine\//i.test(navigator.userAgent)||/LIFF/i.test(navigator.userAgent),preview=document.getElementById('exportImage');latestExport={name,url,file:null,meta:canvas.wallpaperMeta};preview.src=url;preview.dataset.width=canvas.wallpaperMeta.width;preview.dataset.height=canvas.wallpaperMeta.height;preview.dataset.fontSize=canvas.wallpaperMeta.fontSize;preview.dataset.lineCount=canvas.wallpaperMeta.lineCount;preview.dataset.lines=JSON.stringify(canvas.wallpaperMeta.lines);preview.dataset.quoteTop=canvas.wallpaperMeta.quoteTop;preview.dataset.quoteBottom=canvas.wallpaperMeta.quoteBottom;shareButton.style.display='none';downloadButton.disabled=!hasQuote;guide.textContent=!hasQuote?'輸入一句話後，就可以儲存桌布。':isLine?'妳正在 LINE 裡開啟。可以長按上方圖片儲存，或使用手機的分享功能。':'預覽就是正式成品；可以下載，也可以長按圖片儲存。';
+  if(!hasQuote)return;canvas.toBlob(blob=>{if(!blob||typeof File==='undefined'||quoteInput.value!==quote)return;try{latestExport.file=new File([blob],name,{type:'image/png'});const canShare=Boolean(navigator.share&&navigator.canShare?.({files:[latestExport.file]}));shareButton.style.display=canShare?'inline-flex':'none'}catch(error){shareButton.style.display='none'}},'image/png')
+}
+function triggerExportDownload(){if(!latestExport||!document.getElementById('wallpaperQuote').value.trim())return;const link=document.createElement('a');link.download=latestExport.name;link.href=latestExport.url;document.body.appendChild(link);link.click();link.remove()}
 function closeExportPreview(){document.getElementById('exportOverlay').classList.remove('visible')}
-document.getElementById('exportBtn').addEventListener('click',()=>{const canvas=createExportCanvas();if(!canvas)return;const name=`生活色彩整理桌-${new Date().toISOString().slice(0,10)}.png`,url=canvas.toDataURL('image/png');latestExport={name,url,file:null};document.getElementById('exportImage').src=url;const isLine=/\bLine\//i.test(navigator.userAgent)||/LIFF/i.test(navigator.userAgent),shareButton=document.getElementById('shareExportBtn'),downloadButton=document.getElementById('downloadExportBtn');shareButton.style.display='none';document.getElementById('exportGuide').textContent=isLine?'你正在 LINE 裡開啟。請長按下方圖片，選擇「儲存圖片」。':'長按圖片可以儲存到手機，也可以使用下方按鈕下載。';downloadButton.style.display=isLine?'none':'inline-flex';canvas.toBlob(blob=>{if(!blob||typeof File==='undefined')return;try{latestExport.file=new File([blob],name,{type:'image/png'});const canShare=Boolean(navigator.share&&navigator.canShare?.({files:[latestExport.file]}));shareButton.style.display=canShare?'inline-flex':'none'}catch(error){shareButton.style.display='none'}},'image/png');document.getElementById('exportOverlay').classList.add('visible')});
+document.getElementById('exportBtn').addEventListener('click',async()=>{const input=document.getElementById('wallpaperQuote');input.value=session.wallpaperQuote||'';document.getElementById('exportOverlay').classList.add('visible');if(document.fonts?.ready)await document.fonts.ready;updateWallpaperPreview();setTimeout(()=>input.focus({preventScroll:true}),120)});
+document.getElementById('wallpaperQuote').addEventListener('input',()=>{clearTimeout(wallpaperPreviewTimer);wallpaperPreviewTimer=setTimeout(updateWallpaperPreview,120)});
 document.getElementById('shareExportBtn').addEventListener('click',async()=>{if(!latestExport?.file)return;try{await navigator.share({files:[latestExport.file],title:'生活色彩整理桌'})}catch(error){if(error.name!=='AbortError')document.getElementById('exportGuide').textContent='分享功能沒有開啟，請直接長按圖片儲存。'}});
 document.getElementById('downloadExportBtn').addEventListener('click',triggerExportDownload);
 document.getElementById('closeExportBtn').addEventListener('click',closeExportPreview);
@@ -736,7 +812,7 @@ function closeRestart(){document.getElementById('confirmOverlay').classList.remo
 document.getElementById('restartDeskBtn').addEventListener('click',requestRestart);document.getElementById('restartResultBtn').addEventListener('click',requestRestart);document.getElementById('reflectionHomeBtn').addEventListener('click',requestRestart);document.getElementById('afterReflectionHomeBtn').addEventListener('click',requestRestart);document.getElementById('cancelRestartBtn').addEventListener('click',closeRestart);document.getElementById('confirmRestartBtn').addEventListener('click',()=>{localStorage.removeItem(STORAGE_KEY);session=blankSession();closeRestart();render()});
 
 function render(){cancelAnimationFrame(deskRAF);cancelAnimationFrame(resultRAF);cancelAnimationFrame(mixRAF);mixRAF=0;mixGeneration++;resultRAF=0;resultRenderGeneration++;reflectionTypeToken++;reflectionTyping=false;if(session.step==='confirm')session.step='color';if(session.step==='before'&&!session.deskTutorialSeen){session.tutorialReturnStep='before';session.step='tutorial';saveSession()}if(session.step==='input')renderInput();else if(session.step==='color')renderColor();else if(session.step==='mix')renderMix();else if(session.step==='review')renderReview();else if(session.step==='tutorial')renderDeskTutorial();else if(session.step==='before'||session.step==='between'||session.step==='after')renderDesk();else if(session.step==='reflection')renderReflection();else if(session.step==='afterReflection')renderAfterReflection();else if(session.step==='result')renderResult();else if(session.step==='prompts')renderPromptScreen();else{session=blankSession();renderInput()}window.__ready=true}
-window.__studio={getState:()=>clone(session),reset:()=>{localStorage.removeItem(STORAGE_KEY);session=blankSession();render()},setStep:step=>{session.step=step;saveSession();render()},getAnimationDebug:()=>({resultRAF,resultRenderGeneration,resultObjects:document.querySelectorAll('.result-object').length})};
+window.__studio={getState:()=>clone(session),reset:()=>{localStorage.removeItem(STORAGE_KEY);session=blankSession();render()},setStep:step=>{session.step=step;saveSession();render()},createWallpaperCanvas,inspectWallpaperLayout:text=>createWallpaperCanvas(text)?.wallpaperMeta||null,getAnimationDebug:()=>({resultRAF,resultRenderGeneration,resultObjects:document.querySelectorAll('.result-object').length})};
 addEventListener('resize',()=>{if(session.step==='before'||session.step==='after')deskObjects.forEach(applyObject)});
 render();
 </script>
