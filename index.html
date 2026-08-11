@@ -67,6 +67,7 @@ button{touch-action:manipulation}
 .topic-input:focus{border-color:rgba(154,112,48,.62);box-shadow:0 0 0 3px rgba(154,112,48,.08)}
 .remove-topic{min-width:50px;height:44px;border:0;background:transparent;color:#9B8B78;font-size:.62rem;letter-spacing:.04em;cursor:pointer}
 .add-topic{display:block;margin:10px auto 0}
+.input-edit-note{margin:-7px auto 14px;color:#978874}
 #topicCountNote:empty{display:none}
 
 /* ② 原版方形色票 */
@@ -125,6 +126,9 @@ button{touch-action:manipulation}
 .lightfield-canvas{position:absolute;width:170px;height:170px;left:50%;top:50%;transform:translate(-50%,-50%);display:block;pointer-events:none;mix-blend-mode:screen;transition:filter .18s ease,opacity .22s ease}
 .lightfield-object.active .lightfield-canvas{filter:brightness(1.07)}
 .lightfield-object.parked .lightfield-canvas{opacity:.68;filter:brightness(.84)}
+.object-caption{position:absolute;z-index:3;left:50%;top:50%;min-width:132px;max-width:176px;text-align:center;color:rgba(255,249,239,.68);pointer-events:none;transform-origin:top center;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.object-caption strong{display:block;font-size:.66rem;font-weight:500;line-height:1.45;letter-spacing:.07em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.object-caption span{display:block;margin-top:2px;font-size:.54rem;font-weight:300;line-height:1.45;letter-spacing:.035em;color:rgba(255,249,239,.48);white-space:nowrap}
 .object-label{position:absolute;z-index:1200;display:none;min-width:112px;max-width:180px;padding:9px 12px;border-radius:12px;background:rgba(248,243,234,.94);box-shadow:0 8px 24px rgba(0,0,0,.2);color:#2D2012;text-align:center;pointer-events:none;transform:translate(-50%,-115%)}
 .object-label.visible{display:block}
 .object-label strong{display:block;font-size:.72rem;font-weight:500;letter-spacing:.08em}
@@ -185,6 +189,7 @@ button{touch-action:manipulation}
 .result-object{position:absolute;left:50%;top:50%;width:112px;height:112px;transform-origin:center;pointer-events:none}
 .result-label{position:absolute;color:rgba(255,249,239,.62);font-size:.56rem;letter-spacing:.06em;white-space:nowrap;transform:translate(14px,8px)}
 .result-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:20px}
+.result-share-note{margin:16px auto 0;max-width:420px;text-align:center;font-size:.68rem;font-weight:300;line-height:1.85;letter-spacing:.045em;color:#786953}
 .result-reflection{margin:24px auto 4px;max-width:480px;padding:24px 0;border-top:1px solid rgba(154,112,48,.16);border-bottom:1px solid rgba(154,112,48,.16)}
 .result-reflection p{font-size:.78rem;font-weight:300;line-height:2;letter-spacing:.055em;color:#4E3C28;text-align:left}
 .result-reflection p+p{margin-top:5px}
@@ -238,10 +243,11 @@ button{touch-action:manipulation}
   <div class="content input-content">
     <header class="page-head">
       <div class="eyebrow">Life Color Studio</div>
-      <h1 class="page-title">今天想整理什麼？</h1>
+      <h1 class="page-title">今天想用色彩整理什麼？</h1>
     </header>
-    <p class="lead">先寫下 2～6 件最近佔據心思的事。<br>接著替它們選色，再用手排出「現在的樣子」。</p>
+    <p class="lead">先寫下 2～6 件最近佔據心思的事。<br>接著替每件事選一個貼近感受的顏色，再排出「現在的樣子」。</p>
     <div class="topic-list" id="topicList"></div>
+    <p class="subtle-note input-edit-note">點選欄位裡的文字，就可以直接修改。</p>
     <button class="btn-secondary add-topic" id="addTopicBtn">＋ 再加一件事情</button>
     <p class="subtle-note" id="topicCountNote"></p>
     <div class="actions"><button class="btn-primary" id="startColorBtn">下一步・替它們選色</button></div>
@@ -347,6 +353,7 @@ button{touch-action:manipulation}
       <button class="segment" data-view="before">現在的樣子</button>
       <button class="segment active" data-view="after">想靠近的樣子</button>
     </div>
+    <p class="result-share-note">先看看前後有什麼不同。<br>活動中，分享一個妳最有感覺的變化就好。</p>
     <div class="result-reflection" id="resultReflection" hidden></div>
     <div class="result-actions">
       <button class="btn-primary" id="exportBtn">儲存我的色彩整理</button>
@@ -397,16 +404,16 @@ const MVP_COLOR_IDS=[
 const CARD_BY_ID=new Map(PALETTE.map(card=>[card.id,card]));
 if(MVP_COLOR_IDS.length!==60||new Set(MVP_COLOR_IDS).size!==60||MVP_COLOR_IDS.some(id=>!CARD_BY_ID.has(id)))throw new Error('MVP 60 色清單不完整');
 const STORAGE_KEY='lifeColorStudio.session.v3';
-const MIN_SCALE=.18,MAX_SCALE=4.2,OBJECT_SIZE=170,MIN_HIT_SIZE=44,PINCH_SENSITIVITY=1.32;
+const MIN_SCALE=.18,MAX_SCALE=4.2,OBJECT_SIZE=170,MIN_HIT_SIZE=44,PINCH_GROW_SENSITIVITY=1.25,PINCH_SHRINK_SENSITIVITY=1.58;
 let textureId=0,deskRAF=0,resultRAF=0,resultRenderGeneration=0,deskObjects=[],undoStack=[],topLayer=20,labelTimer=0,activeGestureObject=null,latestExport=null;
 let reflectionTypeToken=0,reflectionTyping=false;
 let afterReflectionView='after';
 
-const blankBeforeReflection=()=>({introSeen:false,uiStep:0,firstNotice:null,unexpectedItem:null,unexpectedObservation:null,relatedItem:null,wantToLookAgain:null,firstFeeling:'',completedAt:null});
+const blankBeforeReflection=()=>({introSeen:false,uiStep:1,wantsAdjustment:null,firstNotice:null,unexpectedItem:null,unexpectedObservation:null,relatedItem:null,wantToLookAgain:null,firstFeeling:'',completedAt:null});
 const blankAfterReflection=()=>({uiStep:1,biggestDifference:'',finalDiscovery:'',nextSevenDays:'',completedAt:null});
 const blankSession=()=>({step:'input',draftNames:['',''],items:[],currentIndex:0,colorDraft:{first:null,second:null,choosingSecond:false,returnToReview:false},before:null,beforeReflection:null,after:null,afterReflection:null,resultView:'after'});
 let session=loadSession();
-function loadSession(){try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null')||{};if(!saved.afterReflection&&saved.afterFinalReflection)saved.afterReflection=saved.afterFinalReflection;return {...blankSession(),...saved}}catch(error){return blankSession()}}
+function loadSession(){try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null')||{};if(!saved.afterReflection&&saved.afterFinalReflection)saved.afterReflection=saved.afterFinalReflection;if(saved.step==='afterReflection')saved.step='result';return {...blankSession(),...saved}}catch(error){return blankSession()}}
 function saveSession(){localStorage.setItem(STORAGE_KEY,JSON.stringify(session))}
 function clone(value){return JSON.parse(JSON.stringify(value))}
 function card(id){return CARD_BY_ID.get(id)}
@@ -437,7 +444,7 @@ function renderGlow(canvas,colorIds,time=4200){
 function renderInput(){
   showScreen('inputScreen');const list=document.getElementById('topicList');list.innerHTML='';
   session.draftNames=(session.draftNames?.length?session.draftNames:['','']).slice(0,6);while(session.draftNames.length<2)session.draftNames.push('');
-  session.draftNames.forEach((value,index)=>{const removable=session.draftNames.length>2,row=document.createElement('div');row.className=`topic-row${removable?' removable':''}`;row.innerHTML=`<input class="topic-input" maxlength="24" placeholder="例如：工作、休息、收入" value="${escapeHtml(value)}">${removable?'<button class="remove-topic" aria-label="移除這一項">移除</button>':''}`;const input=row.querySelector('input');input.addEventListener('input',()=>{session.draftNames[index]=input.value;updateTopicControls();saveSession()});row.querySelector('button')?.addEventListener('click',()=>{session.draftNames.splice(index,1);saveSession();renderInput()});list.appendChild(row)});
+  session.draftNames.forEach((value,index)=>{const removable=session.draftNames.length>2,row=document.createElement('div');row.className=`topic-row${removable?' removable':''}`;row.innerHTML=`<input class="topic-input" maxlength="24" placeholder="例如：工作、休息、收入" value="${escapeHtml(value)}">${removable?'<button class="remove-topic" aria-label="刪除這一項">刪除這項</button>':''}`;const input=row.querySelector('input');input.addEventListener('input',()=>{session.draftNames[index]=input.value;updateTopicControls();saveSession()});row.querySelector('button')?.addEventListener('click',()=>{session.draftNames.splice(index,1);saveSession();renderInput()});list.appendChild(row)});
   document.getElementById('addTopicBtn').style.display=session.draftNames.length<6?'block':'none';updateTopicControls();
 }
 function escapeHtml(text=''){return text.replace(/[&<>"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[char]))}
@@ -446,16 +453,14 @@ document.getElementById('addTopicBtn').addEventListener('click',()=>{if(session.
 document.getElementById('startColorBtn').addEventListener('click',()=>{const names=session.draftNames.map(name=>name.trim()).filter(Boolean);if(names.length<2)return;session.items=names.map((name,index)=>({id:`item-${Date.now()}-${index}`,name,colorIds:[],layout:null}));session.currentIndex=0;session.colorDraft={first:null,second:null,choosingSecond:false,returnToReview:false};session.step='color';saveSession();render()});
 
 function buildPalette(){const grid=document.getElementById('colorGrid');grid.innerHTML='';MVP_COLOR_IDS.forEach(id=>{const entry=card(id);if(!entry)return;const button=document.createElement('button');button.className='cc';button.dataset.id=id;button.title=`${entry.zh}｜${entry.en}`;button.setAttribute('aria-label',`${entry.zh}，${entry.en}`);button.innerHTML=`<span class="cc-bg" style="background:linear-gradient(158deg,${entry.bg[0]},${entry.bg[1]})"></span><span class="cc-glass"></span><span class="cc-glow"></span><span class="cc-chk"></span>`;button.addEventListener('click',()=>selectColor(id));grid.appendChild(button)})}
-function selectColor(id){if(session.colorDraft.choosingSecond){if(id===session.colorDraft.first)return;session.colorDraft.second=id}else session.colorDraft.first=id;saveSession();updateColorSelection()}
-function renderColor(){showScreen('colorScreen');const item=session.items[session.currentIndex];document.getElementById('colorProgress').textContent=`${String(session.currentIndex+1).padStart(2,'0')} / ${String(session.items.length).padStart(2,'0')}`;document.getElementById('colorPrompt').textContent=`想到「${item.name}」，現在最想替它選哪個顏色？`;buildPalette();updateColorSelection()}
+function selectColor(id){const draft=session.colorDraft;if(!draft.first){draft.first=id}else if(id===draft.first){if(draft.second){draft.first=draft.second;draft.second=null}else draft.first=null}else if(id===draft.second){draft.second=null}else draft.second=id;draft.choosingSecond=false;saveSession();updateColorSelection()}
+function renderColor(){showScreen('colorScreen');const item=session.items[session.currentIndex];document.getElementById('colorProgress').textContent=`${String(session.currentIndex+1).padStart(2,'0')} / ${String(session.items.length).padStart(2,'0')}`;document.getElementById('colorPrompt').textContent=`當你想到「${item.name}」，哪個顏色最接近你此刻對它的感受？`;buildPalette();updateColorSelection()}
 function updateColorSelection(){
   const draft=session.colorDraft,first=card(draft.first),second=card(draft.second),canvas=document.getElementById('selectionGlow');document.querySelectorAll('.cc').forEach(tile=>tile.classList.toggle('sel',tile.dataset.id===draft.first||tile.dataset.id===draft.second));
-  document.getElementById('colorMode').textContent=!first?'哪個顏色現在最像這件事？':draft.choosingSecond?(second?'這兩個顏色會一起成為它的光。':'再選一個想一起放進來的顏色'):(second?'這兩個顏色會一起成為它的光。':'還想再放進一個顏色嗎？');
+  document.getElementById('colorMode').textContent=!first?'不是替它上色，只選一個最貼近你感受的顏色。':second?'已選兩種感受色；再點一次可取消。':'如果還有另一種感受，可以直接再選一色。';
   if(first){canvas.classList.add('visible');renderGlow(canvas,[draft.first,draft.second].filter(Boolean));document.getElementById('selectedCopy').innerHTML=`<strong>${colorNames([draft.first,draft.second].filter(Boolean))}</strong><br>${second?'兩個顏色會自然交會':'可以只用這一色'}`}else{canvas.classList.remove('visible');document.getElementById('selectedCopy').textContent='不需要想太久，先讓眼睛替你選。'}
   const footer=document.getElementById('colorFooter');footer.innerHTML='';
   if(!first){const back=makeButton('返回修改事情','btn-text',()=>{session.step='input';saveSession();render()});footer.appendChild(back);return}
-  if(!draft.choosingSecond&&!second)footer.appendChild(makeButton('＋ 再選一色','btn-secondary',()=>{draft.choosingSecond=true;saveSession();updateColorSelection()}));
-  if(draft.choosingSecond)footer.appendChild(makeButton('就用第一個顏色','btn-text',()=>{draft.second=null;draft.choosingSecond=false;saveSession();updateColorSelection()}));
   footer.appendChild(makeButton(second?'就用這兩個顏色':'就用這個顏色','btn-primary',commitCurrentColors));
 }
 function makeButton(text,className,handler){const button=document.createElement('button');button.className=className;button.textContent=text;button.addEventListener('click',handler);return button}
@@ -481,7 +486,7 @@ function renderDesk(){
   const workspace=document.getElementById('workspace');workspace.querySelectorAll('.lightfield-object').forEach(element=>element.remove());requestAnimationFrame(()=>{const rect=workspace.getBoundingClientRect();session.items.forEach((item,index)=>{if(!item.layout)item.layout=initialLayout(session.items.length,rect.width,rect.height,index);const object=createDeskObject(item,index);if(between)object.element.style.pointerEvents='none'});saveSession();updateUndo();if(!between)setTimeout(()=>document.getElementById('gestureHint').classList.add('hidden'),3600);animateDesk()});
 }
 function createDeskObject(item,index){
-  const element=document.createElement('div');element.className='lightfield-object';element.dataset.itemId=item.id;element.style.zIndex=item.layout.z;const canvas=document.createElement('canvas');canvas.className='lightfield-canvas';element.appendChild(canvas);document.getElementById('workspace').appendChild(element);const object={item,index,element,canvas,pointers:new Map(),gesture:null,startLayout:null,moved:false,downAt:0};deskObjects.push(object);applyObject(object);
+  const element=document.createElement('div');element.className='lightfield-object';element.dataset.itemId=item.id;element.style.zIndex=item.layout.z;const canvas=document.createElement('canvas'),caption=document.createElement('div'),captionName=document.createElement('strong'),captionColors=document.createElement('span');canvas.className='lightfield-canvas';caption.className='object-caption';captionName.textContent=item.name;captionColors.textContent=colorNames(item.colorIds);caption.append(captionName,captionColors);element.append(canvas,caption);document.getElementById('workspace').appendChild(element);const object={item,index,element,canvas,caption,pointers:new Map(),gesture:null,startLayout:null,moved:false,downAt:0};deskObjects.push(object);applyObject(object);
   element.addEventListener('pointerdown',event=>objectPointerDown(object,event),{passive:false});element.addEventListener('pointermove',event=>objectPointerMove(object,event),{passive:false});element.addEventListener('pointerup',event=>objectPointerEnd(object,event),{passive:false});element.addEventListener('pointercancel',event=>objectPointerEnd(object,event),{passive:false});return object;
 }
 function distance(a,b){return Math.hypot(b.x-a.x,b.y-a.y)}function midpoint(a,b){return{x:(a.x+b.x)/2,y:(a.y+b.y)/2}}
@@ -495,16 +500,16 @@ function objectPointerDown(object,event){
   target.pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});try{target.element.setPointerCapture(event.pointerId)}catch(error){}
   target.item.layout.z=++topLayer;target.element.style.zIndex=target.item.layout.z;target.element.classList.add('active');beginObjectGesture(target)
 }
-function objectPointerMove(object,event){if(!object.pointers.has(event.pointerId))return;event.preventDefault();event.stopPropagation();object.pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});const points=[...object.pointers.values()],layout=object.item.layout;if(points.length===1&&object.gesture?.type==='drag'){const nx=object.gesture.startX+points[0].x-object.gesture.startPoint.x,ny=object.gesture.startY+points[0].y-object.gesture.startPoint.y;if(Math.hypot(nx-object.gesture.startX,ny-object.gesture.startY)>5)object.moved=true;layout.x=nx;layout.y=ny}else if(points.length>=2){if(object.gesture?.type!=='pinch')beginObjectGesture(object);const [a,b]=points,mid=midpoint(a,b),ratio=Math.max(.01,distance(a,b)/object.gesture.startDistance);layout.scale=clamp(object.gesture.startScale*Math.pow(ratio,PINCH_SENSITIVITY),MIN_SCALE,MAX_SCALE);layout.x=object.gesture.startX+mid.x-object.gesture.startMid.x;layout.y=object.gesture.startY+mid.y-object.gesture.startMid.y;object.moved=true}if(session.step==='after'){const rect=document.getElementById('parkingZone').getBoundingClientRect();document.getElementById('parkingZone').classList.toggle('drag-over',event.clientY>=rect.top&&event.clientY<=rect.bottom)}applyObject(object)}
-function objectPointerEnd(object,event){if(!object.pointers.has(event.pointerId))return;event.preventDefault();event.stopPropagation();object.pointers.delete(event.pointerId);if(object.pointers.size){beginObjectGesture(object);return}object.element.classList.remove('active');object.gesture=null;if(activeGestureObject===object)activeGestureObject=null;const zone=document.getElementById('parkingZone');zone.classList.remove('drag-over');if(session.step==='after'){const rect=zone.getBoundingClientRect();object.item.layout.inParking=event.clientY>=rect.top&&event.clientY<=rect.bottom}else object.item.layout.inParking=false;if(object.moved){undoStack.push({itemId:object.item.id,layout:object.startLayout});if(undoStack.length>50)undoStack.shift();updateUndo();saveSession()}else if(performance.now()-object.downAt<500)showObjectLabel(object);applyObject(object)}
-function applyObject(object){const rect=document.getElementById('workspace').getBoundingClientRect(),layout=object.item.layout,allow=OBJECT_SIZE*layout.scale*.15;layout.x=clamp(layout.x,-rect.width/2-allow,rect.width/2+allow);layout.y=clamp(layout.y,-rect.height/2-allow,rect.height/2+allow);object.element.style.setProperty('--hit-diameter',`${Math.max(OBJECT_SIZE,MIN_HIT_SIZE/layout.scale)}px`);object.element.style.transform=`translate(-50%,-50%) translate3d(${layout.x}px,${layout.y}px,0) scale(${layout.scale})`;object.element.style.zIndex=layout.z;object.element.classList.toggle('parked',Boolean(layout.inParking))}
+function objectPointerMove(object,event){if(!object.pointers.has(event.pointerId))return;event.preventDefault();event.stopPropagation();object.pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});const points=[...object.pointers.values()],layout=object.item.layout;if(points.length===1&&object.gesture?.type==='drag'){const nx=object.gesture.startX+points[0].x-object.gesture.startPoint.x,ny=object.gesture.startY+points[0].y-object.gesture.startPoint.y;if(Math.hypot(nx-object.gesture.startX,ny-object.gesture.startY)>5)object.moved=true;layout.x=nx;layout.y=ny}else if(points.length>=2){if(object.gesture?.type!=='pinch')beginObjectGesture(object);const [a,b]=points,mid=midpoint(a,b),ratio=Math.max(.01,distance(a,b)/object.gesture.startDistance),sensitivity=ratio<1?PINCH_SHRINK_SENSITIVITY:PINCH_GROW_SENSITIVITY;layout.scale=clamp(object.gesture.startScale*Math.pow(ratio,sensitivity),MIN_SCALE,MAX_SCALE);layout.x=object.gesture.startX+mid.x-object.gesture.startMid.x;layout.y=object.gesture.startY+mid.y-object.gesture.startMid.y;object.moved=true}if(session.step==='after'){const rect=document.getElementById('parkingZone').getBoundingClientRect();document.getElementById('parkingZone').classList.toggle('drag-over',event.clientY>=rect.top&&event.clientY<=rect.bottom)}applyObject(object)}
+function objectPointerEnd(object,event){if(!object.pointers.has(event.pointerId))return;event.preventDefault();event.stopPropagation();object.pointers.delete(event.pointerId);if(object.pointers.size){beginObjectGesture(object);return}object.element.classList.remove('active');object.gesture=null;if(activeGestureObject===object)activeGestureObject=null;const zone=document.getElementById('parkingZone');zone.classList.remove('drag-over');if(session.step==='after'){const rect=zone.getBoundingClientRect();object.item.layout.inParking=event.clientY>=rect.top&&event.clientY<=rect.bottom}else object.item.layout.inParking=false;if(object.moved){undoStack.push({itemId:object.item.id,layout:object.startLayout});if(undoStack.length>50)undoStack.shift();updateUndo();saveSession()}applyObject(object)}
+function applyObject(object){const rect=document.getElementById('workspace').getBoundingClientRect(),layout=object.item.layout,allow=OBJECT_SIZE*layout.scale*.15;layout.x=clamp(layout.x,-rect.width/2-allow,rect.width/2+allow);layout.y=clamp(layout.y,-rect.height/2-allow,rect.height/2+allow);object.element.style.setProperty('--hit-diameter',`${Math.max(OBJECT_SIZE,MIN_HIT_SIZE/layout.scale)}px`);object.element.style.transform=`translate(-50%,-50%) translate3d(${layout.x}px,${layout.y}px,0) scale(${layout.scale})`;object.element.style.zIndex=layout.z;object.element.classList.toggle('parked',Boolean(layout.inParking));if(object.caption){const offset=62+12/layout.scale;object.caption.style.top=`calc(50% + ${offset}px)`;object.caption.style.transform=`translateX(-50%) scale(${1/layout.scale})`}}
 function animateDesk(now=4200){deskObjects.forEach(object=>renderGlow(object.canvas,object.item.colorIds,now));deskRAF=requestAnimationFrame(time=>animateDesk(time))}
 function showObjectLabel(object){const label=document.getElementById('objectLabel'),workspace=document.getElementById('workspace').getBoundingClientRect(),element=object.element.getBoundingClientRect();label.querySelector('strong').textContent=object.item.name;label.querySelector('span').textContent=colorNames(object.item.colorIds);label.style.left=`${element.left+element.width/2-workspace.left}px`;label.style.top=`${element.top-workspace.top}px`;label.classList.add('visible');clearTimeout(labelTimer);labelTimer=setTimeout(hideObjectLabel,2800)}
 function hideObjectLabel(){document.getElementById('objectLabel').classList.remove('visible')}
 document.getElementById('workspace').addEventListener('pointerdown',event=>{if(event.pointerType==='touch'&&activeGestureObject?.pointers.size&&!activeGestureObject.pointers.has(event.pointerId)){objectPointerDown(activeGestureObject,event);return}if(event.target.id==='workspace')hideObjectLabel()},{passive:false});
 document.getElementById('undoBtn').addEventListener('click',()=>{const action=undoStack.pop();if(!action)return;const item=session.items.find(candidate=>candidate.id===action.itemId);if(item){item.layout=clone(action.layout);const object=deskObjects.find(candidate=>candidate.item.id===item.id);if(object)applyObject(object);saveSession()}updateUndo()});
 function updateUndo(){document.getElementById('undoBtn').disabled=!undoStack.length}
-document.getElementById('saveStageBtn').addEventListener('click',()=>{if(session.step==='before'){session.before=captureSnapshot();session.beforeReflection=blankBeforeReflection();session.step='reflection';undoStack=[];saveSession();render()}else{session.after=captureSnapshot();session.afterReflection=blankAfterReflection();afterReflectionView='after';session.step='afterReflection';session.resultView='after';saveSession();render()}});
+document.getElementById('saveStageBtn').addEventListener('click',()=>{if(session.step==='before'){session.before=captureSnapshot();session.beforeReflection=blankBeforeReflection();session.step='reflection';undoStack=[];saveSession();render()}else{session.after=captureSnapshot();session.afterReflection=null;session.step='result';session.resultView='after';saveSession();render()}});
 document.getElementById('startAfterBtn').addEventListener('click',()=>{session.step='after';undoStack=[];saveSession();render()});
 
 function ensureBeforeReflection(){session.beforeReflection={...blankBeforeReflection(),...(session.beforeReflection||{})};return session.beforeReflection}
@@ -525,21 +530,13 @@ function renderReflection(){showScreen('reflectionScreen');const data=ensureBefo
 function setReflectionStep(step){const data=ensureBeforeReflection(),screen=document.getElementById('reflectionScreen'),panel=document.getElementById('reflectionPanel');data.uiStep=step;saveSession();renderReflectionQuestion();screen.scrollTo({top:Math.max(0,panel.offsetTop-24),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}
 function addReflectionNext(panel,label,enabled,handler){const actions=document.createElement('div'),button=document.createElement('button');actions.className='reflection-actions';button.type='button';button.className='btn-primary';button.textContent=label;button.disabled=!enabled;button.addEventListener('click',handler);actions.appendChild(button);panel.appendChild(actions)}
 function renderReflectionQuestion(){
-  const data=ensureBeforeReflection(),panel=document.getElementById('reflectionPanel'),step=Math.max(1,data.uiStep||1);panel.innerHTML=reflectionProgress(step);
-  const title=document.createElement('h2'),helper=document.createElement('p'),options=document.createElement('div');title.className='reflection-question';helper.className='reflection-helper';options.className='reflection-options';panel.append(title,helper,options);
-  if(step===1){
-    title.textContent='第一眼，你最先注意到哪一個？';helper.textContent='不用解釋，只看看你的視線先停在哪裡。';session.items.forEach(item=>options.appendChild(reflectionItemButton(item,data.firstNotice===item.id,()=>{data.firstNotice=item.id;saveSession();renderReflectionQuestion()})));addReflectionNext(panel,'下一題・看看意外之處',Boolean(data.firstNotice),()=>setReflectionStep(2));return
-  }
-  if(step===2){
-    title.textContent='有哪個地方，跟你原本想的不太一樣？';helper.textContent='先選一件事情，再選一個最接近的描述。';session.items.forEach(item=>options.appendChild(reflectionItemButton(item,data.unexpectedItem===item.id,()=>{data.unexpectedItem=item.id;data.unexpectedObservation=null;data.relatedItem=null;saveSession();renderReflectionQuestion()})));
-    if(data.unexpectedItem){const follow=document.createElement('div'),subtitle=document.createElement('p'),observationOptions=document.createElement('div');follow.className='reflection-followup';subtitle.className='reflection-subtitle';subtitle.textContent='哪一個描述最接近？';observationOptions.className='reflection-options';[['larger','比想像中大'],['smaller','比想像中小'],['closer','比想像中靠近'],['farther','比想像中遠'],['overlap','跟另一件事情疊在一起'],['none','沒有特別意外']].forEach(([value,label])=>observationOptions.appendChild(reflectionChip(label,data.unexpectedObservation===value,()=>{data.unexpectedObservation=value;if(value!=='overlap')data.relatedItem=null;saveSession();renderReflectionQuestion()})));follow.append(subtitle,observationOptions);panel.appendChild(follow)}
-    if(data.unexpectedObservation==='overlap'){const related=document.createElement('div'),subtitle=document.createElement('p'),relatedOptions=document.createElement('div');related.className='reflection-followup';subtitle.className='reflection-subtitle';subtitle.textContent='和哪一件事情疊在一起？';relatedOptions.className='reflection-options';session.items.filter(item=>item.id!==data.unexpectedItem).forEach(item=>relatedOptions.appendChild(reflectionItemButton(item,data.relatedItem===item.id,()=>{data.relatedItem=item.id;saveSession();renderReflectionQuestion()})));related.append(subtitle,relatedOptions);panel.appendChild(related)}
-    addReflectionNext(panel,'下一題・看看想多留意的地方',Boolean(data.unexpectedItem&&data.unexpectedObservation&&(data.unexpectedObservation!=='overlap'||data.relatedItem)),()=>setReflectionStep(3));return
-  }
-  if(step===3){
-    title.textContent='看完這張圖，哪個地方讓你最想再多看一下？';helper.textContent='只選一個現在最想多停留一下的地方。';session.items.forEach(item=>options.appendChild(reflectionItemButton(item,data.wantToLookAgain===`item:${item.id}`,()=>{data.wantToLookAgain=`item:${item.id}`;saveSession();renderReflectionQuestion()})));[['relationship','兩件事情的關係'],['size','大小'],['distance','距離'],['overlap','重疊'],['whole','整體畫面'],['unknown','我現在還不知道']].forEach(([value,label])=>options.appendChild(reflectionChip(label,data.wantToLookAgain===value,()=>{data.wantToLookAgain=value;saveSession();renderReflectionQuestion()})));addReflectionNext(panel,'留下一句感受',Boolean(data.wantToLookAgain),()=>setReflectionStep(4));return
-  }
-  title.textContent='看完之後，我現在最明顯的感覺是……';helper.textContent='選填，一句話就好。也可以先留白。';options.remove();const textarea=document.createElement('textarea'),count=document.createElement('span');textarea.className='reflection-feeling';textarea.maxLength=50;textarea.rows=3;textarea.placeholder='例如：有點擠。';textarea.value=data.firstFeeling||'';count.className='reflection-count';count.textContent=`${textarea.value.length} / 50`;textarea.addEventListener('input',()=>{data.firstFeeling=textarea.value;count.textContent=`${textarea.value.length} / 50`;saveSession()});panel.append(textarea,count);addReflectionNext(panel,'帶著發現・重新安排',true,()=>{data.firstFeeling=textarea.value.trim();data.completedAt=new Date().toISOString();session.step='after';undoStack=[];saveSession();render()})
+  const data=ensureBeforeReflection(),panel=document.getElementById('reflectionPanel');panel.innerHTML='';
+  const title=document.createElement('h2'),helper=document.createElement('p'),actions=document.createElement('div'),adjust=document.createElement('button'),keep=document.createElement('button');
+  title.className='reflection-question';helper.className='reflection-helper';actions.className='reflection-actions';adjust.type='button';keep.type='button';adjust.className='btn-primary';keep.className='btn-secondary';
+  title.textContent='看完這張圖，你想重新調整嗎？';helper.textContent='不需要在網站裡回答。活動中，直接分享你看見的地方就好。';adjust.textContent='想，回到整理桌';keep.textContent='先保留現在的樣子';
+  adjust.addEventListener('click',()=>{data.wantsAdjustment=true;data.completedAt=new Date().toISOString();session.step='after';undoStack=[];saveSession();render()});
+  keep.addEventListener('click',()=>{data.wantsAdjustment=false;data.completedAt=new Date().toISOString();session.after=clone(session.before);session.afterReflection=null;session.step='result';session.resultView='after';saveSession();render()});
+  actions.append(adjust,keep);panel.append(title,helper,actions)
 }
 document.getElementById('reflectionOpening').addEventListener('click',event=>{if(reflectionTyping){event.preventDefault();finishReflectionIntro()}});
 
@@ -564,7 +561,7 @@ document.querySelectorAll('#afterReflectionSegments .segment').forEach(button=>b
 
 function itemName(itemId){return session.items.find(item=>item.id===itemId)?.name||''}
 function renderResultReflection(){const area=document.getElementById('resultReflection'),before=session.beforeReflection,after=session.afterReflection;if(!after?.completedAt){area.hidden=true;area.innerHTML='';return}const first=itemName(before?.firstNotice)||'一個原本沒注意到的地方';area.innerHTML=`<p>我一開始注意到<strong>「${escapeHtml(first)}」</strong>。</p><p>我最後發現<strong>「${escapeHtml(after.finalDiscovery)}」</strong>。</p><p>接下來七天，我想先<strong>「${escapeHtml(after.nextSevenDays)}」</strong>。</p>`;area.hidden=false}
-function renderResult(){showScreen('resultScreen');document.querySelectorAll('#resultScreen .segment').forEach(button=>button.classList.toggle('active',button.dataset.view===session.resultView));renderResultWorkspace();renderResultReflection()}
+function renderResult(){showScreen('resultScreen');document.querySelectorAll('#resultScreen .segment').forEach(button=>button.classList.toggle('active',button.dataset.view===session.resultView));document.getElementById('resultReflection').hidden=true;renderResultWorkspace()}
 function renderResultWorkspace(){
   cancelAnimationFrame(resultRAF);resultRAF=0;const generation=++resultRenderGeneration;
   const area=document.getElementById('resultWorkspace');area.innerHTML='';const snapshot=session.resultView==='before'?session.before:session.after;if(!snapshot)return;
