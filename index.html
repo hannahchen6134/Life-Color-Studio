@@ -286,6 +286,12 @@ button{touch-action:manipulation;white-space:nowrap}
 .wallpaper-quote:focus{border-color:rgba(154,112,48,.58);box-shadow:0 0 0 3px rgba(154,112,48,.07)}
 .wallpaper-quote::placeholder{color:#A0917D}
 .wallpaper-field-meta{display:flex;justify-content:space-between;gap:12px;margin-top:7px;font-size:.58rem;line-height:1.6;letter-spacing:.025em;color:#8A7A66}
+.wallpaper-size{max-width:430px;margin:-5px auto 18px;text-align:left}
+.wallpaper-size-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:.68rem;font-weight:500;letter-spacing:.065em;color:#483520}
+.wallpaper-size-head output{font-size:.6rem;font-weight:300;color:#8A7A66}
+.wallpaper-size-row{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:10px}
+.wallpaper-size-button{width:44px;height:44px;border:1px solid rgba(145,105,50,.2);border-radius:50%;background:rgba(255,255,255,.46);color:#5D4931;font-size:.72rem;cursor:pointer}
+.wallpaper-size-range{width:100%;height:44px;margin:0;accent-color:#A87528;cursor:pointer}
 .wallpaper-preview-label{margin:2px auto 9px;font-size:.6rem;letter-spacing:.14em;color:#92734A}
 .export-image{display:block;width:auto;max-width:100%;height:auto;max-height:52dvh;margin:auto;object-fit:contain;border-radius:12px;background:#0D0A07;box-shadow:0 8px 28px rgba(35,22,8,.12);-webkit-touch-callout:default;user-select:auto}
 .export-sheet .actions{margin-top:16px}
@@ -526,13 +532,21 @@ button{touch-action:manipulation;white-space:nowrap}
       <textarea class="wallpaper-quote" id="wallpaperQuote" maxlength="80" rows="3" placeholder="例如：先把自己&#10;放回最重要的位置"></textarea>
       <div class="wallpaper-field-meta"><span>妳輸入的換行會保留</span><span id="wallpaperQuoteCount">0 / 80</span></div>
     </div>
+    <div class="wallpaper-size">
+      <div class="wallpaper-size-head"><label for="wallpaperFontSize">文字大小</label><output id="wallpaperFontSizeValue">60 px</output></div>
+      <div class="wallpaper-size-row">
+        <button class="wallpaper-size-button" id="wallpaperFontMinus" type="button" aria-label="縮小桌布文字">A－</button>
+        <input class="wallpaper-size-range" id="wallpaperFontSize" type="range" min="40" max="84" step="2" value="60" aria-label="調整桌布文字大小">
+        <button class="wallpaper-size-button" id="wallpaperFontPlus" type="button" aria-label="放大桌布文字">A＋</button>
+      </div>
+    </div>
     <div class="wallpaper-preview-label">桌布預覽・1080 × 1920</div>
     <img class="export-image" id="exportImage" alt="生活色彩整理桌桌布預覽">
     <p id="exportGuide">輸入一句話後，就可以儲存桌布。</p>
     <div class="actions">
       <button class="btn-primary" id="shareExportBtn">分享／儲存圖片</button>
       <button class="btn-secondary" id="downloadExportBtn">下載 1080 × 1920 PNG</button>
-      <a class="btn-secondary external-export-link" id="externalExportLink" target="_blank" rel="noopener external">到手機瀏覽器儲存</a>
+      <a class="btn-primary external-export-link" id="externalExportLink" target="_blank" rel="noopener external">到手機瀏覽器儲存</a>
       <button class="btn-text" id="closeExportBtn">關閉</button>
     </div>
   </div>
@@ -572,13 +586,13 @@ const ACTIVITY_PROMPTS=[
   ['如果今天只留下一個發現，','你最想留下什麼？'],
   ['接下來七天，','你想先做哪一個小調整？']
 ];
-let textureId=0,deskRAF=0,resultRAF=0,mixRAF=0,mixGeneration=0,resultRenderGeneration=0,deskObjects=[],undoStack=[],pendingUndoRestore=null,topLayer=20,labelTimer=0,activeGestureObject=null,latestExport=null,wallpaperPreviewTimer=0,externalWallpaperData=null;
+let textureId=0,deskRAF=0,resultRAF=0,mixRAF=0,mixGeneration=0,resultRenderGeneration=0,deskObjects=[],undoStack=[],pendingUndoRestore=null,topLayer=20,labelTimer=0,activeGestureObject=null,latestExport=null,wallpaperPreviewTimer=0,externalWallpaperData=null,exportOriginalUrl='';
 let reflectionTypeToken=0,reflectionTyping=false;
 let afterReflectionView='after';
 
 const blankBeforeReflection=()=>({introSeen:false,uiStep:1,wantsAdjustment:null,firstNotice:null,unexpectedItem:null,unexpectedObservation:null,relatedItem:null,wantToLookAgain:null,firstFeeling:'',completedAt:null});
 const blankAfterReflection=()=>({uiStep:1,biggestDifference:'',finalDiscovery:'',nextSevenDays:'',completedAt:null});
-const blankSession=()=>({step:'input',draftNames:['',''],items:[],currentIndex:0,colorDraft:{first:null,second:null,choosingSecond:false,returnToReview:false},before:null,beforeReflection:null,after:null,afterReflection:null,resultView:'after',promptIndex:0,wallpaperQuote:'',deskTutorialSeen:false,tutorialReturnStep:'before'});
+const blankSession=()=>({step:'input',draftNames:['',''],items:[],currentIndex:0,colorDraft:{first:null,second:null,choosingSecond:false,returnToReview:false},before:null,beforeReflection:null,after:null,afterReflection:null,resultView:'after',promptIndex:0,wallpaperQuote:'',wallpaperFontSize:60,deskTutorialSeen:false,tutorialReturnStep:'before'});
 let session=loadSession();
 function loadSession(){try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null')||{};if(!saved.afterReflection&&saved.afterFinalReflection)saved.afterReflection=saved.afterFinalReflection;if(saved.step==='afterReflection')saved.step='result';return {...blankSession(),...saved}}catch(error){return blankSession()}}
 function saveSession(){localStorage.setItem(STORAGE_KEY,JSON.stringify(session))}
@@ -802,42 +816,52 @@ function wrapWallpaperParagraph(ctx,text,maxWidth){
   for(let index=1;index<lines.length;index++){if(!/^[的了著過和與或但而]/.test(lines[index])||!lines[index-1])continue;const previousTokens=wallpaperTokens(lines[index-1]);let moveIndex=previousTokens.length-1;while(moveIndex>0&&/^\s+$/.test(previousTokens[moveIndex]))moveIndex--;if(moveIndex>0&&/^\p{Script=Han}$/u.test(previousTokens[moveIndex])&&/^\p{Script=Han}$/u.test(previousTokens[moveIndex-1]))moveIndex--;const moved=previousTokens.splice(moveIndex).join('');if(moved){lines[index-1]=previousTokens.join('').trimEnd();lines[index]=moved+lines[index]}}
   return lines
 }
-function layoutWallpaperQuote(ctx,text){
-  const paragraphs=String(text||'').replace(/\r\n?/g,'\n').split('\n');let fontSize=WALLPAPER_TEXT_MAX,lines=[],lineHeight=0;
+function layoutWallpaperQuote(ctx,text,preferredSize=60){
+  const paragraphs=String(text||'').replace(/\r\n?/g,'\n').split('\n');let fontSize=clamp(Number(preferredSize)||60,WALLPAPER_TEXT_MIN,84),lines=[],lineHeight=0;
   for(;fontSize>=WALLPAPER_TEXT_MIN;fontSize-=2){ctx.font=`300 ${fontSize}px "Noto Serif TC",serif`;lines=paragraphs.flatMap(paragraph=>wrapWallpaperParagraph(ctx,paragraph,WALLPAPER_TEXT_WIDTH));lineHeight=Math.round(fontSize*1.6);if(lines.length*lineHeight<=570&&lines.every(line=>ctx.measureText(line).width<=WALLPAPER_TEXT_WIDTH+1))break}
   fontSize=Math.max(WALLPAPER_TEXT_MIN,fontSize);ctx.font=`300 ${fontSize}px "Noto Serif TC",serif`;return{lines,lineHeight:Math.round(fontSize*1.6),fontSize}
 }
 function sampleWallpaperLuminance(ctx,x,y,width,height){
   const pixels=ctx.getImageData(x,y,width,height).data;let total=0,count=0;for(let index=0;index<pixels.length;index+=4*24){const r=pixels[index]/255,g=pixels[index+1]/255,b=pixels[index+2]/255;total+=(.2126*r+.7152*g+.0722*b);count++}return count?total/count:0
 }
-function createWallpaperCanvasFromSnapshot(quote,snapshot){
+function createWallpaperCanvasFromSnapshot(quote,snapshot,preferredFontSize=60){
   const normalized=normalizeWallpaperSnapshot(snapshot),canvas=document.createElement('canvas');if(!normalized)return null;canvas.width=WALLPAPER_WIDTH;canvas.height=WALLPAPER_HEIGHT;const ctx=canvas.getContext('2d',{alpha:false});paintWallpaperArrangement(ctx,normalized);
-  const layout=layoutWallpaperQuote(ctx,quote),totalHeight=layout.lines.length*layout.lineHeight,quoteTop=clamp(790-totalHeight/2,410,960-totalHeight),quoteLum=sampleWallpaperLuminance(ctx,130,Math.max(250,quoteTop-90),820,Math.min(760,totalHeight+180)),lightText=quoteLum<.48;
+  const layout=layoutWallpaperQuote(ctx,quote,preferredFontSize),totalHeight=layout.lines.length*layout.lineHeight,quoteTop=clamp(790-totalHeight/2,410,960-totalHeight),quoteLum=sampleWallpaperLuminance(ctx,130,Math.max(250,quoteTop-90),820,Math.min(760,totalHeight+180)),lightText=quoteLum<.48;
   ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`300 ${layout.fontSize}px "Noto Serif TC",serif`;ctx.fillStyle=lightText?'rgba(255,250,243,.92)':'rgba(28,20,14,.88)';ctx.shadowColor=lightText?'rgba(8,5,3,.28)':'rgba(255,250,243,.18)';ctx.shadowBlur=12;ctx.shadowOffsetY=2;
   layout.lines.forEach((line,index)=>{if(line)ctx.fillText(line,WALLPAPER_WIDTH/2,quoteTop+layout.lineHeight*(index+.5),WALLPAPER_TEXT_WIDTH)});ctx.shadowColor='transparent';ctx.shadowBlur=0;
   const brandLum=sampleWallpaperLuminance(ctx,280,1700,520,160),brandLight=brandLum<.5,brandColor=brandLight?'rgba(255,249,240,.43)':'rgba(36,25,16,.43)';ctx.fillStyle=brandColor;ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.font='300 24px "Noto Serif TC",serif';ctx.fillText('生活色彩整理桌',WALLPAPER_WIDTH/2,1784);ctx.font='italic 32px "Cormorant Garamond",serif';ctx.fillText('Life Color Studio',WALLPAPER_WIDTH/2,1830);
   canvas.wallpaperMeta={width:canvas.width,height:canvas.height,fontSize:layout.fontSize,lineCount:layout.lines.length,lines:layout.lines,quoteTop,quoteBottom:quoteTop+totalHeight,brandBottom:1830,items:normalized.items.map(item=>({colorIds:item.colorIds,layout:item.layout}))};return canvas
 }
-function createWallpaperCanvas(quote=session.wallpaperQuote||''){return createWallpaperCanvasFromSnapshot(quote,externalWallpaperData?.snapshot||session.after)}
+function createWallpaperCanvas(quote=session.wallpaperQuote||''){return createWallpaperCanvasFromSnapshot(quote,externalWallpaperData?.snapshot||session.after,externalWallpaperData?.fontSize||session.wallpaperFontSize||60)}
 function encodeWallpaperPayload(value){const bytes=new TextEncoder().encode(JSON.stringify(value));let binary='';bytes.forEach(byte=>binary+=String.fromCharCode(byte));return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
 function decodeWallpaperPayload(value){const base64=value.replace(/-/g,'+').replace(/_/g,'/').padEnd(Math.ceil(value.length/4)*4,'=');const binary=atob(base64),bytes=Uint8Array.from(binary,char=>char.charCodeAt(0));return JSON.parse(new TextDecoder().decode(bytes))}
-function wallpaperHandoffUrl(quote,snapshot){
-  if(!/^https?:$/.test(location.protocol))return'';const normalized=normalizeWallpaperSnapshot(snapshot);if(!normalized)return'';const url=new URL(location.href);url.hash='';url.search='';url.searchParams.set('wallpaper',encodeWallpaperPayload({q:String(quote||'').slice(0,80),s:normalized}));return url.href
+function wallpaperHandoffUrl(quote,snapshot,fontSize=60){
+  if(!/^https?:$/.test(location.protocol))return'';const normalized=normalizeWallpaperSnapshot(snapshot);if(!normalized)return'';const url=new URL(location.href);url.hash='';url.search='';url.searchParams.set('wallpaper',encodeWallpaperPayload({q:String(quote||'').slice(0,80),f:clamp(Number(fontSize)||60,40,84),s:normalized}));return url.href
 }
 function readWallpaperHandoff(){
-  const encoded=new URLSearchParams(location.search).get('wallpaper');if(!encoded||encoded.length>12000)return null;try{const data=decodeWallpaperPayload(encoded),snapshot=normalizeWallpaperSnapshot(data.s);return snapshot?{quote:String(data.q||'').slice(0,80),snapshot}:null}catch(error){return null}
+  const encoded=new URLSearchParams(location.search).get('wallpaper');if(!encoded||encoded.length>12000)return null;try{const data=decodeWallpaperPayload(encoded),snapshot=normalizeWallpaperSnapshot(data.s);return snapshot?{quote:String(data.q||'').slice(0,80),fontSize:clamp(Number(data.f)||60,40,84),snapshot}:null}catch(error){return null}
 }
 function externalBrowserHref(url){if(!url)return'';if(/Android/i.test(navigator.userAgent)&&/\bLine\//i.test(navigator.userAgent)){const parsed=new URL(url),fallback=encodeURIComponent(url);return`intent://${parsed.host}${parsed.pathname}${parsed.search}#Intent;scheme=${parsed.protocol.slice(0,-1)};package=com.android.chrome;S.browser_fallback_url=${fallback};end`}return url}
 function updateWallpaperPreview(){
-  const quoteInput=document.getElementById('wallpaperQuote'),quote=quoteInput.value,shareButton=document.getElementById('shareExportBtn'),downloadButton=document.getElementById('downloadExportBtn'),externalLink=document.getElementById('externalExportLink'),guide=document.getElementById('exportGuide'),snapshot=externalWallpaperData?.snapshot||session.after;if(!externalWallpaperData){session.wallpaperQuote=quote;saveSession()}document.getElementById('wallpaperQuoteCount').textContent=`${quote.length} / 80`;const canvas=createWallpaperCanvasFromSnapshot(quote,snapshot);if(!canvas)return;
-  const name=`生活色彩桌布-${new Date().toISOString().slice(0,10)}.png`,url=canvas.toDataURL('image/png'),hasQuote=Boolean(quote.trim()),isLine=/\bLine\//i.test(navigator.userAgent)||/LIFF/i.test(navigator.userAgent),handoffUrl=wallpaperHandoffUrl(quote,snapshot),preview=document.getElementById('exportImage');latestExport={name,url,file:null,meta:canvas.wallpaperMeta,handoffUrl};preview.src=url;preview.dataset.width=canvas.wallpaperMeta.width;preview.dataset.height=canvas.wallpaperMeta.height;preview.dataset.fontSize=canvas.wallpaperMeta.fontSize;preview.dataset.lineCount=canvas.wallpaperMeta.lineCount;preview.dataset.lines=JSON.stringify(canvas.wallpaperMeta.lines);preview.dataset.quoteTop=canvas.wallpaperMeta.quoteTop;preview.dataset.quoteBottom=canvas.wallpaperMeta.quoteBottom;shareButton.style.display=hasQuote&&navigator.share?'inline-flex':'none';shareButton.disabled=true;downloadButton.disabled=!hasQuote;downloadButton.style.display=isLine&&!externalWallpaperData?'none':'inline-flex';externalLink.classList.toggle('visible',Boolean(hasQuote&&isLine&&!externalWallpaperData&&handoffUrl));externalLink.href=externalBrowserHref(handoffUrl);guide.textContent=!hasQuote?'輸入一句話後，就可以儲存桌布。':externalWallpaperData?'已把剛才的桌布帶到手機瀏覽器，現在可以下載 PNG。':isLine?'先按「分享／儲存圖片」；若沒有儲存選項，再按「到手機瀏覽器儲存」。若仍停在 LINE，請用右上角選單選「以瀏覽器開啟」。':'預覽就是正式成品；可以下載，也可以長按圖片儲存。';
-  if(!hasQuote)return;canvas.toBlob(blob=>{if(!blob||quoteInput.value!==quote)return;try{latestExport.file=typeof File==='undefined'?blob:new File([blob],name,{type:'image/png'});shareButton.disabled=!navigator.share}catch(error){shareButton.style.display='none'}},'image/png')
+  const quoteInput=document.getElementById('wallpaperQuote'),quote=quoteInput.value,fontControl=document.getElementById('wallpaperFontSize'),preferredFontSize=clamp(Number(fontControl.value)||60,40,84),shareButton=document.getElementById('shareExportBtn'),downloadButton=document.getElementById('downloadExportBtn'),externalLink=document.getElementById('externalExportLink'),guide=document.getElementById('exportGuide'),snapshot=externalWallpaperData?.snapshot||session.after;
+  if(!externalWallpaperData){session.wallpaperQuote=quote;session.wallpaperFontSize=preferredFontSize;saveSession()}else externalWallpaperData.fontSize=preferredFontSize;
+  document.getElementById('wallpaperQuoteCount').textContent=`${quote.length} / 80`;const canvas=createWallpaperCanvasFromSnapshot(quote,snapshot,preferredFontSize);if(!canvas)return;document.getElementById('wallpaperFontSizeValue').textContent=`${canvas.wallpaperMeta.fontSize} px`;
+  const name=`生活色彩桌布-${new Date().toISOString().slice(0,10)}.png`,url=canvas.toDataURL('image/png'),hasQuote=Boolean(quote.trim()),isLine=/\bLine\//i.test(navigator.userAgent)||/LIFF/i.test(navigator.userAgent),handoffUrl=wallpaperHandoffUrl(quote,snapshot,preferredFontSize),preview=document.getElementById('exportImage');
+  if(latestExport?.blobUrl)URL.revokeObjectURL(latestExport.blobUrl);latestExport={name,url,file:null,blobUrl:'',meta:canvas.wallpaperMeta,handoffUrl};preview.src=url;preview.dataset.width=canvas.wallpaperMeta.width;preview.dataset.height=canvas.wallpaperMeta.height;preview.dataset.fontSize=canvas.wallpaperMeta.fontSize;preview.dataset.lineCount=canvas.wallpaperMeta.lineCount;preview.dataset.lines=JSON.stringify(canvas.wallpaperMeta.lines);preview.dataset.quoteTop=canvas.wallpaperMeta.quoteTop;preview.dataset.quoteBottom=canvas.wallpaperMeta.quoteBottom;
+  shareButton.style.display=hasQuote&&!isLine&&navigator.share?'inline-flex':'none';shareButton.disabled=true;downloadButton.disabled=!hasQuote;downloadButton.style.display=isLine&&!externalWallpaperData?'none':'inline-flex';externalLink.classList.toggle('visible',Boolean(hasQuote&&isLine&&!externalWallpaperData&&handoffUrl));externalLink.href=externalBrowserHref(handoffUrl);
+  if(isLine&&!externalWallpaperData&&handoffUrl){if(!exportOriginalUrl)exportOriginalUrl=location.href;history.replaceState(history.state,'',handoffUrl)}
+  guide.textContent=!hasQuote?'輸入一句話後，就可以儲存桌布。':externalWallpaperData?'桌布已完整帶到手機瀏覽器，現在請按「下載 PNG」或使用手機分享功能。':isLine?'LINE 本身無法儲存這張圖。請按「到手機瀏覽器儲存」；若仍留在 LINE，請用右上角選單選「以瀏覽器開啟」。':'預覽就是正式成品，請使用下方按鈕儲存。';
+  if(!hasQuote)return;canvas.toBlob(blob=>{if(!blob||quoteInput.value!==quote)return;try{latestExport.blobUrl=URL.createObjectURL(blob);latestExport.file=typeof File==='undefined'?blob:new File([blob],name,{type:'image/png'});shareButton.disabled=!navigator.share}catch(error){shareButton.style.display='none'}},'image/png')
 }
-function triggerExportDownload(){if(!latestExport||!document.getElementById('wallpaperQuote').value.trim())return;const link=document.createElement('a');link.download=latestExport.name;link.href=latestExport.url;document.body.appendChild(link);link.click();link.remove()}
-function closeExportPreview(){document.getElementById('exportOverlay').classList.remove('visible')}
-async function openWallpaperPreview(quote,focus=true){const input=document.getElementById('wallpaperQuote');input.value=quote||'';document.getElementById('exportOverlay').classList.add('visible');if(document.fonts?.ready)await document.fonts.ready;updateWallpaperPreview();if(focus)setTimeout(()=>input.focus({preventScroll:true}),120)}
+function triggerExportDownload(){if(!latestExport||!document.getElementById('wallpaperQuote').value.trim())return;const link=document.createElement('a');link.download=latestExport.name;link.href=latestExport.blobUrl||latestExport.url;document.body.appendChild(link);link.click();link.remove()}
+function closeExportPreview(){document.getElementById('exportOverlay').classList.remove('visible');if(exportOriginalUrl){history.replaceState(history.state,'',exportOriginalUrl);exportOriginalUrl=''}}
+async function openWallpaperPreview(quote,focus=true){const input=document.getElementById('wallpaperQuote'),fontControl=document.getElementById('wallpaperFontSize');input.value=quote||'';fontControl.value=String(externalWallpaperData?.fontSize||session.wallpaperFontSize||60);document.getElementById('exportOverlay').classList.add('visible');if(document.fonts?.ready)await document.fonts.ready;updateWallpaperPreview();if(focus)setTimeout(()=>input.focus({preventScroll:true}),120)}
 document.getElementById('exportBtn').addEventListener('click',()=>{externalWallpaperData=null;openWallpaperPreview(session.wallpaperQuote||'')});
 document.getElementById('wallpaperQuote').addEventListener('input',()=>{clearTimeout(wallpaperPreviewTimer);wallpaperPreviewTimer=setTimeout(updateWallpaperPreview,120)});
+document.getElementById('wallpaperFontSize').addEventListener('input',()=>{clearTimeout(wallpaperPreviewTimer);wallpaperPreviewTimer=setTimeout(updateWallpaperPreview,60)});
+function changeWallpaperFontSize(delta){const control=document.getElementById('wallpaperFontSize');control.value=String(clamp(Number(control.value)+delta,Number(control.min),Number(control.max)));updateWallpaperPreview()}
+document.getElementById('wallpaperFontMinus').addEventListener('click',()=>changeWallpaperFontSize(-2));
+document.getElementById('wallpaperFontPlus').addEventListener('click',()=>changeWallpaperFontSize(2));
 document.getElementById('shareExportBtn').addEventListener('click',async()=>{if(!latestExport?.file||!navigator.share)return;const guide=document.getElementById('exportGuide');try{await navigator.share({files:[latestExport.file],title:'生活色彩整理桌'})}catch(error){if(error.name==='AbortError')return;try{if(latestExport.handoffUrl)await navigator.share({title:'生活色彩整理桌',text:'到手機瀏覽器儲存我的色彩桌布',url:latestExport.handoffUrl});else throw error}catch(secondError){if(secondError.name!=='AbortError')guide.textContent='LINE 沒有開啟圖片儲存，請改按「到手機瀏覽器儲存」。'}}});
 document.getElementById('downloadExportBtn').addEventListener('click',triggerExportDownload);
 document.getElementById('closeExportBtn').addEventListener('click',closeExportPreview);
