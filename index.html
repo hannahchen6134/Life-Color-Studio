@@ -97,6 +97,18 @@ button{touch-action:manipulation}
 .cc-chk::after{content:'';width:3px;height:5px;border-right:1.5px solid #2A2018;border-bottom:1.5px solid #2A2018;transform:rotate(40deg) translate(-1px,-1px)}
 .color-footer{flex:0 0 auto;padding:10px 32px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,rgba(248,243,234,.98),rgba(248,243,234,.9));display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
 
+/* 選色完成後的情緒混色儀式：沿用母版深暖黑與大面積柔光。 */
+#mixScreen{overflow:hidden;flex-direction:column;background:var(--workspace);color:rgba(255,249,239,.92)}
+.mix-stage{position:relative;flex:1;min-height:0;width:100%;overflow:hidden;isolation:isolate}
+#mixCanvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.mix-vignette{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to bottom,rgba(13,10,7,.18),transparent 20%,transparent 68%,rgba(13,10,7,.9) 100%)}
+.mix-copy{position:absolute;z-index:2;left:32px;right:32px;bottom:clamp(34px,7dvh,70px);text-align:center;opacity:0;transform:translateY(10px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
+.mix-copy.visible{opacity:1;transform:none}
+.mix-title{font-size:clamp(1.05rem,4.6vw,1.28rem);font-weight:500;line-height:1.7;letter-spacing:.075em}
+.mix-note{margin-top:8px;font-size:.66rem;font-weight:300;line-height:1.8;letter-spacing:.045em;color:rgba(255,249,239,.56)}
+.mix-actions{flex:0 0 auto;padding:12px 32px calc(18px + env(safe-area-inset-bottom));display:flex;justify-content:center;background:var(--workspace);opacity:0;pointer-events:none;transition:opacity .7s ease}
+.mix-actions.visible{opacity:1;pointer-events:auto}
+
 /* ③ 確認一顆色彩 */
 .confirm-card{text-align:center;padding:26px 18px 22px;border-top:1px solid rgba(154,112,48,.18);border-bottom:1px solid rgba(154,112,48,.18)}
 .confirm-topic{font-size:1.08rem;font-weight:400;letter-spacing:.14em;margin-bottom:12px}
@@ -199,12 +211,13 @@ button{touch-action:manipulation}
 .result-label strong{display:block;font-size:.66rem;font-weight:500;line-height:1.45;letter-spacing:.07em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .result-label span{display:block;margin-top:2px;font-size:.54rem;font-weight:300;line-height:1.45;letter-spacing:.035em;color:rgba(255,249,239,.48);white-space:nowrap}
 .result-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:20px}
-.result-prompts{margin:22px auto 0;max-width:470px;padding:20px 0;border-top:1px solid rgba(154,112,48,.14);border-bottom:1px solid rgba(154,112,48,.14)}
-.result-prompts-kicker{text-align:center;font-size:.62rem;font-weight:500;letter-spacing:.16em;color:#9A7030}
-.result-prompts ol{list-style:none;counter-reset:result-question;display:grid;gap:10px;margin-top:15px}
-.result-prompts li{counter-increment:result-question;position:relative;padding-left:28px;font-size:.72rem;font-weight:400;line-height:1.75;letter-spacing:.035em;color:#493723}
-.result-prompts li::before{content:counter(result-question);position:absolute;left:0;top:.1em;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:rgba(154,112,48,.1);color:#8B672F;font:400 .56rem/1 'EB Garamond',serif}
-.result-prompts-note{margin-top:14px;text-align:center;font-size:.62rem;font-weight:300;line-height:1.7;letter-spacing:.035em;color:#8B7A66}
+/* 活動分享題獨立成一題一頁，避免與成果畫面擠在一起。 */
+#promptScreen{overflow-y:auto}
+.prompt-content{width:100%;max-width:520px;margin:auto;text-align:center}
+.prompt-progress{font-family:'EB Garamond',serif;font-size:.66rem;letter-spacing:.35em;color:#9A7030}
+.prompt-question{margin:26px auto 0;max-width:430px;font-size:clamp(1.05rem,4.6vw,1.28rem);font-weight:600;line-height:1.8;letter-spacing:.055em;text-wrap:balance}
+.prompt-note{margin:16px auto 0;max-width:360px;font-size:.68rem;font-weight:300;line-height:1.9;letter-spacing:.04em;color:#786953}
+.prompt-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:34px}
 .result-reflection{margin:24px auto 4px;max-width:480px;padding:24px 0;border-top:1px solid rgba(154,112,48,.16);border-bottom:1px solid rgba(154,112,48,.16)}
 .result-reflection p{font-size:.78rem;font-weight:300;line-height:2;letter-spacing:.055em;color:#4E3C28;text-align:left}
 .result-reflection p+p{margin-top:5px}
@@ -281,6 +294,20 @@ button{touch-action:manipulation}
     <div class="selected-copy" id="selectedCopy">不需要想太久，先讓眼睛替你選。</div>
   </div>
   <footer class="color-footer" id="colorFooter"></footer>
+</section>
+
+<section class="screen" id="mixScreen">
+  <div class="mix-stage" id="mixStage">
+    <canvas id="mixCanvas" aria-label="剛才選過的情緒色彩正在交會"></canvas>
+    <div class="mix-vignette"></div>
+    <div class="mix-copy" id="mixCopy">
+      <h1 class="mix-title">讓剛才的感受，先在這裡相遇。</h1>
+      <p class="mix-note">不需要解釋，先看著它們慢慢靠近。</p>
+    </div>
+  </div>
+  <div class="mix-actions" id="mixActions">
+    <button class="btn-primary" id="finishMixBtn">看看每件事情的色彩</button>
+  </div>
 </section>
 
 <section class="screen warm-screen" id="reviewScreen">
@@ -371,21 +398,25 @@ button{touch-action:manipulation}
       <button class="segment" data-view="before">現在的樣子</button>
       <button class="segment active" data-view="after">想靠近的樣子</button>
     </div>
-    <section class="result-prompts" aria-labelledby="resultPromptsTitle">
-      <p class="result-prompts-kicker" id="resultPromptsTitle">帶回活動裡分享</p>
-      <ol>
-        <li>一開始和整理後，最大的差別是什麼？</li>
-        <li>如果今天只留下一個發現，你最想留下什麼？</li>
-        <li>接下來七天，你想先做哪一個小調整？</li>
-      </ol>
-      <p class="result-prompts-note">不用在網站裡填寫，直接和大家分享就好。</p>
-    </section>
     <div class="result-reflection" id="resultReflection" hidden></div>
     <div class="result-actions">
       <button class="btn-primary" id="exportBtn">儲存我的色彩整理</button>
       <button class="btn-secondary" id="continueEditBtn">繼續調整想靠近的樣子</button>
     </div>
+    <div class="actions"><button class="btn-secondary" id="openPromptsBtn">帶著畫面，看看分享題</button></div>
     <div class="actions"><button class="btn-text" id="restartResultBtn">回到首頁</button></div>
+  </div>
+</section>
+
+<section class="screen warm-screen" id="promptScreen">
+  <div class="prompt-content">
+    <p class="prompt-progress" id="promptProgress">01 / 03</p>
+    <h1 class="prompt-question" id="promptQuestion"></h1>
+    <p class="prompt-note">不用在網站裡填寫。停一下想想，活動中直接分享就好。</p>
+    <div class="prompt-actions">
+      <button class="btn-text" id="promptBackBtn">回去看整理結果</button>
+      <button class="btn-primary" id="promptNextBtn">下一題</button>
+    </div>
   </div>
 </section>
 
@@ -431,13 +462,18 @@ const CARD_BY_ID=new Map(PALETTE.map(card=>[card.id,card]));
 if(MVP_COLOR_IDS.length!==60||new Set(MVP_COLOR_IDS).size!==60||MVP_COLOR_IDS.some(id=>!CARD_BY_ID.has(id)))throw new Error('MVP 60 色清單不完整');
 const STORAGE_KEY='lifeColorStudio.session.v3';
 const MIN_SCALE=.18,MAX_SCALE=4.2,OBJECT_SIZE=170,MIN_HIT_SIZE=44,PINCH_GROW_SENSITIVITY=1.25,PINCH_SHRINK_SENSITIVITY=1.58;
-let textureId=0,deskRAF=0,resultRAF=0,resultRenderGeneration=0,deskObjects=[],undoStack=[],topLayer=20,labelTimer=0,activeGestureObject=null,latestExport=null;
+const ACTIVITY_PROMPTS=[
+  '一開始和整理後，最大的差別是什麼？',
+  '如果今天只留下一個發現，你最想留下什麼？',
+  '接下來七天，你想先做哪一個小調整？'
+];
+let textureId=0,deskRAF=0,resultRAF=0,mixRAF=0,mixGeneration=0,resultRenderGeneration=0,deskObjects=[],undoStack=[],topLayer=20,labelTimer=0,activeGestureObject=null,latestExport=null;
 let reflectionTypeToken=0,reflectionTyping=false;
 let afterReflectionView='after';
 
 const blankBeforeReflection=()=>({introSeen:false,uiStep:1,wantsAdjustment:null,firstNotice:null,unexpectedItem:null,unexpectedObservation:null,relatedItem:null,wantToLookAgain:null,firstFeeling:'',completedAt:null});
 const blankAfterReflection=()=>({uiStep:1,biggestDifference:'',finalDiscovery:'',nextSevenDays:'',completedAt:null});
-const blankSession=()=>({step:'input',draftNames:['',''],items:[],currentIndex:0,colorDraft:{first:null,second:null,choosingSecond:false,returnToReview:false},before:null,beforeReflection:null,after:null,afterReflection:null,resultView:'after'});
+const blankSession=()=>({step:'input',draftNames:['',''],items:[],currentIndex:0,colorDraft:{first:null,second:null,choosingSecond:false,returnToReview:false},before:null,beforeReflection:null,after:null,afterReflection:null,resultView:'after',promptIndex:0});
 let session=loadSession();
 function loadSession(){try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null')||{};if(!saved.afterReflection&&saved.afterFinalReflection)saved.afterReflection=saved.afterFinalReflection;if(saved.step==='afterReflection')saved.step='result';return {...blankSession(),...saved}}catch(error){return blankSession()}}
 function saveSession(){localStorage.setItem(STORAGE_KEY,JSON.stringify(session))}
@@ -496,9 +532,18 @@ function commitCurrentColors(){
   const item=session.items[session.currentIndex];item.colorIds=[session.colorDraft.first,session.colorDraft.second].filter(Boolean);
   if(session.colorDraft.returnToReview){session.step='review'}
   else if(session.currentIndex<session.items.length-1){session.currentIndex++;session.colorDraft={first:null,second:null,choosingSecond:false,returnToReview:false};session.step='color'}
-  else session.step='review';
+  else session.step='mix';
   saveSession();render();
 }
+function renderMix(){showScreen('mixScreen');const copy=document.getElementById('mixCopy'),actions=document.getElementById('mixActions');copy.classList.remove('visible');actions.classList.remove('visible');const generation=++mixGeneration;mixRAF=requestAnimationFrame(()=>startMixAnimation(generation))}
+function startMixAnimation(generation){
+  const stage=document.getElementById('mixStage'),canvas=document.getElementById('mixCanvas'),rect=stage.getBoundingClientRect(),W=Math.max(320,rect.width),H=Math.max(360,rect.height),DPR=Math.min(devicePixelRatio||1,2),ids=[...new Set(session.items.flatMap(item=>item.colorIds))],cards=ids.map(card).filter(Boolean);if(!cards.length)return;
+  canvas.width=Math.round(W*DPR);canvas.height=Math.round(H*DPR);canvas.style.width=`${W}px`;canvas.style.height=`${H}px`;const ctx=canvas.getContext('2d');ctx.setTransform(DPR,0,0,DPR,0,0);
+  const n=cards.length,r=Math.min(W,H)*(n<=2 ? .48 : n<=4 ? .39 : n<=8 ? .32 : .28),phases=cards.map((_,index)=>index*1.17),start=performance.now(),reduced=matchMedia('(prefers-reduced-motion: reduce)').matches,fadeDuration=reduced?1:1800,stagger=reduced?0:220,revealAt=reduced?0:fadeDuration+stagger*Math.max(0,n-1)+350;
+  const positions=cards.map((_,index)=>{if(n===1)return{x:W*.5,y:H*.43};if(n===2)return{x:W*(index?0.58:0.42),y:H*.43};const angle=-Math.PI/2+index*Math.PI*2/n;return{x:W*.5+Math.cos(angle)*W*.19,y:H*.43+Math.sin(angle)*H*.12}});
+  const frame=now=>{if(generation!==mixGeneration)return;const elapsed=now-start;ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;ctx.fillStyle='#0D0A07';ctx.fillRect(0,0,W,H);cards.forEach((entry,index)=>{const t=Math.max(0,Math.min(1,(elapsed-index*stagger)/fadeDuration));if(!t)return;const eased=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2,cx=positions[index].x+Math.sin(now*.00035+phases[index])*W*.012,cy=positions[index].y+Math.cos(now*.00028+phases[index])*H*.008,breath=1+.035*Math.sin(now*.001+phases[index]);ctx.globalCompositeOperation='lighten';paintGlow(ctx,W,H,cx,cy,r*eased*breath,entry.hex,eased)});ctx.globalCompositeOperation='source-over';ctx.globalAlpha=.05*(.5+.5*Math.sin(now*.0008));const center=ctx.createRadialGradient(W*.5,H*.43,0,W*.5,H*.43,Math.min(W,H)*.45);center.addColorStop(0,'rgba(255,248,235,1)');center.addColorStop(1,'rgba(255,248,235,0)');ctx.fillStyle=center;ctx.fillRect(0,0,W,H);ctx.globalAlpha=1;if(elapsed>=revealAt){document.getElementById('mixCopy').classList.add('visible');document.getElementById('mixActions').classList.add('visible')}mixRAF=requestAnimationFrame(frame)};frame(performance.now())
+}
+document.getElementById('finishMixBtn').addEventListener('click',()=>{session.step='review';saveSession();render()});
 function renderReview(){
   showScreen('reviewScreen');const grid=document.getElementById('reviewGrid');grid.innerHTML='';
   session.items.forEach((item,index)=>{const article=document.createElement('article');article.className='review-item';article.innerHTML=`<button class="review-edit" aria-label="調整${escapeHtml(item.name)}的顏色">調整</button><canvas class="review-glow"></canvas><div class="review-name">${escapeHtml(item.name)}</div><div class="review-colors">${escapeHtml(colorNames(item.colorIds))}</div>`;article.querySelector('button').addEventListener('click',()=>{session.currentIndex=index;session.colorDraft={first:item.colorIds[0]||null,second:item.colorIds[1]||null,choosingSecond:false,returnToReview:true};session.step='color';saveSession();render()});grid.appendChild(article);requestAnimationFrame(()=>renderGlow(article.querySelector('canvas'),item.colorIds))});
@@ -598,6 +643,16 @@ function renderResultWorkspace(){
 }
 document.querySelectorAll('#resultScreen .segment').forEach(button=>button.addEventListener('click',()=>{session.resultView=button.dataset.view;saveSession();renderResult()}));
 document.getElementById('continueEditBtn').addEventListener('click',()=>{restoreSnapshot(session.after);session.step='after';saveSession();render()});
+function renderPromptScreen(){
+  showScreen('promptScreen');
+  session.promptIndex=clamp(Number(session.promptIndex)||0,0,ACTIVITY_PROMPTS.length-1);
+  document.getElementById('promptProgress').textContent=`${String(session.promptIndex+1).padStart(2,'0')} / ${String(ACTIVITY_PROMPTS.length).padStart(2,'0')}`;
+  document.getElementById('promptQuestion').textContent=ACTIVITY_PROMPTS[session.promptIndex];
+  document.getElementById('promptNextBtn').textContent=session.promptIndex===ACTIVITY_PROMPTS.length-1?'回到整理結果':'下一題';
+}
+document.getElementById('openPromptsBtn').addEventListener('click',()=>{session.promptIndex=0;session.step='prompts';saveSession();render()});
+document.getElementById('promptBackBtn').addEventListener('click',()=>{session.step='result';saveSession();render()});
+document.getElementById('promptNextBtn').addEventListener('click',()=>{if(session.promptIndex<ACTIVITY_PROMPTS.length-1){session.promptIndex++;saveSession();renderPromptScreen()}else{session.step='result';saveSession();render()}});
 
 function drawExportGlow(ctx,x,y,radius,colorIds){ctx.globalCompositeOperation='screen';colorIds.map(card).filter(Boolean).forEach((entry,index)=>{const cx=x+(colorIds.length>1?(index===0?-radius*.2:radius*.2):0);const gradient=ctx.createRadialGradient(cx,y,0,cx,y,radius);[[0,1],[.12,.96],[.24,.91],[.35,.82],[.46,.69],[.56,.53],[.66,.38],[.76,.22],[.86,.094],[.94,.031],[1,0]].forEach(([stop,a])=>gradient.addColorStop(stop,rgba(entry.hex,a)));ctx.fillStyle=gradient;ctx.fillRect(cx-radius,y-radius,radius*2,radius*2)})}
 function createExportCanvas(){const snapshot=session.after,width=1200,height=1600,canvas=document.createElement('canvas');if(!snapshot)return null;canvas.width=width;canvas.height=height;const ctx=canvas.getContext('2d');ctx.fillStyle='#F8F3EA';ctx.fillRect(0,0,width,height);ctx.fillStyle='#1C1208';ctx.textAlign='center';ctx.font='300 48px "Noto Serif TC",serif';ctx.fillText('生活色彩整理桌',width/2,78);ctx.font='italic 25px "Cormorant Garamond",serif';ctx.fillStyle='#6C5940';ctx.fillText('Life Color Studio',width/2,118);ctx.font='22px "Noto Serif TC",serif';ctx.fillText(new Date().toLocaleDateString('zh-TW'),width/2,148);const wx=70,wy=185,ww=1060,wh=1330;ctx.fillStyle='#0D0A07';roundRect(ctx,wx,wy,ww,wh,28);ctx.fill();const sx=ww/snapshot.width,sy=wh/snapshot.height;snapshot.items.slice().sort((a,b)=>a.layout.z-b.layout.z).forEach(saved=>{const x=wx+ww/2+saved.layout.x*sx,y=wy+wh/2+saved.layout.y*sy,radius=62*saved.layout.scale*Math.min(sx,sy);drawExportGlow(ctx,x,y,radius,saved.colorIds)});ctx.globalCompositeOperation='source-over';ctx.textAlign='center';ctx.font='300 20px "Noto Serif TC",serif';ctx.fillStyle='rgba(255,249,239,.76)';snapshot.items.forEach(saved=>{const rawX=wx+ww/2+saved.layout.x*sx,rawY=wy+wh/2+saved.layout.y*sy,label=`${saved.name}｜${colorNames(saved.colorIds)}`,half=Math.min(210,ctx.measureText(label).width/2),x=clamp(rawX,wx+half+24,wx+ww-half-24),y=clamp(rawY-16,wy+34,wy+wh-28);ctx.fillText(label,x,y)});return canvas}
@@ -614,7 +669,7 @@ function requestRestart(){document.getElementById('confirmOverlay').classList.ad
 function closeRestart(){document.getElementById('confirmOverlay').classList.remove('visible')}
 document.getElementById('restartDeskBtn').addEventListener('click',requestRestart);document.getElementById('restartResultBtn').addEventListener('click',requestRestart);document.getElementById('reflectionHomeBtn').addEventListener('click',requestRestart);document.getElementById('afterReflectionHomeBtn').addEventListener('click',requestRestart);document.getElementById('cancelRestartBtn').addEventListener('click',closeRestart);document.getElementById('confirmRestartBtn').addEventListener('click',()=>{localStorage.removeItem(STORAGE_KEY);session=blankSession();closeRestart();render()});
 
-function render(){cancelAnimationFrame(deskRAF);cancelAnimationFrame(resultRAF);resultRAF=0;resultRenderGeneration++;reflectionTypeToken++;reflectionTyping=false;if(session.step==='confirm')session.step='color';if(session.step==='input')renderInput();else if(session.step==='color')renderColor();else if(session.step==='review')renderReview();else if(session.step==='before'||session.step==='between'||session.step==='after')renderDesk();else if(session.step==='reflection')renderReflection();else if(session.step==='afterReflection')renderAfterReflection();else if(session.step==='result')renderResult();else{session=blankSession();renderInput()}window.__ready=true}
+function render(){cancelAnimationFrame(deskRAF);cancelAnimationFrame(resultRAF);cancelAnimationFrame(mixRAF);mixRAF=0;mixGeneration++;resultRAF=0;resultRenderGeneration++;reflectionTypeToken++;reflectionTyping=false;if(session.step==='confirm')session.step='color';if(session.step==='input')renderInput();else if(session.step==='color')renderColor();else if(session.step==='mix')renderMix();else if(session.step==='review')renderReview();else if(session.step==='before'||session.step==='between'||session.step==='after')renderDesk();else if(session.step==='reflection')renderReflection();else if(session.step==='afterReflection')renderAfterReflection();else if(session.step==='result')renderResult();else if(session.step==='prompts')renderPromptScreen();else{session=blankSession();renderInput()}window.__ready=true}
 window.__studio={getState:()=>clone(session),reset:()=>{localStorage.removeItem(STORAGE_KEY);session=blankSession();render()},setStep:step=>{session.step=step;saveSession();render()},getAnimationDebug:()=>({resultRAF,resultRenderGeneration,resultObjects:document.querySelectorAll('.result-object').length})};
 addEventListener('resize',()=>{if(session.step==='before'||session.step==='after')deskObjects.forEach(applyObject)});
 render();
