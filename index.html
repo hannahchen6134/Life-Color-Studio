@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-<title>生活色彩整理桌｜Life Color Studio</title>
+<title>每月生活色彩整理｜Life Color Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400&family=EB+Garamond:wght@400&display=swap" rel="stylesheet">
@@ -56,6 +56,8 @@ button{touch-action:manipulation;white-space:nowrap}
 #inputScreen .page-head{margin-bottom:14px}
 #inputScreen .lead{margin-bottom:28px}
 #inputScreen .actions{margin-top:30px}
+.product-kicker{margin:8px 0 14px;font-size:.68rem;font-weight:400;line-height:1.7;letter-spacing:.08em;color:#806B50}
+.input-example{margin:-15px 0 24px;text-align:center}
 .topic-list{display:grid;gap:12px;margin:0 0 18px}
 .topic-row{display:block}
 .topic-row.removable{display:grid;grid-template-columns:1fr 50px;gap:8px;align-items:center}
@@ -267,7 +269,7 @@ button{touch-action:manipulation;white-space:nowrap}
 .prompt-content{width:100%;max-width:520px;margin:auto;text-align:center}
 .prompt-progress{font-family:'EB Garamond',serif;font-size:.66rem;letter-spacing:.35em;color:#9A7030}
 .prompt-question{margin:24px auto 0;max-width:100%;font-size:clamp(.98rem,4.1vw,1.12rem);font-weight:600;line-height:1.85;letter-spacing:.03em;line-break:strict;text-wrap:pretty}
-.prompt-phrase{display:inline-block;white-space:nowrap}
+.prompt-phrase{display:inline;white-space:normal}
 .prompt-note{margin:16px auto 0;max-width:360px;font-size:.68rem;font-weight:300;line-height:1.9;letter-spacing:.04em;color:#786953}
 .prompt-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:34px}
 .activity-next{margin:22px auto 2px;max-width:470px;padding:22px 18px 20px;border-top:1px solid rgba(154,112,48,.17);border-bottom:1px solid rgba(154,112,48,.17);text-align:center}
@@ -275,10 +277,43 @@ button{touch-action:manipulation;white-space:nowrap}
 .activity-next h2{margin-top:8px;font-size:.88rem;font-weight:600;line-height:1.75;letter-spacing:.055em;color:#2B1C0E}
 .activity-next p:last-of-type{margin:6px auto 0;max-width:360px;font-size:.65rem;font-weight:300;line-height:1.8;letter-spacing:.025em;color:#7A6A57}
 .activity-next .btn-primary{margin-top:16px}
+.monthly-summary{max-width:470px;margin:18px auto 0;padding:20px 0;border-top:1px solid rgba(154,112,48,.16);border-bottom:1px solid rgba(154,112,48,.16)}
+.monthly-summary-grid{display:grid;gap:14px}
+.monthly-summary-row{display:grid;grid-template-columns:minmax(92px,.8fr) minmax(0,1.6fr);gap:14px;align-items:start;text-align:left}
+.monthly-summary-label{font-size:.61rem;line-height:1.65;letter-spacing:.08em;color:#97713A}
+.monthly-summary-value{font-size:.72rem;font-weight:400;line-height:1.7;letter-spacing:.035em;color:#332313;overflow-wrap:anywhere}
 .result-reflection{margin:24px auto 4px;max-width:480px;padding:24px 0;border-top:1px solid rgba(154,112,48,.16);border-bottom:1px solid rgba(154,112,48,.16)}
 .result-reflection p{font-size:.78rem;font-weight:300;line-height:2;letter-spacing:.055em;color:#4E3C28;text-align:left}
 .result-reflection p+p{margin-top:5px}
 .result-reflection strong{font-weight:600;color:#291B0E}
+
+/* 每月整理方法：沿用暖白版面，用同一頁完成先放、重要、急與比較。 */
+#sortingScreen{overflow-y:auto}
+.sorting-content{width:100%;max-width:560px;margin:auto;padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+.sorting-head{margin-bottom:22px}
+.sorting-body{display:grid;gap:12px}
+.sorting-options{display:grid;gap:10px}
+.sorting-item{display:grid;grid-template-columns:26px 14px minmax(0,1fr);align-items:center;gap:10px;width:100%;min-height:52px;padding:10px 14px;border:1px solid rgba(145,105,50,.18);border-radius:14px;background:rgba(255,255,255,.36);color:#3A2917;text-align:left;font:400 .74rem/1.55 'Noto Serif TC',serif;letter-spacing:.035em;cursor:pointer}
+.sorting-item.selected{border-color:rgba(154,112,48,.62);background:rgba(255,255,255,.78);box-shadow:0 5px 18px rgba(78,48,14,.06)}
+.sorting-number{font-family:'EB Garamond',serif;font-size:.74rem;color:#A1712E;text-align:center}
+.sorting-dot{width:12px;height:12px;border-radius:50%;box-shadow:0 0 10px currentColor}
+.sorting-empty-number{opacity:.28}
+.sorting-note{font-size:.63rem;font-weight:300;line-height:1.8;letter-spacing:.035em;color:#806F59;text-align:center}
+.sorting-compare{display:grid;gap:16px}
+.sorting-column{padding:16px;border:1px solid rgba(145,105,50,.14);border-radius:16px;background:rgba(255,255,255,.28)}
+.sorting-column h2{font-size:.72rem;font-weight:600;line-height:1.6;letter-spacing:.07em;color:#3A2917;margin-bottom:10px}
+.sorting-ranking{list-style:none;display:grid;gap:7px;counter-reset:rank}
+.sorting-ranking li{counter-increment:rank;display:grid;grid-template-columns:22px 12px minmax(0,1fr);align-items:center;gap:8px;font-size:.68rem;line-height:1.55;color:#5E4B34}
+.sorting-ranking li::before{content:counter(rank);font-family:'EB Garamond',serif;color:#A1712E;text-align:center}
+.sorting-choice{display:grid;gap:8px;margin-top:4px}
+.sorting-choice-label{font-size:.66rem;font-weight:500;line-height:1.65;letter-spacing:.04em;color:#4A3722}
+.sorting-choice-options{display:flex;flex-wrap:wrap;gap:8px}
+.sorting-choice-button{min-height:44px;padding:9px 14px;border:1px solid rgba(145,105,50,.18);border-radius:999px;background:rgba(255,255,255,.36);color:#604C34;font:400 .66rem/1.5 'Noto Serif TC',serif;cursor:pointer}
+.sorting-choice-button.selected{border-color:rgba(154,112,48,.62);background:rgba(255,255,255,.85);color:#2F2011;box-shadow:0 3px 12px rgba(70,45,15,.06)}
+.sorting-text-input{display:block;width:100%;min-height:48px;border:1px solid rgba(145,105,50,.2);border-radius:14px;padding:11px 14px;background:rgba(255,255,255,.46);color:#3A2917;font:400 .7rem/1.6 'Noto Serif TC',serif;letter-spacing:.025em;outline:none}
+.sorting-text-input:focus{border-color:rgba(154,112,48,.62);box-shadow:0 0 0 3px rgba(154,112,48,.07)}
+.sorting-text-input::placeholder{color:#9A8A75}
+.sorting-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:28px}
 
 /* LINE 內建瀏覽器不可靠支援 download；成果先成為可長按的真實圖片。 */
 .export-overlay{position:fixed;z-index:10000;inset:0;display:none;align-items:flex-end;justify-content:center;padding:22px 18px calc(22px + env(safe-area-inset-bottom));background:rgba(18,12,7,.48);backdrop-filter:blur(8px)}
@@ -343,6 +378,8 @@ button{touch-action:manipulation;white-space:nowrap}
 @media(max-width:380px){.warm-screen,.color-head,.palette-scroll,.color-footer{padding-left:32px;padding-right:32px}.color-grid{gap:6px}.lightfield-canvas{width:158px;height:158px}.desk-footer{gap:6px}.desk-footer .btn-primary{padding-left:24px;padding-right:24px}}
 @media(max-width:380px){.reflection-workspace{min-height:300px}.reflection-panel{padding-top:26px}.reflection-options{gap:8px}.reflection-chip{padding-left:14px;padding-right:14px}}
 @media(max-width:380px){.after-reflection-workspace{min-height:300px}.after-reflection-panel{padding-top:26px}}
+@media(max-width:380px){.monthly-summary-row{grid-template-columns:84px minmax(0,1fr);gap:10px}.sorting-item{padding-left:11px;padding-right:11px}}
+@media(min-width:700px){.sorting-compare{grid-template-columns:1fr 1fr}.sorting-choice{grid-column:1/-1}}
 @media(max-height:700px){.desk-head{padding-top:calc(8px + env(safe-area-inset-top));padding-bottom:6px}.desk-wrap{padding-left:16px;padding-right:16px}.workspace{min-height:390px}.lightfield-canvas{width:154px;height:154px}.desk-footer{padding-top:8px}}
 @media(min-width:700px){.color-grid{grid-template-columns:repeat(10,minmax(0,1fr));gap:11px;max-width:620px}.desk-wrap{max-width:660px;align-self:center}.lightfield-canvas{width:184px;height:184px}.result-workspace{height:min(62vh,560px);min-height:430px}.export-overlay{align-items:center}}
 @media(prefers-reduced-motion:reduce){.reflection-opening *,.tutorial-glow{animation:none!important;transition:none!important;opacity:1!important;filter:none!important}.demo-distance-a,.demo-overlap-a{transform:translate(-50%,-50%) translateX(-9px)}.demo-distance-b,.demo-overlap-b{transform:translate(-50%,-50%) translateX(9px)}}
@@ -353,15 +390,17 @@ button{touch-action:manipulation;white-space:nowrap}
 <section class="screen warm-screen" id="inputScreen">
   <div class="content input-content">
     <header class="page-head">
-      <div class="eyebrow">Life Color Studio</div>
-      <h1 class="page-title">把腦中同時存在的事情，排成一張看得見的圖。</h1>
+      <div class="eyebrow">STEP 1 · THIS MONTH</div>
+      <p class="product-kicker">每月生活色彩整理 · Life Color Studio</p>
+      <h1 class="page-title">這個月，生活裡有哪些重要的事？</h1>
     </header>
-    <p class="lead">先寫下最近佔據你注意力的 2～6 件事情。接著替它們選一個顏色，再用移動、縮放、靠近與重疊，整理它們現在的關係。</p>
+    <p class="lead">每月一次，重新梳理生活重心與優先順序。寫下最近需要你分配時間或心力的 2～6 件事。</p>
+    <p class="subtle-note input-example">工作、健康、家人、休息、新計畫……都可以。</p>
     <div class="topic-list" id="topicList"></div>
     <p class="subtle-note input-edit-note">點選欄位裡的文字，就可以直接修改。</p>
     <button class="btn-secondary add-topic" id="addTopicBtn">＋ 再加一件事情</button>
     <p class="subtle-note" id="topicCountNote"></p>
-    <div class="actions"><button class="btn-primary" id="startColorBtn">下一步・替它們選色</button></div>
+    <div class="actions"><button class="btn-primary" id="startColorBtn">接著替它們選色</button></div>
   </div>
 </section>
 
@@ -369,13 +408,13 @@ button{touch-action:manipulation;white-space:nowrap}
   <header class="color-head">
     <div class="eyebrow" id="colorProgress">01 / 03</div>
     <h1 class="color-prompt" id="colorPrompt"></h1>
-    <p class="color-mode" id="colorMode">哪個顏色現在最像這件事？</p>
+    <p class="color-mode" id="colorMode">選一個你現在最想用來代表它的顏色</p>
   </header>
   <p class="palette-scroll-hint" id="paletteScrollHint">上下滑動，看看更多顏色</p>
   <div class="palette-scroll" id="paletteScroll"><div class="color-grid" id="colorGrid"></div></div>
   <div class="selection-preview">
     <canvas class="mini-glow" id="selectionGlow"></canvas>
-    <div class="selected-copy" id="selectedCopy">不需要想太久，先讓眼睛替你選。</div>
+    <div class="selected-copy" id="selectedCopy">不用找標準答案，選一個現在看起來最像它的顏色就好。</div>
   </div>
   <footer class="color-footer" id="colorFooter"></footer>
 </section>
@@ -396,13 +435,13 @@ button{touch-action:manipulation;white-space:nowrap}
 <section class="screen warm-screen" id="reviewScreen">
   <div class="content">
     <header class="page-head">
-      <div class="eyebrow">Life Color Studio</div>
-      <h1 class="page-title">把這些事情放上整理桌</h1>
+      <div class="eyebrow">STEP 2 · YOUR COLORS</div>
+      <h1 class="page-title">這個月的生活色彩，準備好了</h1>
     </header>
-    <p class="lead">接下來可以改變每件事情的大小、距離與位置，排出它們此刻在生活裡的樣子。</p>
+    <p class="lead">接下來，把它們放到同一張桌上，排出現在的生活重心。</p>
     <div class="review-grid" id="reviewGrid"></div>
     <div class="actions">
-      <button class="btn-primary" id="enterDeskBtn">開始排出現在的生活順序</button>
+      <button class="btn-primary" id="enterDeskBtn">進入生活色彩整理桌</button>
     </div>
   </div>
 </section>
@@ -410,7 +449,7 @@ button{touch-action:manipulation;white-space:nowrap}
 <section class="screen" id="deskTutorialScreen">
   <div class="desk-tutorial-content">
     <div class="eyebrow">How to Arrange</div>
-    <h1 class="desk-tutorial-title">把它們排成現在的生活順序。</h1>
+    <h1 class="desk-tutorial-title">把它們排成現在的生活重心。</h1>
     <p class="desk-tutorial-ops">拖曳移動・雙指縮放・靠近或拉遠・可以重疊</p>
     <div class="tutorial-demo-grid" aria-label="整理桌操作示範">
       <div class="tutorial-demo">
@@ -430,7 +469,7 @@ button{touch-action:manipulation;white-space:nowrap}
         <div class="tutorial-stage" aria-hidden="true"><span class="tutorial-glow warm demo-overlap-a"></span><span class="tutorial-glow soft demo-overlap-b"></span></div>
       </div>
     </div>
-    <p class="desk-tutorial-copy">最近越佔你注意力的，可以放大一點；彼此有關的，可以靠近或重疊。沒有標準答案，照現在看起來最像的方式排就好。</p>
+    <p class="desk-tutorial-copy">現在越佔你時間、心力或注意力的，可以放大一點；彼此有關的，可以靠近或重疊。沒有標準答案，照目前的狀況排就好。</p>
     <div class="desk-tutorial-actions"><button class="btn-primary" id="startDeskTutorialBtn">開始整理</button></div>
   </div>
 </section>
@@ -444,18 +483,18 @@ button{touch-action:manipulation;white-space:nowrap}
   <div class="desk-wrap">
     <div class="workspace" id="workspace">
       <button class="undo-btn" id="undoBtn" aria-label="復原上一步" title="復原">↶</button>
-      <button class="desk-help-btn" id="deskHelpBtn" aria-label="重新查看整理桌操作提示">？ 操作提示</button>
+      <button class="desk-help-btn" id="deskHelpBtn" aria-label="重新查看整理桌操作提示">？ 怎麼排？</button>
       <div class="gesture-hint" id="gestureHint">單指移動・雙指縮放</div>
       <div class="parking-zone" id="parkingZone">
         <div class="parking-title">先放著</div>
-        <div class="parking-copy">有些事情，現在不一定要一起處理。</div>
+        <div class="parking-copy">這個月先不用一起處理。</div>
       </div>
       <div class="object-label" id="objectLabel"><strong></strong><span></span></div>
       <div class="between-panel" id="betweenPanel">
         <div class="between-inner">
-          <h2 class="between-title">現在的生活順序，已經留下來了。</h2>
-          <p class="between-copy">接著，不需要變得完美。只看看怎麼安排，會比現在舒服一點。</p>
-          <button class="btn-primary" id="startAfterBtn">排出理想的生活順序</button>
+          <h2 class="between-title">讓剛才的感受，在這裡沉澱一下</h2>
+          <p class="between-copy">接下來，我們會把「重要」和「急」分開看，再重新安排這個月的重心。</p>
+          <button class="btn-primary" id="startAfterBtn">繼續整理</button>
         </div>
       </div>
     </div>
@@ -465,6 +504,21 @@ button{touch-action:manipulation;white-space:nowrap}
     <button class="btn-text" id="restartDeskBtn">重新開始</button>
     <button class="btn-primary" id="saveStageBtn"></button>
   </footer>
+</section>
+
+<section class="screen warm-screen" id="sortingScreen">
+  <div class="sorting-content">
+    <header class="page-head sorting-head">
+      <div class="eyebrow" id="sortingEyebrow">STEP 3 · PRIORITIES</div>
+      <h1 class="page-title" id="sortingTitle"></h1>
+      <p class="lead" id="sortingLead"></p>
+    </header>
+    <div class="sorting-body" id="sortingBody"></div>
+    <div class="sorting-actions">
+      <button class="btn-text" id="sortingBackBtn">上一步</button>
+      <button class="btn-primary" id="sortingNextBtn"></button>
+    </div>
+  </div>
 </section>
 
 <section class="screen warm-screen" id="reflectionScreen">
@@ -484,14 +538,14 @@ button{touch-action:manipulation;white-space:nowrap}
   <button class="reflection-home" id="afterReflectionHomeBtn">回到首頁</button>
   <div class="after-reflection-content">
     <header class="after-reflection-head">
-      <div class="eyebrow">After Reflection</div>
-      <h1 class="page-title">看看整理後的畫面</h1>
-      <p class="lead">來回看看現在與理想的生活順序，只留下妳自己看見的變化。</p>
+      <div class="eyebrow">MONTHLY REVIEW</div>
+      <h1 class="page-title">看完這張圖，你現在更清楚什麼？</h1>
+      <p class="lead">來回看看整理前後，只留下你自己看見的變化。</p>
     </header>
-    <div class="after-reflection-workspace" id="afterReflectionWorkspace" aria-label="現在的生活順序與理想的生活順序"></div>
+    <div class="after-reflection-workspace" id="afterReflectionWorkspace" aria-label="整理前與整理後的生活重心"></div>
     <div class="segmented after-reflection-segmented" id="afterReflectionSegments">
-      <button class="segment" data-after-view="before">現在的生活順序</button>
-      <button class="segment active" data-after-view="after">理想的生活順序</button>
+      <button class="segment" data-after-view="before">整理前</button>
+      <button class="segment active" data-after-view="after">整理後</button>
     </div>
     <div class="after-reflection-panel" id="afterReflectionPanel"></div>
   </div>
@@ -501,27 +555,28 @@ button{touch-action:manipulation;white-space:nowrap}
   <div class="result-content">
     <header class="page-head">
       <div class="eyebrow">Life Color Studio</div>
-      <h1 class="page-title">生活色彩整理桌</h1>
-      <p class="page-en">Your Life Color Arrangement</p>
+      <h1 class="page-title">這個月的生活色彩整理</h1>
+      <p class="page-en">Your Monthly Life Color Arrangement</p>
     </header>
     <div class="result-workspace" id="resultWorkspace"></div>
     <div class="segmented result-view-switch">
-      <button class="segment" data-view="before">現在的生活順序</button>
-      <button class="segment active" data-view="after">理想的生活順序</button>
+      <button class="segment" data-view="before">整理前</button>
+      <button class="segment active" data-view="after">整理後</button>
     </div>
     <div class="fixed-legend warm result-legend" id="resultLegend" aria-label="色彩註記"></div>
+    <div class="monthly-summary" id="monthlySummary"></div>
     <div class="result-reflection" id="resultReflection" hidden></div>
     <section class="activity-next" aria-labelledby="activityNextTitle">
-      <p class="activity-next-kicker">活動中的最後一步</p>
-      <h2 id="activityNextTitle">帶著這張圖，看看 3 個活動問題</h2>
-      <p>不用在網站裡填寫，等一下直接和大家分享。</p>
-      <button class="btn-primary" id="openPromptsBtn">開始看 3 個問題</button>
+      <p class="activity-next-kicker">回看這個月</p>
+      <h2 id="activityNextTitle">帶著整理結果，看看 3 個短問題</h2>
+      <p>不用在網站裡填寫，活動中直接分享就好。</p>
+      <button class="btn-primary" id="openPromptsBtn">回看 3 個問題</button>
     </section>
     <details class="result-more">
       <summary>其他操作</summary>
       <div class="result-actions">
         <button class="btn-secondary" id="exportBtn">製作我的色彩桌布</button>
-        <button class="btn-text" id="continueEditBtn">繼續調整理想的生活順序</button>
+        <button class="btn-text" id="continueEditBtn">繼續調整這個月的安排</button>
       </div>
     </details>
     <div class="actions"><button class="btn-text" id="restartResultBtn">回到首頁</button></div>
@@ -542,8 +597,8 @@ button{touch-action:manipulation;white-space:nowrap}
 
 <div class="export-overlay" id="exportOverlay" role="dialog" aria-modal="true" aria-labelledby="exportTitle">
   <div class="export-sheet">
-    <h2 id="exportTitle">儲存妳的色彩桌布</h2>
-    <p>可以加上一句想帶走的話，也可以略過，只儲存整理後的色彩。</p>
+    <h2 id="exportTitle">留一句話給這個月的自己</h2>
+    <p>不用寫得漂亮，只要是你接下來想記得的一句話。也可以略過，只儲存整理後的色彩。</p>
     <div class="wallpaper-field">
       <label for="wallpaperQuote">我的一句話（選填）</label>
       <textarea class="wallpaper-quote" id="wallpaperQuote" maxlength="80" rows="3" placeholder="例如：先把自己&#10;放回最重要的位置"></textarea>
@@ -551,7 +606,7 @@ button{touch-action:manipulation;white-space:nowrap}
     </div>
     <div class="wallpaper-preview-label">桌布預覽・1080 × 1920</div>
     <div class="wallpaper-preview-wrap" id="wallpaperPreviewWrap">
-      <canvas class="export-image" id="exportImage" width="1080" height="1920" aria-label="生活色彩整理桌桌布預覽，可拖曳文字調整位置"></canvas>
+      <canvas class="export-image" id="exportImage" width="1080" height="1920" aria-label="每月生活色彩整理桌布預覽，可拖曳文字調整位置"></canvas>
     </div>
     <div class="wallpaper-text-tools" id="wallpaperTextTools">
       <div class="wallpaper-drag-hint">直接拖曳預覽中的文字</div>
@@ -610,11 +665,12 @@ const MVP_COLOR_IDS=[
 const CARD_BY_ID=new Map(PALETTE.map(card=>[card.id,card]));
 if(MVP_COLOR_IDS.length!==60||new Set(MVP_COLOR_IDS).size!==60||MVP_COLOR_IDS.some(id=>!CARD_BY_ID.has(id)))throw new Error('MVP 60 色清單不完整');
 const STORAGE_KEY='lifeColorStudio.session.v3';
+const MONTHLY_STORAGE_KEY='lifeColorStudio.monthlySessions';
 const MIN_SCALE=.18,MAX_SCALE=4.2,OBJECT_SIZE=170,MIN_HIT_SIZE=44,PINCH_GROW_SENSITIVITY=1.25,PINCH_SHRINK_SENSITIVITY=1.58;
 const ACTIVITY_PROMPTS=[
-  ['一開始和整理後，','最大的差別是什麼？'],
-  ['如果今天只留下一個發現，','你最想留下什麼？'],
-  ['接下來七天，','你想先做哪一個小調整？']
+  ['整理前後，最大的差別是什麼？'],
+  ['你這個月最想把時間和心力留給什麼？'],
+  ['有沒有哪一個顏色，對你有自己的意義或聯想？']
 ];
 let textureId=0,deskRAF=0,resultRAF=0,mixRAF=0,mixGeneration=0,resultRenderGeneration=0,deskObjects=[],undoStack=[],pendingUndoRestore=null,topLayer=20,labelTimer=0,activeGestureObject=null,selectedOrb=null,legendMoveGesture=null,latestExport=null,wallpaperPreviewTimer=0,wallpaperTextRAF=0,wallpaperTextGesture=null,externalWallpaperData=null,exportOriginalUrl='';
 let reflectionTypeToken=0,reflectionTyping=false;
@@ -622,11 +678,18 @@ let afterReflectionView='after';
 
 const blankBeforeReflection=()=>({introSeen:false,uiStep:1,wantsAdjustment:null,firstNotice:null,unexpectedItem:null,unexpectedObservation:null,relatedItem:null,wantToLookAgain:null,firstFeeling:'',completedAt:null});
 const blankAfterReflection=()=>({uiStep:1,biggestDifference:'',finalDiscovery:'',nextSevenDays:'',completedAt:null});
-const blankSession=()=>({step:'input',draftNames:['',''],items:[],currentIndex:0,colorDraft:{first:null,second:null,choosingSecond:false,returnToReview:false},before:null,beforeReflection:null,after:null,afterReflection:null,resultView:'after',promptIndex:0,wallpaperQuote:'',wallpaperFontSize:84,wallpaperTextX:null,wallpaperTextY:null,wallpaperTextColor:'light',deskTutorialSeen:false,tutorialReturnStep:'before'});
+const blankSession=()=>({step:'input',draftNames:['',''],items:[],currentIndex:0,colorDraft:{first:null,second:null,choosingSecond:false,returnToReview:false},before:null,beforeReflection:null,parkedItems:[],importantRanking:[],urgentRanking:[],monthlyFocus:null,firstAction:null,sortingStep:'filter',after:null,afterReflection:null,resultView:'after',promptIndex:0,reflectionAnswers:[],wallpaperQuote:'',wallpaperFontSize:84,wallpaperTextX:null,wallpaperTextY:null,wallpaperTextColor:'light',deskTutorialSeen:false,tutorialReturnStep:'before',recordId:null,createdAt:null});
 let session=loadSession();
 function loadSession(){try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null')||{};if(!saved.afterReflection&&saved.afterFinalReflection)saved.afterReflection=saved.afterFinalReflection;if(saved.step==='afterReflection')saved.step='result';return {...blankSession(),...saved}}catch(error){return blankSession()}}
 function saveSession(){localStorage.setItem(STORAGE_KEY,JSON.stringify(session))}
 function clone(value){return JSON.parse(JSON.stringify(value))}
+function localYearMonth(date=new Date()){return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}`}
+function loadMonthlySessions(){try{const records=JSON.parse(localStorage.getItem(MONTHLY_STORAGE_KEY)||'[]');return Array.isArray(records)?records:[]}catch(error){return []}}
+function saveMonthlyRecord(){
+  if(!session.after)return;const now=new Date(),records=loadMonthlySessions();if(!session.recordId)session.recordId=`monthly-${now.getTime()}-${Math.random().toString(36).slice(2,8)}`;if(!session.createdAt)session.createdAt=now.toISOString();
+  const record={id:session.recordId,createdAt:session.createdAt,updatedAt:now.toISOString(),yearMonth:localYearMonth(now),items:clone(session.items),beforeSnapshot:clone(session.before),importantRanking:[...(session.importantRanking||[])],urgentRanking:[...(session.urgentRanking||[])],parkedItems:[...(session.parkedItems||[])],monthlyFocus:session.monthlyFocus||null,firstAction:session.firstAction||null,afterSnapshot:clone(session.after),reflectionAnswers:clone(session.reflectionAnswers||[]),reminderText:session.wallpaperQuote||'',wallpaperTextPosition:{x:session.wallpaperTextX??null,y:session.wallpaperTextY??null}};
+  const index=records.findIndex(item=>item.id===record.id);if(index>=0)records[index]=record;else records.push(record);localStorage.setItem(MONTHLY_STORAGE_KEY,JSON.stringify(records));saveSession()
+}
 function card(id){return CARD_BY_ID.get(id)}
 function colorNames(ids){return ids.map(id=>card(id)?.zh).filter(Boolean).join(' × ')}
 function renderFixedLegend(containerId,items=session.items){const container=document.getElementById(containerId);if(!container)return;container.innerHTML='';const interactive=containerId==='deskLegend'&&(session.step==='before'||session.step==='after');items.forEach(item=>{const entry=document.createElement(interactive?'button':'div'),dot=document.createElement('span'),name=document.createElement('strong'),colors=document.createElement('span'),first=card(item.colorIds?.[0]);entry.className='legend-entry';entry.dataset.itemId=item.id;if(interactive){entry.type='button';entry.setAttribute('aria-label',`按住並拖曳${item.name}的色塊`);entry.addEventListener('pointerdown',event=>legendPointerDown(item.id,event),{passive:false});entry.addEventListener('pointermove',legendPointerMove,{passive:false});entry.addEventListener('pointerup',legendPointerEnd,{passive:false});entry.addEventListener('pointercancel',legendPointerEnd,{passive:false});entry.addEventListener('lostpointercapture',event=>{if(legendMoveGesture?.pointerId===event.pointerId)legendPointerEnd(event)},{passive:false})}dot.className='legend-dot';dot.style.color=first?.hex||'#B8A890';dot.style.background=first?.hex||'#B8A890';name.textContent=item.name;colors.textContent=colorNames(item.colorIds||[]);entry.append(dot,name,colors);container.appendChild(entry)})}
@@ -666,12 +729,12 @@ document.getElementById('startColorBtn').addEventListener('click',()=>{const nam
 
 function buildPalette(){const grid=document.getElementById('colorGrid');grid.innerHTML='';MVP_COLOR_IDS.forEach(id=>{const entry=card(id);if(!entry)return;const button=document.createElement('button');button.className='cc';button.dataset.id=id;button.title=`${entry.zh}｜${entry.en}`;button.setAttribute('aria-label',`${entry.zh}，${entry.en}`);button.innerHTML=`<span class="cc-bg" style="background:linear-gradient(158deg,${entry.bg[0]},${entry.bg[1]})"></span><span class="cc-glass"></span><span class="cc-glow"></span><span class="cc-chk"></span>`;button.addEventListener('click',()=>selectColor(id));grid.appendChild(button)})}
 function selectColor(id){const draft=session.colorDraft;if(!draft.first){draft.first=id}else if(id===draft.first){if(draft.second){draft.first=draft.second;draft.second=null}else draft.first=null}else if(id===draft.second){draft.second=null}else draft.second=id;draft.choosingSecond=false;saveSession();updateColorSelection()}
-function renderColor(){showScreen('colorScreen');const item=session.items[session.currentIndex],scroll=document.getElementById('paletteScroll'),hint=document.getElementById('paletteScrollHint');document.getElementById('colorProgress').textContent=`${String(session.currentIndex+1).padStart(2,'0')} / ${String(session.items.length).padStart(2,'0')}`;document.getElementById('colorPrompt').textContent=`當你想到「${item.name}」，哪個顏色最接近你此刻對它的感受？`;buildPalette();scroll.scrollTop=0;hint.classList.remove('seen');updateColorSelection()}
+function renderColor(){showScreen('colorScreen');const item=session.items[session.currentIndex],scroll=document.getElementById('paletteScroll'),hint=document.getElementById('paletteScrollHint');document.getElementById('colorProgress').textContent=`${String(session.currentIndex+1).padStart(2,'0')} / ${String(session.items.length).padStart(2,'0')}`;document.getElementById('colorPrompt').textContent=`想到「${item.name}」，現在最想替它選哪個顏色？`;buildPalette();scroll.scrollTop=0;hint.classList.remove('seen');updateColorSelection()}
 document.getElementById('paletteScroll').addEventListener('scroll',event=>document.getElementById('paletteScrollHint').classList.toggle('seen',event.currentTarget.scrollTop>12),{passive:true});
 function updateColorSelection(){
   const draft=session.colorDraft,first=card(draft.first),second=card(draft.second),canvas=document.getElementById('selectionGlow');document.querySelectorAll('.cc').forEach(tile=>tile.classList.toggle('sel',tile.dataset.id===draft.first||tile.dataset.id===draft.second));
-  document.getElementById('colorMode').textContent=!first?'不是替它上色，只選一個最貼近你感受的顏色。':second?'已選兩種感受色；再點一次可取消。':'如果還有另一種感受，可以直接再選一色。';
-  if(first){canvas.classList.add('visible');renderGlow(canvas,[draft.first,draft.second].filter(Boolean));document.getElementById('selectedCopy').innerHTML=`<strong>${colorNames([draft.first,draft.second].filter(Boolean))}</strong><span>${second?'兩個顏色會自然交會':'可以只用這一色'}</span>`}else{canvas.classList.remove('visible');document.getElementById('selectedCopy').textContent='不需要想太久，先讓眼睛替你選。'}
+  document.getElementById('colorMode').textContent=!first?'選一個你現在最想用來代表它的顏色。':second?'已選兩個顏色；再點一次可以取消。':'如果一個顏色不夠，也可以再放進一個。';
+  if(first){canvas.classList.add('visible');renderGlow(canvas,[draft.first,draft.second].filter(Boolean));document.getElementById('selectedCopy').innerHTML=`<strong>${colorNames([draft.first,draft.second].filter(Boolean))}</strong><span>${second?'兩個顏色會自然交會':'可以只用這一色'}</span>`}else{canvas.classList.remove('visible');document.getElementById('selectedCopy').textContent='不用找標準答案，選一個現在看起來最像它的顏色就好。'}
   const footer=document.getElementById('colorFooter');footer.innerHTML='';
   if(!first){const back=makeButton('返回修改事情','btn-text',()=>{session.step='input';saveSession();render()});footer.appendChild(back);return}
   footer.appendChild(makeButton(second?'就用這兩個顏色':'就用這個顏色','btn-primary',commitCurrentColors));
@@ -698,7 +761,7 @@ function renderReview(){
   showScreen('reviewScreen');const grid=document.getElementById('reviewGrid');grid.innerHTML='';
   session.items.forEach((item,index)=>{const article=document.createElement('article');article.className='review-item';article.innerHTML=`<button class="review-edit" aria-label="調整${escapeHtml(item.name)}的顏色">調整</button><canvas class="review-glow"></canvas><div class="review-name">${escapeHtml(item.name)}</div><div class="review-colors">${escapeHtml(colorNames(item.colorIds))}</div>`;article.querySelector('button').addEventListener('click',()=>{session.currentIndex=index;session.colorDraft={first:item.colorIds[0]||null,second:item.colorIds[1]||null,choosingSecond:false,returnToReview:true};session.step='color';saveSession();render()});grid.appendChild(article);requestAnimationFrame(()=>renderGlow(article.querySelector('canvas'),item.colorIds))});
 }
-document.getElementById('enterDeskBtn').addEventListener('click',()=>{session.items.forEach(item=>item.layout=null);session.step='before';session.before=null;session.after=null;saveSession();render()});
+document.getElementById('enterDeskBtn').addEventListener('click',()=>{session.items.forEach(item=>item.layout=null);session.step='before';session.before=null;session.after=null;session.parkedItems=[];session.importantRanking=[];session.urgentRanking=[];session.monthlyFocus=null;session.firstAction=null;session.sortingStep='filter';session.recordId=null;session.createdAt=null;saveSession();render()});
 
 function renderDeskTutorial(){showScreen('deskTutorialScreen');document.getElementById('startDeskTutorialBtn').textContent=session.deskTutorialSeen?'回到整理桌':'開始整理'}
 function openDeskTutorial(){pendingUndoRestore=clone(undoStack);session.tutorialReturnStep=['before','between','after'].includes(session.step)?session.step:'before';session.step='tutorial';saveSession();render()}
@@ -714,7 +777,7 @@ function selectDeskObject(object){if(selectedOrb===object){updateLegendSelection
 function resetDeskInteractionState(){deskObjects.forEach(object=>{object.pointers.clear();object.gesture=null;object.element.classList.remove('active','selected')});activeGestureObject=null;legendMoveGesture=null;selectedOrb=null;document.querySelectorAll('#deskLegend .legend-entry').forEach(entry=>entry.classList.remove('dragging','selected'))}
 function pushDeskUndo(itemId,startLayout){if(!startLayout)return;undoStack.push({itemId,layout:startLayout});if(undoStack.length>50)undoStack.shift();updateUndo();saveSession()}
 function renderDesk(){
-  resetDeskInteractionState();showScreen('deskScreen');renderFixedLegend('deskLegend');cancelAnimationFrame(deskRAF);deskObjects=[];undoStack=pendingUndoRestore||[];pendingUndoRestore=null;const after=session.step==='after',between=session.step==='between';document.getElementById('deskPhase').textContent=after?'理想的生活順序':'現在的生活順序';document.getElementById('deskGuide').textContent=after?'如果只是比現在舒服一點，你希望它們怎麼存在？':'把它們排成現在的生活順序。';document.getElementById('parkingZone').classList.toggle('visible',after);document.getElementById('parkingZone').classList.remove('drag-over');document.getElementById('betweenPanel').classList.toggle('visible',between);document.querySelector('.desk-footer').classList.toggle('hidden',between);document.getElementById('undoBtn').style.display=between?'none':'block';document.getElementById('saveStageBtn').textContent=after?'完成整理':'留下現在的生活順序';document.getElementById('gestureHint').classList.toggle('hidden',between);document.getElementById('objectLabel').classList.remove('visible');
+  resetDeskInteractionState();showScreen('deskScreen');renderFixedLegend('deskLegend');cancelAnimationFrame(deskRAF);deskObjects=[];undoStack=pendingUndoRestore||[];pendingUndoRestore=null;const after=session.step==='after',between=session.step==='between';document.getElementById('deskPhase').textContent=after?'重新排好這個月':'現在的生活重心';document.getElementById('deskGuide').textContent=after?'把剛才整理出的答案，重新放回你的生活裡。':'不用排好壞，只要照現在的狀況放。';document.getElementById('parkingZone').classList.toggle('visible',after);document.getElementById('parkingZone').classList.remove('drag-over');document.getElementById('betweenPanel').classList.toggle('visible',between);document.querySelector('.desk-footer').classList.toggle('hidden',between);document.getElementById('undoBtn').style.display=between?'none':'block';document.getElementById('saveStageBtn').textContent=after?'完成整理':'存下現在的樣子';document.getElementById('gestureHint').classList.toggle('hidden',between);document.getElementById('objectLabel').classList.remove('visible');
   const workspace=document.getElementById('workspace');workspace.querySelectorAll('.lightfield-object').forEach(element=>element.remove());requestAnimationFrame(()=>{const rect=workspace.getBoundingClientRect();session.items.forEach((item,index)=>{if(!item.layout)item.layout=initialLayout(session.items.length,rect.width,rect.height,index);const object=createDeskObject(item,index);if(between)object.element.style.pointerEvents='none'});saveSession();updateUndo();if(!between)setTimeout(()=>document.getElementById('gestureHint').classList.add('hidden'),3600);animateDesk()});
 }
 function createDeskObject(item,index){
@@ -750,8 +813,30 @@ addEventListener('pointerup',event=>{if(legendMoveGesture?.pointerId===event.poi
 addEventListener('pointercancel',event=>{if(legendMoveGesture?.pointerId===event.pointerId){legendPointerEnd(event);return}if(activeGestureObject?.pointers.has(event.pointerId))objectPointerEnd(activeGestureObject,event)},{capture:true,passive:false});
 document.getElementById('undoBtn').addEventListener('click',()=>{const action=undoStack.pop();if(!action)return;const item=session.items.find(candidate=>candidate.id===action.itemId);if(item){item.layout=clone(action.layout);const object=deskObjects.find(candidate=>candidate.item.id===item.id);if(object)applyObject(object);saveSession()}updateUndo()});
 function updateUndo(){document.getElementById('undoBtn').disabled=!undoStack.length}
-document.getElementById('saveStageBtn').addEventListener('click',()=>{if(session.step==='before'){session.before=captureSnapshot();session.beforeReflection=blankBeforeReflection();session.step='reflection';undoStack=[];saveSession();render()}else{session.after=captureSnapshot();session.afterReflection=null;session.step='result';session.resultView='after';saveSession();render()}});
-document.getElementById('startAfterBtn').addEventListener('click',()=>{session.step='after';undoStack=[];saveSession();render()});
+document.getElementById('saveStageBtn').addEventListener('click',()=>{if(session.step==='before'){session.before=captureSnapshot();session.beforeReflection=blankBeforeReflection();session.step='between';undoStack=[];saveSession();render()}else{session.parkedItems=session.items.filter(item=>item.layout?.inParking).map(item=>item.id);session.after=captureSnapshot();session.afterReflection=null;session.step='result';session.resultView='after';saveMonthlyRecord();render()}});
+document.getElementById('startAfterBtn').addEventListener('click',()=>{session.sortingStep='filter';session.step='sorting';undoStack=[];saveSession();render()});
+
+const SORTING_STEPS=['filter','important','urgent','compare'];
+function activeSortingItems(){const parked=new Set(session.parkedItems||[]);return session.items.filter(item=>!parked.has(item.id))}
+function normalizeRanking(key){const active=new Set(activeSortingItems().map(item=>item.id)),seen=new Set();session[key]=(session[key]||[]).filter(id=>active.has(id)&&!seen.has(id)&&seen.add(id));return session[key]}
+function sortingDot(item){const entry=card(item.colorIds?.[0]);return `<span class="sorting-dot" style="color:${entry?.hex||'#B8A890'};background:${entry?.hex||'#B8A890'}"></span>`}
+function renderSortingItem(item,number,selected,onClick){const button=document.createElement('button');button.type='button';button.className=`sorting-item${selected?' selected':''}`;button.innerHTML=`<span class="sorting-number${number?'':' sorting-empty-number'}">${number||'·'}</span>${sortingDot(item)}<span>${escapeHtml(item.name)}</span>`;button.addEventListener('click',onClick);return button}
+function renderSortingRanking(title,ids){const itemMap=new Map(session.items.map(item=>[item.id,item])),section=document.createElement('section');section.className='sorting-column';section.innerHTML=`<h2>${title}</h2><ol class="sorting-ranking">${ids.map(id=>{const item=itemMap.get(id);return item?`<li>${sortingDot(item)}<span>${escapeHtml(item.name)}</span></li>`:''}).join('')}</ol>`;return section}
+function renderSortingChoices(body,label,key,items){const wrap=document.createElement('div'),options=document.createElement('div');wrap.className='sorting-choice';options.className='sorting-choice-options';wrap.innerHTML=`<div class="sorting-choice-label">${label}</div>`;items.forEach(item=>{const button=document.createElement('button');button.type='button';button.className=`sorting-choice-button${session[key]===item.id?' selected':''}`;button.textContent=item.name;button.addEventListener('click',()=>{session[key]=item.id;saveSession();renderSorting()});options.appendChild(button)});wrap.appendChild(options);body.appendChild(wrap)}
+function renderFirstActionInput(body){const wrap=document.createElement('label'),input=document.createElement('input');wrap.className='sorting-choice';wrap.innerHTML='<span class="sorting-choice-label">我近期第一個要做的是：</span>';input.className='sorting-text-input';input.type='text';input.maxLength=40;input.placeholder='例如：先把週三晚上留給休息';input.value=session.firstAction||'';input.addEventListener('input',()=>{session.firstAction=input.value;document.getElementById('sortingNextBtn').disabled=!session.monthlyFocus||!input.value.trim();saveSession()});wrap.appendChild(input);body.appendChild(wrap)}
+function advanceSorting(next){session.sortingStep=next;saveSession();renderSorting();document.getElementById('sortingScreen').scrollTo({top:0,behavior:'auto'})}
+function enterAfterArrangement(){restoreSnapshot(session.before);const parked=new Set(session.parkedItems||[]);session.items.forEach(item=>{item.layout.inParking=parked.has(item.id)});session.step='after';undoStack=[];saveSession();render()}
+function renderSorting(){
+  showScreen('sortingScreen');const step=SORTING_STEPS.includes(session.sortingStep)?session.sortingStep:'filter',title=document.getElementById('sortingTitle'),lead=document.getElementById('sortingLead'),body=document.getElementById('sortingBody'),next=document.getElementById('sortingNextBtn'),back=document.getElementById('sortingBackBtn');body.innerHTML='';session.sortingStep=step;
+  if(step==='filter'){
+    title.textContent='這個月，哪些可以先放？';lead.textContent='不是放棄，只是這個月先不用讓它跟其他事情一起搶時間和心力。';const options=document.createElement('div');options.className='sorting-options';session.items.forEach(item=>{const selected=(session.parkedItems||[]).includes(item.id);options.appendChild(renderSortingItem(item,selected?'✓':'',selected,()=>{const parked=new Set(session.parkedItems||[]);selected?parked.delete(item.id):parked.add(item.id);session.parkedItems=[...parked];session.importantRanking=[];session.urgentRanking=[];session.monthlyFocus=null;session.firstAction=null;saveSession();renderSorting()}))});body.appendChild(options);const note=document.createElement('p');note.className='sorting-note';note.textContent='至少留下一件這個月要繼續整理的事。';body.appendChild(note);next.textContent='接著排重要順序';next.disabled=activeSortingItems().length<1
+  }else if(step==='important'||step==='urgent'){
+    const important=step==='important',key=important?'importantRanking':'urgentRanking',ranking=normalizeRanking(key),items=activeSortingItems();title.textContent=important?'對你來說，什麼最重要？':'近期，什麼最需要先處理？';lead.textContent=important?'依序點選，從最重要排到最不重要。':'只看接下來這段時間，依序從最急排到最不急。';const options=document.createElement('div');options.className='sorting-options';items.forEach(item=>{const index=ranking.indexOf(item.id);options.appendChild(renderSortingItem(item,index+1,index>=0,()=>{if(index>=0)ranking.splice(index,1);else ranking.push(item.id);session[key]=ranking;saveSession();renderSorting()}))});body.appendChild(options);const note=document.createElement('p');note.className='sorting-note';note.textContent='點錯可以再點一次取消，後面的順序會自動補上。';body.appendChild(note);next.textContent=important?'接著排近期急迫順序':'比較兩個順序';next.disabled=ranking.length!==items.length
+  }else{
+    const important=normalizeRanking('importantRanking'),urgent=normalizeRanking('urgentRanking'),items=activeSortingItems();title.textContent='重要，跟急，是同一件事嗎？';lead.textContent='看完兩個順序，決定這個月真正要把重心放在哪裡。';const compare=document.createElement('div');compare.className='sorting-compare';compare.append(renderSortingRanking('最重要排序',important),renderSortingRanking('最急排序',urgent));renderSortingChoices(compare,'我這個月想先把重心放在：','monthlyFocus',items);renderFirstActionInput(compare);body.appendChild(compare);next.textContent='重新排好這個月';next.disabled=!session.monthlyFocus||!String(session.firstAction||'').trim()
+  }
+  back.textContent=step==='filter'?'回到剛才的畫面':'上一步';back.onclick=()=>{const index=SORTING_STEPS.indexOf(step);if(index<=0){session.step='between';saveSession();render()}else advanceSorting(SORTING_STEPS[index-1])};next.onclick=()=>{if(next.disabled)return;if(step==='filter')advanceSorting('important');else if(step==='important')advanceSorting('urgent');else if(step==='urgent')advanceSorting('compare');else enterAfterArrangement()};saveSession()
+}
 
 function ensureBeforeReflection(){session.beforeReflection={...blankBeforeReflection(),...(session.beforeReflection||{})};return session.beforeReflection}
 function reflectionItemButton(item,selected,handler){const button=document.createElement('button'),entry=card(item.colorIds[0]);button.type='button';button.className=`reflection-chip item-chip${selected?' selected':''}`;button.innerHTML=`<span class="reflection-color-dot" style="color:${entry?.hex||'#B8A890'};background:${entry?.hex||'#B8A890'}"></span><span>${escapeHtml(item.name)}</span>`;button.addEventListener('click',handler);return button}
@@ -775,7 +860,7 @@ function renderReflectionQuestion(){
   const data=ensureBeforeReflection(),panel=document.getElementById('reflectionPanel');panel.innerHTML='';
   const title=document.createElement('h2'),helper=document.createElement('p'),actions=document.createElement('div'),adjust=document.createElement('button'),keep=document.createElement('button');
   title.className='reflection-question';helper.className='reflection-helper';actions.className='reflection-actions';adjust.type='button';keep.type='button';adjust.className='btn-primary';keep.className='btn-secondary';
-  title.textContent='看完這張圖，你想重新調整嗎？';helper.textContent='不需要在網站裡回答。活動中，直接分享你看見的地方就好。';adjust.textContent='想，回到整理桌';keep.textContent='先保留現在的生活順序';
+  title.textContent='看完這張圖，你想重新調整這個月的重心嗎？';helper.textContent='不需要在網站裡回答。活動中，直接分享你看見的地方就好。';adjust.textContent='想，回到整理桌';keep.textContent='先保留現在的樣子';
   adjust.addEventListener('click',()=>{data.wantsAdjustment=true;data.completedAt=new Date().toISOString();session.step='after';undoStack=[];saveSession();render()});
   keep.addEventListener('click',()=>{data.wantsAdjustment=false;data.completedAt=new Date().toISOString();session.after=clone(session.before);session.afterReflection=null;session.step='result';session.resultView='after';saveSession();render()});
   actions.append(adjust,keep);panel.append(title,helper,actions)
@@ -792,7 +877,7 @@ function setAfterReflectionStep(step){const data=ensureAfterReflection(),screen=
 function renderAfterReflectionQuestion(){
   const data=ensureAfterReflection(),panel=document.getElementById('afterReflectionPanel'),step=Math.min(3,Math.max(1,data.uiStep||1));panel.innerHTML=reflectionProgress(step);
   const title=document.createElement('h2'),helper=document.createElement('p'),textarea=document.createElement('textarea'),count=document.createElement('span');title.className='reflection-question';helper.className='reflection-helper';textarea.className='after-reflection-field';textarea.rows=3;textarea.maxLength=60;count.className='reflection-count';
-  const config=step===1?{key:'biggestDifference',title:'看著一開始和整理後的畫面，最大的差別是什麼？',helper:'不用分析原因，只寫下妳最先看見的變化。',placeholder:'例如：休息靠近我一點了。',button:'留下這個差別'}:step===2?{key:'finalDiscovery',title:'如果今天只能留下一個發現，你最想留下什麼？',helper:'這是妳自己的發現，網站不替妳解讀。',placeholder:'例如：我其實很需要留一點空間。',button:'留下這個發現'}:{key:'nextSevenDays',title:'接下來七天，我想先＿＿＿＿。',helper:'寫一個小而具體、由妳自己決定的開始。',placeholder:'例如：每天留十分鐘不安排事情。',button:'完成我的色彩整理'};
+  const config=step===1?{key:'biggestDifference',title:'整理前後，最大的差別是什麼？',helper:'不用分析原因，只寫下你最先看見的變化。',placeholder:'例如：休息靠近我一點了。',button:'留下這個差別'}:step===2?{key:'finalDiscovery',title:'你這個月最想把時間和心力留給什麼？',helper:'這是你自己的發現，網站不替你解讀。',placeholder:'例如：我想替休息留一點空間。',button:'留下這個重心'}:{key:'nextSevenDays',title:'近期，我第一個要做的是＿＿＿＿。',helper:'寫一個小而具體、由你自己決定的開始。',placeholder:'例如：先把週三晚上留給休息。',button:'完成這個月的整理'};
   title.textContent=config.title;helper.textContent=config.helper;textarea.placeholder=config.placeholder;textarea.value=data[config.key]||'';count.textContent=`${textarea.value.length} / 60`;panel.append(title,helper,textarea,count);
   const actions=document.createElement('div'),button=document.createElement('button');actions.className='reflection-actions';button.type='button';button.className='btn-primary';button.textContent=config.button;button.disabled=!textarea.value.trim();actions.appendChild(button);panel.appendChild(actions);
   textarea.addEventListener('input',()=>{data[config.key]=textarea.value;count.textContent=`${textarea.value.length} / 60`;button.disabled=!textarea.value.trim();saveSession()});
@@ -802,8 +887,10 @@ function renderAfterReflection(){showScreen('afterReflectionScreen');ensureAfter
 document.querySelectorAll('#afterReflectionSegments .segment').forEach(button=>button.addEventListener('click',()=>{afterReflectionView=button.dataset.afterView;renderAfterReflection()}));
 
 function itemName(itemId){return session.items.find(item=>item.id===itemId)?.name||''}
+function itemNames(itemIds=[]){return itemIds.map(itemName).filter(Boolean)}
+function renderMonthlySummary(){const area=document.getElementById('monthlySummary'),rows=[['這個月最重要',itemNames(session.importantRanking).join(' → ')],['近期最急',itemNames(session.urgentRanking).join(' → ')],['這個月先放著',itemNames(session.parkedItems).join('、')||'沒有'],['這個月的主要重心',itemName(session.monthlyFocus)],['第一個具體行動',String(session.firstAction||'').trim()]];area.innerHTML=`<div class="monthly-summary-grid">${rows.map(([label,value])=>`<div class="monthly-summary-row"><div class="monthly-summary-label">${label}</div><div class="monthly-summary-value">${escapeHtml(value||'尚未填寫')}</div></div>`).join('')}</div>`}
 function renderResultReflection(){const area=document.getElementById('resultReflection'),before=session.beforeReflection,after=session.afterReflection;if(!after?.completedAt){area.hidden=true;area.innerHTML='';return}const first=itemName(before?.firstNotice)||'一個原本沒注意到的地方';area.innerHTML=`<p>我一開始注意到<strong>「${escapeHtml(first)}」</strong>。</p><p>我最後發現<strong>「${escapeHtml(after.finalDiscovery)}」</strong>。</p><p>接下來七天，我想先<strong>「${escapeHtml(after.nextSevenDays)}」</strong>。</p>`;area.hidden=false}
-function renderResult(){showScreen('resultScreen');renderFixedLegend('resultLegend');document.querySelectorAll('#resultScreen .segment').forEach(button=>button.classList.toggle('active',button.dataset.view===session.resultView));document.getElementById('resultReflection').hidden=true;renderResultWorkspace()}
+function renderResult(){showScreen('resultScreen');renderFixedLegend('resultLegend');document.querySelectorAll('#resultScreen .segment').forEach(button=>button.classList.toggle('active',button.dataset.view===session.resultView));document.getElementById('resultReflection').hidden=true;renderMonthlySummary();renderResultWorkspace()}
 function renderResultWorkspace(){
   cancelAnimationFrame(resultRAF);resultRAF=0;const generation=++resultRenderGeneration;
   const area=document.getElementById('resultWorkspace');area.innerHTML='';const snapshot=session.resultView==='before'?session.before:session.after;if(!snapshot)return;
@@ -817,15 +904,16 @@ function renderPromptScreen(){
   document.getElementById('promptProgress').textContent=`活動問題 ${String(session.promptIndex+1).padStart(2,'0')} / ${String(ACTIVITY_PROMPTS.length).padStart(2,'0')}`;
   const question=document.getElementById('promptQuestion');question.replaceChildren();
   ACTIVITY_PROMPTS[session.promptIndex].forEach((phrase,index)=>{if(index)question.appendChild(document.createTextNode('\u200B'));const span=document.createElement('span');span.className='prompt-phrase';span.textContent=phrase;question.appendChild(span)});
-  document.getElementById('promptNextBtn').textContent=session.promptIndex===ACTIVITY_PROMPTS.length-1?'回到整理結果':'下一題';
+  document.querySelector('#promptScreen .prompt-note').textContent=session.promptIndex===2?'沒有特別意義也沒關係。不用在網站裡填寫，活動中直接分享就好。':'不用在網站裡填寫。停一下想想，活動中直接分享就好。';
+  document.getElementById('promptNextBtn').textContent=session.promptIndex===ACTIVITY_PROMPTS.length-1?'留一句話給這個月的自己':'下一題';
 }
 document.getElementById('openPromptsBtn').addEventListener('click',()=>{session.promptIndex=0;session.step='prompts';saveSession();render()});
 document.getElementById('promptBackBtn').addEventListener('click',()=>{session.step='result';saveSession();render()});
-document.getElementById('promptNextBtn').addEventListener('click',()=>{if(session.promptIndex<ACTIVITY_PROMPTS.length-1){session.promptIndex++;saveSession();renderPromptScreen()}else{session.step='result';saveSession();render()}});
+document.getElementById('promptNextBtn').addEventListener('click',()=>{session.reflectionAnswers=session.reflectionAnswers||[];session.reflectionAnswers[session.promptIndex]={question:ACTIVITY_PROMPTS[session.promptIndex].join(''),viewedAt:new Date().toISOString()};if(session.promptIndex<ACTIVITY_PROMPTS.length-1){session.promptIndex++;saveSession();renderPromptScreen()}else{session.step='result';saveSession();saveMonthlyRecord();render();externalWallpaperData=null;openWallpaperPreview(session.wallpaperQuote||'',false)}});
 
 const WALLPAPER_WIDTH=1080,WALLPAPER_HEIGHT=1920,WALLPAPER_TEXT_MIN=48,WALLPAPER_TEXT_MAX=128,WALLPAPER_TEXT_WIDTH=820;
 function paintWallpaperGlow(ctx,cx,cy,rx,ry,hex,alpha){
-  ctx.save();ctx.translate(cx,cy);ctx.scale(rx,ry);ctx.globalCompositeOperation='screen';ctx.globalAlpha=alpha;
+  ctx.save();ctx.translate(cx,cy);ctx.scale(rx,ry);ctx.globalCompositeOperation='lighten';ctx.globalAlpha=alpha;
   const gradient=ctx.createRadialGradient(0,0,0,0,0,1);
   [[0,1],[.1,.97],[.22,.9],[.36,.75],[.5,.55],[.64,.34],[.77,.17],[.88,.065],[.96,.016],[1,0]].forEach(([stop,a])=>gradient.addColorStop(stop,rgba(hex,a)));
   ctx.fillStyle=gradient;ctx.fillRect(-1,-1,2,2);ctx.restore()
@@ -839,14 +927,16 @@ function normalizeWallpaperSnapshot(snapshot){
   return items.length?{width,height,items}:null
 }
 function paintWallpaperArrangement(ctx,snapshot){
-  const base=ctx.createLinearGradient(0,0,0,WALLPAPER_HEIGHT);base.addColorStop(0,'#0B0806');base.addColorStop(.58,'#100B08');base.addColorStop(1,'#17100B');ctx.fillStyle=base;ctx.fillRect(0,0,WALLPAPER_WIDTH,WALLPAPER_HEIGHT);
+  // 桌布輸出使用中性近黑，避免暖棕底色改變使用者原本選擇的色相與彩度。
+  const base=ctx.createLinearGradient(0,0,0,WALLPAPER_HEIGHT);base.addColorStop(0,'#070707');base.addColorStop(.58,'#090909');base.addColorStop(1,'#0B0B0B');ctx.fillStyle=base;ctx.fillRect(0,0,WALLPAPER_WIDTH,WALLPAPER_HEIGHT);
   const active=snapshot.items.filter(item=>!item.layout.inParking),items=(active.length?active:snapshot.items).slice().sort((a,b)=>a.layout.z-b.layout.z),mapScale=Math.min(860/snapshot.width,1280/snapshot.height),centerX=WALLPAPER_WIDTH/2,centerY=710;
   items.forEach((item,index)=>{
     const scale=item.layout.scale,cx=centerX+item.layout.x*mapScale,cy=centerY+item.layout.y*mapScale,rx=132*scale*mapScale,ry=142*scale*mapScale,ids=item.colorIds;
-    ids.forEach((id,colorIndex)=>{const entry=card(id),side=ids.length===1?0:(colorIndex?1:-1),offsetX=side*rx*.14,offsetY=(colorIndex?1:-1)*ry*.05;paintWallpaperGlow(ctx,cx+offsetX,cy+offsetY,rx*1.34,ry*1.34,entry.hex,.12);paintWallpaperGlow(ctx,cx+offsetX,cy+offsetY,rx*(ids.length===1?1:.8),ry*(ids.length===1?1:.82),entry.hex,ids.length===1?.58:.5);paintWallpaperGlow(ctx,cx-offsetX*.18,cy-offsetY*.35,rx*.42,ry*.4,entry.hex,.3)});
+    ids.forEach((id,colorIndex)=>{const entry=card(id),side=ids.length===1?0:(colorIndex?1:-1),offsetX=side*rx*.14,offsetY=(colorIndex?1:-1)*ry*.05;paintWallpaperGlow(ctx,cx+offsetX,cy+offsetY,rx*1.34,ry*1.34,entry.hex,.16);paintWallpaperGlow(ctx,cx+offsetX,cy+offsetY,rx*(ids.length===1?1:.8),ry*(ids.length===1?1:.82),entry.hex,ids.length===1?.94:.9);paintWallpaperGlow(ctx,cx-offsetX*.18,cy-offsetY*.35,rx*.42,ry*.4,entry.hex,.34)});
     if(ids.length>1){const first=card(ids[0]);paintWallpaperGlow(ctx,cx,cy,rx*.62,ry*.62,first.hex,.12)}
   });
-  const air=ctx.createLinearGradient(0,0,0,WALLPAPER_HEIGHT);air.addColorStop(0,'rgba(255,248,235,.025)');air.addColorStop(.64,'rgba(255,248,235,0)');air.addColorStop(1,'rgba(8,5,3,.18)');ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;ctx.fillStyle=air;ctx.fillRect(0,0,WALLPAPER_WIDTH,WALLPAPER_HEIGHT)
+  // 只保留無色的極淡暗角；不再覆蓋米黃色「空氣層」。
+  const vignette=ctx.createRadialGradient(WALLPAPER_WIDTH*.5,WALLPAPER_HEIGHT*.43,WALLPAPER_WIDTH*.18,WALLPAPER_WIDTH*.5,WALLPAPER_HEIGHT*.43,WALLPAPER_HEIGHT*.72);vignette.addColorStop(0,'rgba(0,0,0,0)');vignette.addColorStop(.72,'rgba(0,0,0,.015)');vignette.addColorStop(1,'rgba(0,0,0,.16)');ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;ctx.fillStyle=vignette;ctx.fillRect(0,0,WALLPAPER_WIDTH,WALLPAPER_HEIGHT)
 }
 function wallpaperTokens(text){
   if(typeof Intl!=='undefined'&&Intl.Segmenter)return [...new Intl.Segmenter('zh-TW',{granularity:'word'}).segment(text)].map(entry=>entry.segment);
@@ -874,13 +964,13 @@ function createWallpaperCanvasFromSnapshot(quote,snapshot,preferredFontSize=84,t
   const layout=layoutWallpaperQuote(ctx,quote,preferredFontSize),totalHeight=layout.lines.length*layout.lineHeight,position=normalizeWallpaperTextPosition(textPosition),autoCenter=position.y===null?[700,980,1250,1450].map(center=>({center,lum:sampleWallpaperLuminance(ctx,120,clamp(center-totalHeight/2-70,180,1580),840,Math.min(520,totalHeight+140))})).sort((a,b)=>a.lum-b.lum)[0].center:position.y*WALLPAPER_HEIGHT,quoteTop=clamp(autoCenter-totalHeight/2,250,1580-totalHeight),widestLine=Math.max(1,...layout.lines.map(line=>ctx.measureText(line).width)),safeHalf=Math.min(WALLPAPER_TEXT_WIDTH/2,widestLine/2),quoteCenterX=clamp(position.x===null?WALLPAPER_WIDTH/2:position.x*WALLPAPER_WIDTH,90+safeHalf,WALLPAPER_WIDTH-90-safeHalf),quoteCenterY=quoteTop+totalHeight/2;
   const resolvedTextColor=normalizeWallpaperTextColor(textColor);ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`500 ${layout.fontSize}px "Noto Serif TC",serif`;ctx.fillStyle=resolvedTextColor==='dark'?'rgba(25,17,10,.97)':'rgba(255,252,247,.97)';ctx.strokeStyle=resolvedTextColor==='dark'?'rgba(255,252,247,.32)':'rgba(7,4,2,.42)';ctx.lineWidth=1.5;ctx.lineJoin='round';ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetY=0;
   layout.lines.forEach((line,index)=>{if(line){const y=quoteTop+layout.lineHeight*(index+.5);ctx.strokeText(line,quoteCenterX,y,WALLPAPER_TEXT_WIDTH);ctx.fillText(line,quoteCenterX,y,WALLPAPER_TEXT_WIDTH)}});
-  const brandLum=sampleWallpaperLuminance(ctx,280,1700,520,160),brandLight=brandLum<.5,brandColor=brandLight?'rgba(255,249,240,.43)':'rgba(36,25,16,.43)';ctx.fillStyle=brandColor;ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.font='300 24px "Noto Serif TC",serif';ctx.fillText('生活色彩整理桌',WALLPAPER_WIDTH/2,1784);ctx.font='italic 32px "Cormorant Garamond",serif';ctx.fillText('Life Color Studio',WALLPAPER_WIDTH/2,1830);
+  const brandLum=sampleWallpaperLuminance(ctx,280,1700,520,160),brandLight=brandLum<.5,brandColor=brandLight?'rgba(255,249,240,.43)':'rgba(36,25,16,.43)';ctx.fillStyle=brandColor;ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.font='300 24px "Noto Serif TC",serif';ctx.fillText('生活色彩整理',WALLPAPER_WIDTH/2,1784);ctx.font='italic 32px "Cormorant Garamond",serif';ctx.fillText('Life Color Studio',WALLPAPER_WIDTH/2,1830);
   canvas.wallpaperMeta={width:canvas.width,height:canvas.height,fontSize:layout.fontSize,textColor:resolvedTextColor,lineCount:layout.lines.length,lines:layout.lines,quoteTop,quoteBottom:quoteTop+totalHeight,quoteCenterX,quoteCenterY,quoteX:quoteCenterX/WALLPAPER_WIDTH,quoteY:quoteCenterY/WALLPAPER_HEIGHT,brandBottom:1830,items:normalized.items.map(item=>({colorIds:item.colorIds,layout:item.layout}))};return canvas
 }
 function currentWallpaperTextPosition(){return{x:externalWallpaperData?.textX??session.wallpaperTextX,y:externalWallpaperData?.textY??session.wallpaperTextY}}
-function setWallpaperTextPosition(x,y,persist=true){if(externalWallpaperData){externalWallpaperData.textX=x;externalWallpaperData.textY=y}else{session.wallpaperTextX=x;session.wallpaperTextY=y;if(persist)saveSession()}}
+function setWallpaperTextPosition(x,y,persist=true){if(externalWallpaperData){externalWallpaperData.textX=x;externalWallpaperData.textY=y}else{session.wallpaperTextX=x;session.wallpaperTextY=y;if(persist)saveMonthlyRecord()}}
 function currentWallpaperTextColor(){return normalizeWallpaperTextColor(externalWallpaperData?.textColor||session.wallpaperTextColor)}
-function setWallpaperTextColor(value){const color=normalizeWallpaperTextColor(value);if(externalWallpaperData)externalWallpaperData.textColor=color;else{session.wallpaperTextColor=color;saveSession()}return color}
+function setWallpaperTextColor(value){const color=normalizeWallpaperTextColor(value);if(externalWallpaperData)externalWallpaperData.textColor=color;else{session.wallpaperTextColor=color;saveMonthlyRecord()}return color}
 function createWallpaperCanvas(quote=session.wallpaperQuote||''){return createWallpaperCanvasFromSnapshot(quote,externalWallpaperData?.snapshot||session.after,externalWallpaperData?.fontSize||session.wallpaperFontSize||84,currentWallpaperTextPosition(),currentWallpaperTextColor())}
 function encodeWallpaperPayload(value){const bytes=new TextEncoder().encode(JSON.stringify(value));let binary='';bytes.forEach(byte=>binary+=String.fromCharCode(byte));return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
 function decodeWallpaperPayload(value){const base64=value.replace(/-/g,'+').replace(/_/g,'/').padEnd(Math.ceil(value.length/4)*4,'=');const binary=atob(base64),bytes=Uint8Array.from(binary,char=>char.charCodeAt(0));return JSON.parse(new TextDecoder().decode(bytes))}
@@ -893,7 +983,7 @@ function readWallpaperHandoff(){
 function externalBrowserHref(url){if(!url)return'';if(/Android/i.test(navigator.userAgent)&&/\bLine\//i.test(navigator.userAgent)){const parsed=new URL(url),fallback=encodeURIComponent(url);return`intent://${parsed.host}${parsed.pathname}${parsed.search}#Intent;scheme=${parsed.protocol.slice(0,-1)};package=com.android.chrome;S.browser_fallback_url=${fallback};end`}return url}
 function updateWallpaperPreview(finalize=true){
   const quoteInput=document.getElementById('wallpaperQuote'),quote=quoteInput.value,fontControl=document.getElementById('wallpaperFontSize'),preferredFontSize=clamp(Number(fontControl.value)||84,48,128),shareButton=document.getElementById('shareExportBtn'),downloadButton=document.getElementById('downloadExportBtn'),externalLink=document.getElementById('externalExportLink'),guide=document.getElementById('exportGuide'),snapshot=externalWallpaperData?.snapshot||session.after;
-  if(!externalWallpaperData){session.wallpaperQuote=quote;session.wallpaperFontSize=preferredFontSize;saveSession()}else externalWallpaperData.fontSize=preferredFontSize;
+  if(!externalWallpaperData){session.wallpaperQuote=quote;session.wallpaperFontSize=preferredFontSize;saveMonthlyRecord()}else externalWallpaperData.fontSize=preferredFontSize;
   const textColor=currentWallpaperTextColor();document.getElementById('wallpaperTextLight').classList.toggle('active',textColor==='light');document.getElementById('wallpaperTextDark').classList.toggle('active',textColor==='dark');document.getElementById('wallpaperTextLight').setAttribute('aria-pressed',String(textColor==='light'));document.getElementById('wallpaperTextDark').setAttribute('aria-pressed',String(textColor==='dark'));
   document.getElementById('wallpaperQuoteCount').textContent=`${quote.length} / 80`;const canvas=createWallpaperCanvasFromSnapshot(quote,snapshot,preferredFontSize,currentWallpaperTextPosition(),textColor);if(!canvas)return;document.getElementById('wallpaperFontSizeValue').textContent=`${canvas.wallpaperMeta.fontSize} px`;
   const position=currentWallpaperTextPosition();if(quote.trim()&&(position.x===null||position.y===null))setWallpaperTextPosition(canvas.wallpaperMeta.quoteX,canvas.wallpaperMeta.quoteY);
@@ -901,7 +991,7 @@ function updateWallpaperPreview(finalize=true){
   shareButton.style.display=!isLine&&navigator.share?'inline-flex':'none';shareButton.disabled=true;downloadButton.disabled=false;downloadButton.style.display=isLine&&!externalWallpaperData?'none':'inline-flex';externalLink.classList.toggle('visible',Boolean(isLine&&!externalWallpaperData&&handoffUrl));externalLink.href=externalBrowserHref(handoffUrl);
   guide.textContent=externalWallpaperData?'桌布已完整帶到手機瀏覽器，現在請按「下載 PNG」或使用手機分享功能。':isLine?'LINE 本身無法直接儲存圖片。請按「到手機瀏覽器儲存」。':hasQuote?'預覽就是正式成品，請使用下方按鈕儲存。':'不寫文字也可以，直接儲存這張色彩圖片。';
   if(!finalize)return;
-  const name=`生活色彩桌布-${new Date().toISOString().slice(0,10)}.png`,url=canvas.toDataURL('image/png');externalLink.classList.toggle('visible',Boolean(isLine&&!externalWallpaperData&&handoffUrl));externalLink.href=externalBrowserHref(handoffUrl);if(isLine&&!externalWallpaperData&&handoffUrl){if(!exportOriginalUrl)exportOriginalUrl=location.href;history.replaceState(history.state,'',handoffUrl)}
+  const name=`每月生活色彩整理-${new Date().toISOString().slice(0,10)}.png`,url=canvas.toDataURL('image/png');externalLink.classList.toggle('visible',Boolean(isLine&&!externalWallpaperData&&handoffUrl));externalLink.href=externalBrowserHref(handoffUrl);if(isLine&&!externalWallpaperData&&handoffUrl){if(!exportOriginalUrl)exportOriginalUrl=location.href;history.replaceState(history.state,'',handoffUrl)}
   if(latestExport?.blobUrl)URL.revokeObjectURL(latestExport.blobUrl);latestExport={name,url,file:null,blobUrl:'',meta:canvas.wallpaperMeta,handoffUrl};canvas.toBlob(blob=>{if(!blob||quoteInput.value!==quote)return;try{latestExport.blobUrl=URL.createObjectURL(blob);latestExport.file=typeof File==='undefined'?blob:new File([blob],name,{type:'image/png'});shareButton.disabled=!navigator.share}catch(error){shareButton.style.display='none'}},'image/png')
 }
 function triggerExportDownload(){if(!latestExport)return;const link=document.createElement('a');link.download=latestExport.name;link.href=latestExport.blobUrl||latestExport.url;document.body.appendChild(link);link.click();link.remove()}
@@ -924,11 +1014,11 @@ function wallpaperTextPointerMove(event){
   const gesture=wallpaperTextGesture;if(!gesture||gesture.pointerId!==event.pointerId)return;event.preventDefault();event.stopPropagation();const rect=document.getElementById('exportImage').getBoundingClientRect(),x=clamp(gesture.startX+(event.clientX-gesture.startPoint.x)/Math.max(1,rect.width),.04,.96),y=clamp(gesture.startY+(event.clientY-gesture.startPoint.y)/Math.max(1,rect.height),.12,.84);setWallpaperTextPosition(x,y,false);scheduleWallpaperTextPreview()
 }
 function wallpaperTextPointerEnd(event){
-  const gesture=wallpaperTextGesture;if(!gesture||gesture.pointerId!==event.pointerId)return;event.preventDefault();event.stopPropagation();const preview=document.getElementById('exportImage');try{if(preview.hasPointerCapture(event.pointerId))preview.releasePointerCapture(event.pointerId)}catch(error){}preview.classList.remove('dragging');wallpaperTextGesture=null;if(wallpaperTextRAF){cancelAnimationFrame(wallpaperTextRAF);wallpaperTextRAF=0}if(!externalWallpaperData)saveSession();updateWallpaperPreview(true)
+  const gesture=wallpaperTextGesture;if(!gesture||gesture.pointerId!==event.pointerId)return;event.preventDefault();event.stopPropagation();const preview=document.getElementById('exportImage');try{if(preview.hasPointerCapture(event.pointerId))preview.releasePointerCapture(event.pointerId)}catch(error){}preview.classList.remove('dragging');wallpaperTextGesture=null;if(wallpaperTextRAF){cancelAnimationFrame(wallpaperTextRAF);wallpaperTextRAF=0}if(!externalWallpaperData)saveMonthlyRecord();updateWallpaperPreview(true)
 }
 const wallpaperPreviewCanvas=document.getElementById('exportImage');wallpaperPreviewCanvas.addEventListener('pointerdown',wallpaperTextPointerDown,{passive:false});wallpaperPreviewCanvas.addEventListener('pointermove',wallpaperTextPointerMove,{passive:false});wallpaperPreviewCanvas.addEventListener('pointerup',wallpaperTextPointerEnd,{passive:false});wallpaperPreviewCanvas.addEventListener('pointercancel',wallpaperTextPointerEnd,{passive:false});wallpaperPreviewCanvas.addEventListener('lostpointercapture',event=>{if(wallpaperTextGesture?.pointerId===event.pointerId)wallpaperTextPointerEnd(event)},{passive:false});
 document.getElementById('wallpaperPositionReset').addEventListener('click',()=>{setWallpaperTextPosition(null,null);updateWallpaperPreview(true)});
-document.getElementById('shareExportBtn').addEventListener('click',async()=>{if(!latestExport?.file||!navigator.share)return;const guide=document.getElementById('exportGuide');try{await navigator.share({files:[latestExport.file],title:'生活色彩整理桌'})}catch(error){if(error.name==='AbortError')return;try{if(latestExport.handoffUrl)await navigator.share({title:'生活色彩整理桌',text:'到手機瀏覽器儲存我的色彩桌布',url:latestExport.handoffUrl});else throw error}catch(secondError){if(secondError.name!=='AbortError')guide.textContent='LINE 沒有開啟圖片儲存，請改按「到手機瀏覽器儲存」。'}}});
+document.getElementById('shareExportBtn').addEventListener('click',async()=>{if(!latestExport?.file||!navigator.share)return;const guide=document.getElementById('exportGuide');try{await navigator.share({files:[latestExport.file],title:'每月生活色彩整理'})}catch(error){if(error.name==='AbortError')return;try{if(latestExport.handoffUrl)await navigator.share({title:'每月生活色彩整理',text:'到手機瀏覽器儲存我的色彩桌布',url:latestExport.handoffUrl});else throw error}catch(secondError){if(secondError.name!=='AbortError')guide.textContent='LINE 沒有開啟圖片儲存，請改按「到手機瀏覽器儲存」。'}}});
 document.getElementById('downloadExportBtn').addEventListener('click',triggerExportDownload);
 document.getElementById('closeExportBtn').addEventListener('click',closeExportPreview);
 document.getElementById('exportOverlay').addEventListener('click',event=>{if(event.target.id==='exportOverlay')closeExportPreview()});
@@ -938,7 +1028,7 @@ function requestRestart(){document.getElementById('confirmOverlay').classList.ad
 function closeRestart(){document.getElementById('confirmOverlay').classList.remove('visible')}
 document.getElementById('restartDeskBtn').addEventListener('click',requestRestart);document.getElementById('restartResultBtn').addEventListener('click',requestRestart);document.getElementById('reflectionHomeBtn').addEventListener('click',requestRestart);document.getElementById('afterReflectionHomeBtn').addEventListener('click',requestRestart);document.getElementById('cancelRestartBtn').addEventListener('click',closeRestart);document.getElementById('confirmRestartBtn').addEventListener('click',()=>{localStorage.removeItem(STORAGE_KEY);session=blankSession();closeRestart();render()});
 
-function render(){cancelAnimationFrame(deskRAF);cancelAnimationFrame(resultRAF);cancelAnimationFrame(mixRAF);mixRAF=0;mixGeneration++;resultRAF=0;resultRenderGeneration++;reflectionTypeToken++;reflectionTyping=false;if(session.step==='confirm')session.step='color';if(session.step==='before'&&!session.deskTutorialSeen){session.tutorialReturnStep='before';session.step='tutorial';saveSession()}if(!['before','between','after'].includes(session.step)&&deskObjects.length)resetDeskInteractionState();if(session.step==='input')renderInput();else if(session.step==='color')renderColor();else if(session.step==='mix')renderMix();else if(session.step==='review')renderReview();else if(session.step==='tutorial')renderDeskTutorial();else if(session.step==='before'||session.step==='between'||session.step==='after')renderDesk();else if(session.step==='reflection')renderReflection();else if(session.step==='afterReflection')renderAfterReflection();else if(session.step==='result')renderResult();else if(session.step==='prompts')renderPromptScreen();else{session=blankSession();renderInput()}window.__ready=true}
+function render(){cancelAnimationFrame(deskRAF);cancelAnimationFrame(resultRAF);cancelAnimationFrame(mixRAF);mixRAF=0;mixGeneration++;resultRAF=0;resultRenderGeneration++;reflectionTypeToken++;reflectionTyping=false;if(session.step==='confirm')session.step='color';if(session.step==='before'&&!session.deskTutorialSeen){session.tutorialReturnStep='before';session.step='tutorial';saveSession()}if(!['before','between','after'].includes(session.step)&&deskObjects.length)resetDeskInteractionState();if(session.step==='input')renderInput();else if(session.step==='color')renderColor();else if(session.step==='mix')renderMix();else if(session.step==='review')renderReview();else if(session.step==='tutorial')renderDeskTutorial();else if(session.step==='before'||session.step==='between'||session.step==='after')renderDesk();else if(session.step==='sorting')renderSorting();else if(session.step==='reflection')renderReflection();else if(session.step==='afterReflection')renderAfterReflection();else if(session.step==='result')renderResult();else if(session.step==='prompts')renderPromptScreen();else{session=blankSession();renderInput()}window.__ready=true}
 window.__studio={getState:()=>clone(session),reset:()=>{localStorage.removeItem(STORAGE_KEY);session=blankSession();render()},setStep:step=>{session.step=step;saveSession();render()},createWallpaperCanvas,createWallpaperCanvasFromSnapshot,inspectWallpaperLayout:text=>createWallpaperCanvas(text)?.wallpaperMeta||null,getAnimationDebug:()=>({resultRAF,resultRenderGeneration,resultObjects:document.querySelectorAll('.result-object').length})};
 addEventListener('resize',()=>{if(session.step==='before'||session.step==='after')deskObjects.forEach(applyObject)});
 externalWallpaperData=readWallpaperHandoff();
