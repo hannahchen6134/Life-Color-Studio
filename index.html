@@ -296,14 +296,19 @@ button{touch-action:manipulation;white-space:nowrap}
 .wallpaper-quote:focus{border-color:rgba(154,112,48,.58);box-shadow:0 0 0 3px rgba(154,112,48,.07)}
 .wallpaper-quote::placeholder{color:#A0917D}
 .wallpaper-field-meta{display:flex;justify-content:space-between;gap:12px;margin-top:7px;font-size:.58rem;line-height:1.6;letter-spacing:.025em;color:#8A7A66}
-.wallpaper-size{max-width:430px;margin:-5px auto 18px;text-align:left}
+.wallpaper-size{max-width:430px;margin:14px auto 18px;text-align:left}
 .wallpaper-size-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:.68rem;font-weight:500;letter-spacing:.065em;color:#483520}
 .wallpaper-size-head output{font-size:.6rem;font-weight:300;color:#8A7A66}
 .wallpaper-size-row{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:10px}
 .wallpaper-size-button{width:44px;height:44px;border:1px solid rgba(145,105,50,.2);border-radius:50%;background:rgba(255,255,255,.46);color:#5D4931;font-size:.72rem;cursor:pointer}
 .wallpaper-size-range{width:100%;height:44px;margin:0;accent-color:#A87528;cursor:pointer}
-.wallpaper-preview-label{margin:20px auto 9px;font-size:.6rem;letter-spacing:.14em;color:#92734A}
-.export-image{display:block;width:auto;max-width:100%;height:auto;max-height:52dvh;margin:auto;object-fit:contain;border-radius:12px;background:#0D0A07;box-shadow:0 8px 28px rgba(35,22,8,.12);-webkit-touch-callout:default;user-select:auto}
+.wallpaper-preview-label{margin:18px auto 9px;font-size:.6rem;letter-spacing:.14em;color:#92734A}
+.wallpaper-preview-wrap{position:relative;width:min(100%,260px);margin:0 auto;touch-action:none;overscroll-behavior:contain}
+.export-image{display:block;width:100%;height:auto;aspect-ratio:9/16;border-radius:12px;background:#0D0A07;box-shadow:0 8px 28px rgba(35,22,8,.12);touch-action:none;cursor:grab;-webkit-user-select:none;user-select:none}
+.export-image.dragging{cursor:grabbing;box-shadow:0 8px 30px rgba(35,22,8,.16),0 0 0 1px rgba(184,136,64,.24)}
+.wallpaper-drag-hint{display:flex;align-items:center;justify-content:center;gap:7px;min-height:38px;margin:7px auto 0;color:#806D55;font-size:.6rem;line-height:1.6;letter-spacing:.045em}
+.wallpaper-drag-hint::before{content:'↕';font-family:serif;color:#A67832;font-size:.78rem}
+.wallpaper-position-reset{display:block;min-height:44px;margin:0 auto;border:0;background:transparent;color:#8A7354;font-size:.6rem;letter-spacing:.06em;cursor:pointer}
 .export-sheet .actions{margin-top:12px}
 .external-export-link{display:none;text-decoration:none}
 .external-export-link.visible{display:inline-flex}
@@ -545,6 +550,12 @@ button{touch-action:manipulation;white-space:nowrap}
       <textarea class="wallpaper-quote" id="wallpaperQuote" maxlength="80" rows="3" placeholder="例如：先把自己&#10;放回最重要的位置"></textarea>
       <div class="wallpaper-field-meta"><span>妳輸入的換行會保留</span><span id="wallpaperQuoteCount">0 / 80</span></div>
     </div>
+    <div class="wallpaper-preview-label">桌布預覽・1080 × 1920</div>
+    <div class="wallpaper-preview-wrap" id="wallpaperPreviewWrap">
+      <canvas class="export-image" id="exportImage" width="1080" height="1920" aria-label="生活色彩整理桌桌布預覽，可拖曳文字調整位置"></canvas>
+    </div>
+    <div class="wallpaper-drag-hint">直接拖曳預覽中的文字</div>
+    <button class="wallpaper-position-reset" id="wallpaperPositionReset" type="button">恢復建議位置</button>
     <div class="wallpaper-size">
       <div class="wallpaper-size-head"><label for="wallpaperFontSize">文字大小</label><output id="wallpaperFontSizeValue">84 px</output></div>
       <div class="wallpaper-size-row">
@@ -560,8 +571,6 @@ button{touch-action:manipulation;white-space:nowrap}
       <a class="btn-primary external-export-link" id="externalExportLink" target="_blank" rel="noopener external">到手機瀏覽器儲存</a>
       <button class="btn-text" id="closeExportBtn">關閉</button>
     </div>
-    <div class="wallpaper-preview-label">桌布預覽・1080 × 1920</div>
-    <img class="export-image" id="exportImage" alt="生活色彩整理桌桌布預覽">
   </div>
 </div>
 
@@ -599,13 +608,13 @@ const ACTIVITY_PROMPTS=[
   ['如果今天只留下一個發現，','你最想留下什麼？'],
   ['接下來七天，','你想先做哪一個小調整？']
 ];
-let textureId=0,deskRAF=0,resultRAF=0,mixRAF=0,mixGeneration=0,resultRenderGeneration=0,deskObjects=[],undoStack=[],pendingUndoRestore=null,topLayer=20,labelTimer=0,activeGestureObject=null,selectedOrb=null,moveControlGesture=null,latestExport=null,wallpaperPreviewTimer=0,externalWallpaperData=null,exportOriginalUrl='';
+let textureId=0,deskRAF=0,resultRAF=0,mixRAF=0,mixGeneration=0,resultRenderGeneration=0,deskObjects=[],undoStack=[],pendingUndoRestore=null,topLayer=20,labelTimer=0,activeGestureObject=null,selectedOrb=null,moveControlGesture=null,latestExport=null,wallpaperPreviewTimer=0,wallpaperTextRAF=0,wallpaperTextGesture=null,externalWallpaperData=null,exportOriginalUrl='';
 let reflectionTypeToken=0,reflectionTyping=false;
 let afterReflectionView='after';
 
 const blankBeforeReflection=()=>({introSeen:false,uiStep:1,wantsAdjustment:null,firstNotice:null,unexpectedItem:null,unexpectedObservation:null,relatedItem:null,wantToLookAgain:null,firstFeeling:'',completedAt:null});
 const blankAfterReflection=()=>({uiStep:1,biggestDifference:'',finalDiscovery:'',nextSevenDays:'',completedAt:null});
-const blankSession=()=>({step:'input',draftNames:['',''],items:[],currentIndex:0,colorDraft:{first:null,second:null,choosingSecond:false,returnToReview:false},before:null,beforeReflection:null,after:null,afterReflection:null,resultView:'after',promptIndex:0,wallpaperQuote:'',wallpaperFontSize:84,deskTutorialSeen:false,tutorialReturnStep:'before'});
+const blankSession=()=>({step:'input',draftNames:['',''],items:[],currentIndex:0,colorDraft:{first:null,second:null,choosingSecond:false,returnToReview:false},before:null,beforeReflection:null,after:null,afterReflection:null,resultView:'after',promptIndex:0,wallpaperQuote:'',wallpaperFontSize:84,wallpaperTextX:null,wallpaperTextY:null,deskTutorialSeen:false,tutorialReturnStep:'before'});
 let session=loadSession();
 function loadSession(){try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null')||{};if(!saved.afterReflection&&saved.afterFinalReflection)saved.afterReflection=saved.afterFinalReflection;if(saved.step==='afterReflection')saved.step='result';return {...blankSession(),...saved}}catch(error){return blankSession()}}
 function saveSession(){localStorage.setItem(STORAGE_KEY,JSON.stringify(session))}
@@ -851,37 +860,41 @@ function layoutWallpaperQuote(ctx,text,preferredSize=84){
 function sampleWallpaperLuminance(ctx,x,y,width,height){
   const pixels=ctx.getImageData(x,y,width,height).data;let total=0,count=0;for(let index=0;index<pixels.length;index+=4*24){const r=pixels[index]/255,g=pixels[index+1]/255,b=pixels[index+2]/255;total+=(.2126*r+.7152*g+.0722*b);count++}return count?total/count:0
 }
-function createWallpaperCanvasFromSnapshot(quote,snapshot,preferredFontSize=84){
+function normalizeWallpaperTextPosition(position){const rawX=position?.x,rawY=position?.y,x=rawX===null||rawX===undefined?NaN:Number(rawX),y=rawY===null||rawY===undefined?NaN:Number(rawY);return{x:Number.isFinite(x)?clamp(x,.04,.96):null,y:Number.isFinite(y)?clamp(y,.12,.84):null}}
+function createWallpaperCanvasFromSnapshot(quote,snapshot,preferredFontSize=84,textPosition=null){
   const normalized=normalizeWallpaperSnapshot(snapshot),canvas=document.createElement('canvas');if(!normalized)return null;canvas.width=WALLPAPER_WIDTH;canvas.height=WALLPAPER_HEIGHT;const ctx=canvas.getContext('2d',{alpha:false});paintWallpaperArrangement(ctx,normalized);
-  const layout=layoutWallpaperQuote(ctx,quote,preferredFontSize),totalHeight=layout.lines.length*layout.lineHeight,candidates=[700,980,1250,1450].map(center=>({center,lum:sampleWallpaperLuminance(ctx,120,clamp(center-totalHeight/2-70,180,1580),840,Math.min(520,totalHeight+140))})).sort((a,b)=>a.lum-b.lum),quoteTop=clamp(candidates[0].center-totalHeight/2,330,1580-totalHeight);
+  const layout=layoutWallpaperQuote(ctx,quote,preferredFontSize),totalHeight=layout.lines.length*layout.lineHeight,position=normalizeWallpaperTextPosition(textPosition),autoCenter=position.y===null?[700,980,1250,1450].map(center=>({center,lum:sampleWallpaperLuminance(ctx,120,clamp(center-totalHeight/2-70,180,1580),840,Math.min(520,totalHeight+140))})).sort((a,b)=>a.lum-b.lum)[0].center:position.y*WALLPAPER_HEIGHT,quoteTop=clamp(autoCenter-totalHeight/2,250,1580-totalHeight),widestLine=Math.max(1,...layout.lines.map(line=>ctx.measureText(line).width)),safeHalf=Math.min(WALLPAPER_TEXT_WIDTH/2,widestLine/2),quoteCenterX=clamp(position.x===null?WALLPAPER_WIDTH/2:position.x*WALLPAPER_WIDTH,90+safeHalf,WALLPAPER_WIDTH-90-safeHalf),quoteCenterY=quoteTop+totalHeight/2;
   ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`500 ${layout.fontSize}px "Noto Serif TC",serif`;ctx.fillStyle='rgba(255,252,247,.97)';ctx.strokeStyle='rgba(7,4,2,.42)';ctx.lineWidth=1.5;ctx.lineJoin='round';ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetY=0;
-  layout.lines.forEach((line,index)=>{if(line){const y=quoteTop+layout.lineHeight*(index+.5);ctx.strokeText(line,WALLPAPER_WIDTH/2,y,WALLPAPER_TEXT_WIDTH);ctx.fillText(line,WALLPAPER_WIDTH/2,y,WALLPAPER_TEXT_WIDTH)}});
+  layout.lines.forEach((line,index)=>{if(line){const y=quoteTop+layout.lineHeight*(index+.5);ctx.strokeText(line,quoteCenterX,y,WALLPAPER_TEXT_WIDTH);ctx.fillText(line,quoteCenterX,y,WALLPAPER_TEXT_WIDTH)}});
   const brandLum=sampleWallpaperLuminance(ctx,280,1700,520,160),brandLight=brandLum<.5,brandColor=brandLight?'rgba(255,249,240,.43)':'rgba(36,25,16,.43)';ctx.fillStyle=brandColor;ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.font='300 24px "Noto Serif TC",serif';ctx.fillText('生活色彩整理桌',WALLPAPER_WIDTH/2,1784);ctx.font='italic 32px "Cormorant Garamond",serif';ctx.fillText('Life Color Studio',WALLPAPER_WIDTH/2,1830);
-  canvas.wallpaperMeta={width:canvas.width,height:canvas.height,fontSize:layout.fontSize,lineCount:layout.lines.length,lines:layout.lines,quoteTop,quoteBottom:quoteTop+totalHeight,brandBottom:1830,items:normalized.items.map(item=>({colorIds:item.colorIds,layout:item.layout}))};return canvas
+  canvas.wallpaperMeta={width:canvas.width,height:canvas.height,fontSize:layout.fontSize,lineCount:layout.lines.length,lines:layout.lines,quoteTop,quoteBottom:quoteTop+totalHeight,quoteCenterX,quoteCenterY,quoteX:quoteCenterX/WALLPAPER_WIDTH,quoteY:quoteCenterY/WALLPAPER_HEIGHT,brandBottom:1830,items:normalized.items.map(item=>({colorIds:item.colorIds,layout:item.layout}))};return canvas
 }
-function createWallpaperCanvas(quote=session.wallpaperQuote||''){return createWallpaperCanvasFromSnapshot(quote,externalWallpaperData?.snapshot||session.after,externalWallpaperData?.fontSize||session.wallpaperFontSize||84)}
+function currentWallpaperTextPosition(){return{x:externalWallpaperData?.textX??session.wallpaperTextX,y:externalWallpaperData?.textY??session.wallpaperTextY}}
+function setWallpaperTextPosition(x,y,persist=true){if(externalWallpaperData){externalWallpaperData.textX=x;externalWallpaperData.textY=y}else{session.wallpaperTextX=x;session.wallpaperTextY=y;if(persist)saveSession()}}
+function createWallpaperCanvas(quote=session.wallpaperQuote||''){return createWallpaperCanvasFromSnapshot(quote,externalWallpaperData?.snapshot||session.after,externalWallpaperData?.fontSize||session.wallpaperFontSize||84,currentWallpaperTextPosition())}
 function encodeWallpaperPayload(value){const bytes=new TextEncoder().encode(JSON.stringify(value));let binary='';bytes.forEach(byte=>binary+=String.fromCharCode(byte));return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
 function decodeWallpaperPayload(value){const base64=value.replace(/-/g,'+').replace(/_/g,'/').padEnd(Math.ceil(value.length/4)*4,'=');const binary=atob(base64),bytes=Uint8Array.from(binary,char=>char.charCodeAt(0));return JSON.parse(new TextDecoder().decode(bytes))}
-function wallpaperHandoffUrl(quote,snapshot,fontSize=84){
-  if(!/^https?:$/.test(location.protocol))return'';const normalized=normalizeWallpaperSnapshot(snapshot);if(!normalized)return'';const url=new URL(location.href);url.hash='';url.search='';url.searchParams.set('wallpaper',encodeWallpaperPayload({q:String(quote||'').slice(0,80),f:clamp(Number(fontSize)||84,48,128),s:normalized}));return url.href
+function wallpaperHandoffUrl(quote,snapshot,fontSize=84,textX=null,textY=null){
+  if(!/^https?:$/.test(location.protocol))return'';const normalized=normalizeWallpaperSnapshot(snapshot),position=normalizeWallpaperTextPosition({x:textX,y:textY});if(!normalized)return'';const url=new URL(location.href);url.hash='';url.search='';url.searchParams.set('wallpaper',encodeWallpaperPayload({q:String(quote||'').slice(0,80),f:clamp(Number(fontSize)||84,48,128),x:position.x,y:position.y,s:normalized}));return url.href
 }
 function readWallpaperHandoff(){
-  const encoded=new URLSearchParams(location.search).get('wallpaper');if(!encoded||encoded.length>12000)return null;try{const data=decodeWallpaperPayload(encoded),snapshot=normalizeWallpaperSnapshot(data.s);return snapshot?{quote:String(data.q||'').slice(0,80),fontSize:clamp(Number(data.f)||84,48,128),snapshot}:null}catch(error){return null}
+  const encoded=new URLSearchParams(location.search).get('wallpaper');if(!encoded||encoded.length>12000)return null;try{const data=decodeWallpaperPayload(encoded),snapshot=normalizeWallpaperSnapshot(data.s),position=normalizeWallpaperTextPosition({x:data.x,y:data.y});return snapshot?{quote:String(data.q||'').slice(0,80),fontSize:clamp(Number(data.f)||84,48,128),textX:position.x,textY:position.y,snapshot}:null}catch(error){return null}
 }
 function externalBrowserHref(url){if(!url)return'';if(/Android/i.test(navigator.userAgent)&&/\bLine\//i.test(navigator.userAgent)){const parsed=new URL(url),fallback=encodeURIComponent(url);return`intent://${parsed.host}${parsed.pathname}${parsed.search}#Intent;scheme=${parsed.protocol.slice(0,-1)};package=com.android.chrome;S.browser_fallback_url=${fallback};end`}return url}
-function updateWallpaperPreview(){
+function updateWallpaperPreview(finalize=true){
   const quoteInput=document.getElementById('wallpaperQuote'),quote=quoteInput.value,fontControl=document.getElementById('wallpaperFontSize'),preferredFontSize=clamp(Number(fontControl.value)||84,48,128),shareButton=document.getElementById('shareExportBtn'),downloadButton=document.getElementById('downloadExportBtn'),externalLink=document.getElementById('externalExportLink'),guide=document.getElementById('exportGuide'),snapshot=externalWallpaperData?.snapshot||session.after;
   if(!externalWallpaperData){session.wallpaperQuote=quote;session.wallpaperFontSize=preferredFontSize;saveSession()}else externalWallpaperData.fontSize=preferredFontSize;
-  document.getElementById('wallpaperQuoteCount').textContent=`${quote.length} / 80`;const canvas=createWallpaperCanvasFromSnapshot(quote,snapshot,preferredFontSize);if(!canvas)return;document.getElementById('wallpaperFontSizeValue').textContent=`${canvas.wallpaperMeta.fontSize} px`;
-  const name=`生活色彩桌布-${new Date().toISOString().slice(0,10)}.png`,url=canvas.toDataURL('image/png'),hasQuote=Boolean(quote.trim()),isLine=/\bLine\//i.test(navigator.userAgent)||/LIFF/i.test(navigator.userAgent),handoffUrl=wallpaperHandoffUrl(quote,snapshot,preferredFontSize),preview=document.getElementById('exportImage');
-  if(latestExport?.blobUrl)URL.revokeObjectURL(latestExport.blobUrl);latestExport={name,url,file:null,blobUrl:'',meta:canvas.wallpaperMeta,handoffUrl};preview.src=url;preview.dataset.width=canvas.wallpaperMeta.width;preview.dataset.height=canvas.wallpaperMeta.height;preview.dataset.fontSize=canvas.wallpaperMeta.fontSize;preview.dataset.lineCount=canvas.wallpaperMeta.lineCount;preview.dataset.lines=JSON.stringify(canvas.wallpaperMeta.lines);preview.dataset.quoteTop=canvas.wallpaperMeta.quoteTop;preview.dataset.quoteBottom=canvas.wallpaperMeta.quoteBottom;
+  document.getElementById('wallpaperQuoteCount').textContent=`${quote.length} / 80`;const canvas=createWallpaperCanvasFromSnapshot(quote,snapshot,preferredFontSize,currentWallpaperTextPosition());if(!canvas)return;document.getElementById('wallpaperFontSizeValue').textContent=`${canvas.wallpaperMeta.fontSize} px`;
+  const position=currentWallpaperTextPosition();if(position.x===null||position.y===null)setWallpaperTextPosition(canvas.wallpaperMeta.quoteX,canvas.wallpaperMeta.quoteY);
+  const hasQuote=Boolean(quote.trim()),isLine=/\bLine\//i.test(navigator.userAgent)||/LIFF/i.test(navigator.userAgent),handoffUrl=wallpaperHandoffUrl(quote,snapshot,preferredFontSize,canvas.wallpaperMeta.quoteX,canvas.wallpaperMeta.quoteY),preview=document.getElementById('exportImage'),previewContext=preview.getContext('2d',{alpha:false});preview.width=canvas.width;preview.height=canvas.height;previewContext.drawImage(canvas,0,0);preview.dataset.width=canvas.wallpaperMeta.width;preview.dataset.height=canvas.wallpaperMeta.height;preview.dataset.fontSize=canvas.wallpaperMeta.fontSize;preview.dataset.lineCount=canvas.wallpaperMeta.lineCount;preview.dataset.lines=JSON.stringify(canvas.wallpaperMeta.lines);preview.dataset.quoteTop=canvas.wallpaperMeta.quoteTop;preview.dataset.quoteBottom=canvas.wallpaperMeta.quoteBottom;preview.dataset.quoteX=canvas.wallpaperMeta.quoteX;preview.dataset.quoteY=canvas.wallpaperMeta.quoteY;
   shareButton.style.display=hasQuote&&!isLine&&navigator.share?'inline-flex':'none';shareButton.disabled=true;downloadButton.disabled=!hasQuote;downloadButton.style.display=isLine&&!externalWallpaperData?'none':'inline-flex';externalLink.classList.toggle('visible',Boolean(hasQuote&&isLine&&!externalWallpaperData&&handoffUrl));externalLink.href=externalBrowserHref(handoffUrl);
-  if(isLine&&!externalWallpaperData&&handoffUrl){if(!exportOriginalUrl)exportOriginalUrl=location.href;history.replaceState(history.state,'',handoffUrl)}
   guide.textContent=!hasQuote?'輸入一句話後，就可以儲存桌布。':externalWallpaperData?'桌布已完整帶到手機瀏覽器，現在請按「下載 PNG」或使用手機分享功能。':isLine?'LINE 本身無法儲存這張圖。請按「到手機瀏覽器儲存」；若仍留在 LINE，請用右上角選單選「以瀏覽器開啟」。':'預覽就是正式成品，請使用下方按鈕儲存。';
-  if(!hasQuote)return;canvas.toBlob(blob=>{if(!blob||quoteInput.value!==quote)return;try{latestExport.blobUrl=URL.createObjectURL(blob);latestExport.file=typeof File==='undefined'?blob:new File([blob],name,{type:'image/png'});shareButton.disabled=!navigator.share}catch(error){shareButton.style.display='none'}},'image/png')
+  if(!finalize)return;
+  const name=`生活色彩桌布-${new Date().toISOString().slice(0,10)}.png`,url=canvas.toDataURL('image/png');externalLink.classList.toggle('visible',Boolean(hasQuote&&isLine&&!externalWallpaperData&&handoffUrl));externalLink.href=externalBrowserHref(handoffUrl);if(isLine&&!externalWallpaperData&&handoffUrl){if(!exportOriginalUrl)exportOriginalUrl=location.href;history.replaceState(history.state,'',handoffUrl)}
+  if(latestExport?.blobUrl)URL.revokeObjectURL(latestExport.blobUrl);latestExport={name,url,file:null,blobUrl:'',meta:canvas.wallpaperMeta,handoffUrl};if(!hasQuote)return;canvas.toBlob(blob=>{if(!blob||quoteInput.value!==quote)return;try{latestExport.blobUrl=URL.createObjectURL(blob);latestExport.file=typeof File==='undefined'?blob:new File([blob],name,{type:'image/png'});shareButton.disabled=!navigator.share}catch(error){shareButton.style.display='none'}},'image/png')
 }
 function triggerExportDownload(){if(!latestExport||!document.getElementById('wallpaperQuote').value.trim())return;const link=document.createElement('a');link.download=latestExport.name;link.href=latestExport.blobUrl||latestExport.url;document.body.appendChild(link);link.click();link.remove()}
-function closeExportPreview(){document.getElementById('exportOverlay').classList.remove('visible');if(exportOriginalUrl){history.replaceState(history.state,'',exportOriginalUrl);exportOriginalUrl=''}}
+function closeExportPreview(){document.getElementById('exportOverlay').classList.remove('visible');document.getElementById('exportImage').classList.remove('dragging');wallpaperTextGesture=null;if(wallpaperTextRAF){cancelAnimationFrame(wallpaperTextRAF);wallpaperTextRAF=0}if(exportOriginalUrl){history.replaceState(history.state,'',exportOriginalUrl);exportOriginalUrl=''}}
 async function openWallpaperPreview(quote,focus=false){const input=document.getElementById('wallpaperQuote'),fontControl=document.getElementById('wallpaperFontSize');input.value=quote||'';fontControl.value=String(externalWallpaperData?.fontSize||session.wallpaperFontSize||84);document.getElementById('exportOverlay').classList.add('visible');if(document.fonts?.ready)await document.fonts.ready;updateWallpaperPreview();if(focus)setTimeout(()=>input.focus({preventScroll:true}),120)}
 document.getElementById('exportBtn').addEventListener('click',()=>{externalWallpaperData=null;openWallpaperPreview(session.wallpaperQuote||'',false)});
 document.getElementById('wallpaperQuote').addEventListener('input',()=>{clearTimeout(wallpaperPreviewTimer);wallpaperPreviewTimer=setTimeout(updateWallpaperPreview,120)});
@@ -889,6 +902,18 @@ document.getElementById('wallpaperFontSize').addEventListener('input',()=>{clear
 function changeWallpaperFontSize(delta){const control=document.getElementById('wallpaperFontSize');control.value=String(clamp(Number(control.value)+delta,Number(control.min),Number(control.max)));updateWallpaperPreview()}
 document.getElementById('wallpaperFontMinus').addEventListener('click',()=>changeWallpaperFontSize(-2));
 document.getElementById('wallpaperFontPlus').addEventListener('click',()=>changeWallpaperFontSize(2));
+function scheduleWallpaperTextPreview(){if(wallpaperTextRAF)return;wallpaperTextRAF=requestAnimationFrame(()=>{wallpaperTextRAF=0;updateWallpaperPreview(false)})}
+function wallpaperTextPointerDown(event){
+  if((event.pointerType==='mouse'&&event.button!==0)||!document.getElementById('wallpaperQuote').value.trim())return;event.preventDefault();event.stopPropagation();const preview=document.getElementById('exportImage'),startX=Number(preview.dataset.quoteX),startY=Number(preview.dataset.quoteY);if(!Number.isFinite(startX)||!Number.isFinite(startY))return;wallpaperTextGesture={pointerId:event.pointerId,startPoint:{x:event.clientX,y:event.clientY},startX,startY};try{preview.setPointerCapture(event.pointerId)}catch(error){}preview.classList.add('dragging')
+}
+function wallpaperTextPointerMove(event){
+  const gesture=wallpaperTextGesture;if(!gesture||gesture.pointerId!==event.pointerId)return;event.preventDefault();event.stopPropagation();const rect=document.getElementById('exportImage').getBoundingClientRect(),x=clamp(gesture.startX+(event.clientX-gesture.startPoint.x)/Math.max(1,rect.width),.04,.96),y=clamp(gesture.startY+(event.clientY-gesture.startPoint.y)/Math.max(1,rect.height),.12,.84);setWallpaperTextPosition(x,y,false);scheduleWallpaperTextPreview()
+}
+function wallpaperTextPointerEnd(event){
+  const gesture=wallpaperTextGesture;if(!gesture||gesture.pointerId!==event.pointerId)return;event.preventDefault();event.stopPropagation();const preview=document.getElementById('exportImage');try{if(preview.hasPointerCapture(event.pointerId))preview.releasePointerCapture(event.pointerId)}catch(error){}preview.classList.remove('dragging');wallpaperTextGesture=null;if(wallpaperTextRAF){cancelAnimationFrame(wallpaperTextRAF);wallpaperTextRAF=0}if(!externalWallpaperData)saveSession();updateWallpaperPreview(true)
+}
+const wallpaperPreviewCanvas=document.getElementById('exportImage');wallpaperPreviewCanvas.addEventListener('pointerdown',wallpaperTextPointerDown,{passive:false});wallpaperPreviewCanvas.addEventListener('pointermove',wallpaperTextPointerMove,{passive:false});wallpaperPreviewCanvas.addEventListener('pointerup',wallpaperTextPointerEnd,{passive:false});wallpaperPreviewCanvas.addEventListener('pointercancel',wallpaperTextPointerEnd,{passive:false});wallpaperPreviewCanvas.addEventListener('lostpointercapture',event=>{if(wallpaperTextGesture?.pointerId===event.pointerId)wallpaperTextPointerEnd(event)},{passive:false});
+document.getElementById('wallpaperPositionReset').addEventListener('click',()=>{setWallpaperTextPosition(null,null);updateWallpaperPreview(true)});
 document.getElementById('shareExportBtn').addEventListener('click',async()=>{if(!latestExport?.file||!navigator.share)return;const guide=document.getElementById('exportGuide');try{await navigator.share({files:[latestExport.file],title:'生活色彩整理桌'})}catch(error){if(error.name==='AbortError')return;try{if(latestExport.handoffUrl)await navigator.share({title:'生活色彩整理桌',text:'到手機瀏覽器儲存我的色彩桌布',url:latestExport.handoffUrl});else throw error}catch(secondError){if(secondError.name!=='AbortError')guide.textContent='LINE 沒有開啟圖片儲存，請改按「到手機瀏覽器儲存」。'}}});
 document.getElementById('downloadExportBtn').addEventListener('click',triggerExportDownload);
 document.getElementById('closeExportBtn').addEventListener('click',closeExportPreview);
