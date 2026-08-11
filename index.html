@@ -292,9 +292,9 @@ button{touch-action:manipulation;white-space:nowrap}
 .wallpaper-size-row{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:10px}
 .wallpaper-size-button{width:44px;height:44px;border:1px solid rgba(145,105,50,.2);border-radius:50%;background:rgba(255,255,255,.46);color:#5D4931;font-size:.72rem;cursor:pointer}
 .wallpaper-size-range{width:100%;height:44px;margin:0;accent-color:#A87528;cursor:pointer}
-.wallpaper-preview-label{margin:2px auto 9px;font-size:.6rem;letter-spacing:.14em;color:#92734A}
+.wallpaper-preview-label{margin:20px auto 9px;font-size:.6rem;letter-spacing:.14em;color:#92734A}
 .export-image{display:block;width:auto;max-width:100%;height:auto;max-height:52dvh;margin:auto;object-fit:contain;border-radius:12px;background:#0D0A07;box-shadow:0 8px 28px rgba(35,22,8,.12);-webkit-touch-callout:default;user-select:auto}
-.export-sheet .actions{margin-top:16px}
+.export-sheet .actions{margin-top:12px}
 .external-export-link{display:none;text-decoration:none}
 .external-export-link.visible{display:inline-flex}
 
@@ -533,15 +533,13 @@ button{touch-action:manipulation;white-space:nowrap}
       <div class="wallpaper-field-meta"><span>妳輸入的換行會保留</span><span id="wallpaperQuoteCount">0 / 80</span></div>
     </div>
     <div class="wallpaper-size">
-      <div class="wallpaper-size-head"><label for="wallpaperFontSize">文字大小</label><output id="wallpaperFontSizeValue">60 px</output></div>
+      <div class="wallpaper-size-head"><label for="wallpaperFontSize">文字大小</label><output id="wallpaperFontSizeValue">84 px</output></div>
       <div class="wallpaper-size-row">
         <button class="wallpaper-size-button" id="wallpaperFontMinus" type="button" aria-label="縮小桌布文字">A－</button>
-        <input class="wallpaper-size-range" id="wallpaperFontSize" type="range" min="40" max="84" step="2" value="60" aria-label="調整桌布文字大小">
+        <input class="wallpaper-size-range" id="wallpaperFontSize" type="range" min="48" max="128" step="2" value="84" aria-label="調整桌布文字大小">
         <button class="wallpaper-size-button" id="wallpaperFontPlus" type="button" aria-label="放大桌布文字">A＋</button>
       </div>
     </div>
-    <div class="wallpaper-preview-label">桌布預覽・1080 × 1920</div>
-    <img class="export-image" id="exportImage" alt="生活色彩整理桌桌布預覽">
     <p id="exportGuide">輸入一句話後，就可以儲存桌布。</p>
     <div class="actions">
       <button class="btn-primary" id="shareExportBtn">分享／儲存圖片</button>
@@ -549,6 +547,8 @@ button{touch-action:manipulation;white-space:nowrap}
       <a class="btn-primary external-export-link" id="externalExportLink" target="_blank" rel="noopener external">到手機瀏覽器儲存</a>
       <button class="btn-text" id="closeExportBtn">關閉</button>
     </div>
+    <div class="wallpaper-preview-label">桌布預覽・1080 × 1920</div>
+    <img class="export-image" id="exportImage" alt="生活色彩整理桌桌布預覽">
   </div>
 </div>
 
@@ -592,7 +592,7 @@ let afterReflectionView='after';
 
 const blankBeforeReflection=()=>({introSeen:false,uiStep:1,wantsAdjustment:null,firstNotice:null,unexpectedItem:null,unexpectedObservation:null,relatedItem:null,wantToLookAgain:null,firstFeeling:'',completedAt:null});
 const blankAfterReflection=()=>({uiStep:1,biggestDifference:'',finalDiscovery:'',nextSevenDays:'',completedAt:null});
-const blankSession=()=>({step:'input',draftNames:['',''],items:[],currentIndex:0,colorDraft:{first:null,second:null,choosingSecond:false,returnToReview:false},before:null,beforeReflection:null,after:null,afterReflection:null,resultView:'after',promptIndex:0,wallpaperQuote:'',wallpaperFontSize:60,deskTutorialSeen:false,tutorialReturnStep:'before'});
+const blankSession=()=>({step:'input',draftNames:['',''],items:[],currentIndex:0,colorDraft:{first:null,second:null,choosingSecond:false,returnToReview:false},before:null,beforeReflection:null,after:null,afterReflection:null,resultView:'after',promptIndex:0,wallpaperQuote:'',wallpaperFontSize:84,deskTutorialSeen:false,tutorialReturnStep:'before'});
 let session=loadSession();
 function loadSession(){try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null')||{};if(!saved.afterReflection&&saved.afterFinalReflection)saved.afterReflection=saved.afterFinalReflection;if(saved.step==='afterReflection')saved.step='result';return {...blankSession(),...saved}}catch(error){return blankSession()}}
 function saveSession(){localStorage.setItem(STORAGE_KEY,JSON.stringify(session))}
@@ -780,7 +780,7 @@ document.getElementById('openPromptsBtn').addEventListener('click',()=>{session.
 document.getElementById('promptBackBtn').addEventListener('click',()=>{session.step='result';saveSession();render()});
 document.getElementById('promptNextBtn').addEventListener('click',()=>{if(session.promptIndex<ACTIVITY_PROMPTS.length-1){session.promptIndex++;saveSession();renderPromptScreen()}else{session.step='result';saveSession();render()}});
 
-const WALLPAPER_WIDTH=1080,WALLPAPER_HEIGHT=1920,WALLPAPER_TEXT_MIN=40,WALLPAPER_TEXT_MAX=64,WALLPAPER_TEXT_WIDTH=800;
+const WALLPAPER_WIDTH=1080,WALLPAPER_HEIGHT=1920,WALLPAPER_TEXT_MIN=48,WALLPAPER_TEXT_MAX=128,WALLPAPER_TEXT_WIDTH=820;
 function paintWallpaperGlow(ctx,cx,cy,rx,ry,hex,alpha){
   ctx.save();ctx.translate(cx,cy);ctx.scale(rx,ry);ctx.globalCompositeOperation='screen';ctx.globalAlpha=alpha;
   const gradient=ctx.createRadialGradient(0,0,0,0,0,1);
@@ -799,8 +799,8 @@ function paintWallpaperArrangement(ctx,snapshot){
   const base=ctx.createLinearGradient(0,0,0,WALLPAPER_HEIGHT);base.addColorStop(0,'#0B0806');base.addColorStop(.58,'#100B08');base.addColorStop(1,'#17100B');ctx.fillStyle=base;ctx.fillRect(0,0,WALLPAPER_WIDTH,WALLPAPER_HEIGHT);
   const active=snapshot.items.filter(item=>!item.layout.inParking),items=(active.length?active:snapshot.items).slice().sort((a,b)=>a.layout.z-b.layout.z),mapScale=Math.min(860/snapshot.width,1280/snapshot.height),centerX=WALLPAPER_WIDTH/2,centerY=710;
   items.forEach((item,index)=>{
-    const scale=item.layout.scale,cx=centerX+item.layout.x*mapScale,cy=centerY+item.layout.y*mapScale,rx=176*scale*mapScale,ry=190*scale*mapScale,ids=item.colorIds;
-    ids.forEach((id,colorIndex)=>{const entry=card(id),side=ids.length===1?0:(colorIndex?1:-1),offsetX=side*rx*.13,offsetY=(colorIndex?1:-1)*ry*.045;paintWallpaperGlow(ctx,cx+offsetX,cy+offsetY,rx*(ids.length===1?1:.78),ry*(ids.length===1?1:.8),entry.hex,ids.length===1?.46:.4);paintWallpaperGlow(ctx,cx-offsetX*.18,cy-offsetY*.35,rx*.52,ry*.48,entry.hex,.19)});
+    const scale=item.layout.scale,cx=centerX+item.layout.x*mapScale,cy=centerY+item.layout.y*mapScale,rx=132*scale*mapScale,ry=142*scale*mapScale,ids=item.colorIds;
+    ids.forEach((id,colorIndex)=>{const entry=card(id),side=ids.length===1?0:(colorIndex?1:-1),offsetX=side*rx*.14,offsetY=(colorIndex?1:-1)*ry*.05;paintWallpaperGlow(ctx,cx+offsetX,cy+offsetY,rx*1.34,ry*1.34,entry.hex,.12);paintWallpaperGlow(ctx,cx+offsetX,cy+offsetY,rx*(ids.length===1?1:.8),ry*(ids.length===1?1:.82),entry.hex,ids.length===1?.58:.5);paintWallpaperGlow(ctx,cx-offsetX*.18,cy-offsetY*.35,rx*.42,ry*.4,entry.hex,.3)});
     if(ids.length>1){const first=card(ids[0]);paintWallpaperGlow(ctx,cx,cy,rx*.62,ry*.62,first.hex,.12)}
   });
   const air=ctx.createLinearGradient(0,0,0,WALLPAPER_HEIGHT);air.addColorStop(0,'rgba(255,248,235,.025)');air.addColorStop(.64,'rgba(255,248,235,0)');air.addColorStop(1,'rgba(8,5,3,.18)');ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;ctx.fillStyle=air;ctx.fillRect(0,0,WALLPAPER_WIDTH,WALLPAPER_HEIGHT)
@@ -816,34 +816,34 @@ function wrapWallpaperParagraph(ctx,text,maxWidth){
   for(let index=1;index<lines.length;index++){if(!/^[的了著過和與或但而]/.test(lines[index])||!lines[index-1])continue;const previousTokens=wallpaperTokens(lines[index-1]);let moveIndex=previousTokens.length-1;while(moveIndex>0&&/^\s+$/.test(previousTokens[moveIndex]))moveIndex--;if(moveIndex>0&&/^\p{Script=Han}$/u.test(previousTokens[moveIndex])&&/^\p{Script=Han}$/u.test(previousTokens[moveIndex-1]))moveIndex--;const moved=previousTokens.splice(moveIndex).join('');if(moved){lines[index-1]=previousTokens.join('').trimEnd();lines[index]=moved+lines[index]}}
   return lines
 }
-function layoutWallpaperQuote(ctx,text,preferredSize=60){
-  const paragraphs=String(text||'').replace(/\r\n?/g,'\n').split('\n');let fontSize=clamp(Number(preferredSize)||60,WALLPAPER_TEXT_MIN,84),lines=[],lineHeight=0;
-  for(;fontSize>=WALLPAPER_TEXT_MIN;fontSize-=2){ctx.font=`300 ${fontSize}px "Noto Serif TC",serif`;lines=paragraphs.flatMap(paragraph=>wrapWallpaperParagraph(ctx,paragraph,WALLPAPER_TEXT_WIDTH));lineHeight=Math.round(fontSize*1.6);if(lines.length*lineHeight<=570&&lines.every(line=>ctx.measureText(line).width<=WALLPAPER_TEXT_WIDTH+1))break}
-  fontSize=Math.max(WALLPAPER_TEXT_MIN,fontSize);ctx.font=`300 ${fontSize}px "Noto Serif TC",serif`;return{lines,lineHeight:Math.round(fontSize*1.6),fontSize}
+function layoutWallpaperQuote(ctx,text,preferredSize=84){
+  const paragraphs=String(text||'').replace(/\r\n?/g,'\n').split('\n');let fontSize=clamp(Number(preferredSize)||84,WALLPAPER_TEXT_MIN,WALLPAPER_TEXT_MAX),lines=[],lineHeight=0;
+  for(;fontSize>=WALLPAPER_TEXT_MIN;fontSize-=2){ctx.font=`500 ${fontSize}px "Noto Serif TC",serif`;lines=paragraphs.flatMap(paragraph=>wrapWallpaperParagraph(ctx,paragraph,WALLPAPER_TEXT_WIDTH));lineHeight=Math.round(fontSize*1.55);if(lines.length*lineHeight<=570&&lines.every(line=>ctx.measureText(line).width<=WALLPAPER_TEXT_WIDTH+1))break}
+  fontSize=Math.max(WALLPAPER_TEXT_MIN,fontSize);ctx.font=`500 ${fontSize}px "Noto Serif TC",serif`;return{lines,lineHeight:Math.round(fontSize*1.55),fontSize}
 }
 function sampleWallpaperLuminance(ctx,x,y,width,height){
   const pixels=ctx.getImageData(x,y,width,height).data;let total=0,count=0;for(let index=0;index<pixels.length;index+=4*24){const r=pixels[index]/255,g=pixels[index+1]/255,b=pixels[index+2]/255;total+=(.2126*r+.7152*g+.0722*b);count++}return count?total/count:0
 }
-function createWallpaperCanvasFromSnapshot(quote,snapshot,preferredFontSize=60){
+function createWallpaperCanvasFromSnapshot(quote,snapshot,preferredFontSize=84){
   const normalized=normalizeWallpaperSnapshot(snapshot),canvas=document.createElement('canvas');if(!normalized)return null;canvas.width=WALLPAPER_WIDTH;canvas.height=WALLPAPER_HEIGHT;const ctx=canvas.getContext('2d',{alpha:false});paintWallpaperArrangement(ctx,normalized);
-  const layout=layoutWallpaperQuote(ctx,quote,preferredFontSize),totalHeight=layout.lines.length*layout.lineHeight,quoteTop=clamp(790-totalHeight/2,410,960-totalHeight),quoteLum=sampleWallpaperLuminance(ctx,130,Math.max(250,quoteTop-90),820,Math.min(760,totalHeight+180)),lightText=quoteLum<.48;
-  ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`300 ${layout.fontSize}px "Noto Serif TC",serif`;ctx.fillStyle=lightText?'rgba(255,250,243,.92)':'rgba(28,20,14,.88)';ctx.shadowColor=lightText?'rgba(8,5,3,.28)':'rgba(255,250,243,.18)';ctx.shadowBlur=12;ctx.shadowOffsetY=2;
-  layout.lines.forEach((line,index)=>{if(line)ctx.fillText(line,WALLPAPER_WIDTH/2,quoteTop+layout.lineHeight*(index+.5),WALLPAPER_TEXT_WIDTH)});ctx.shadowColor='transparent';ctx.shadowBlur=0;
+  const layout=layoutWallpaperQuote(ctx,quote,preferredFontSize),totalHeight=layout.lines.length*layout.lineHeight,candidates=[700,980,1250,1450].map(center=>({center,lum:sampleWallpaperLuminance(ctx,120,clamp(center-totalHeight/2-70,180,1580),840,Math.min(520,totalHeight+140))})).sort((a,b)=>a.lum-b.lum),quoteTop=clamp(candidates[0].center-totalHeight/2,330,1580-totalHeight);
+  ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`500 ${layout.fontSize}px "Noto Serif TC",serif`;ctx.fillStyle='rgba(255,252,247,.97)';ctx.strokeStyle='rgba(7,4,2,.42)';ctx.lineWidth=1.5;ctx.lineJoin='round';ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetY=0;
+  layout.lines.forEach((line,index)=>{if(line){const y=quoteTop+layout.lineHeight*(index+.5);ctx.strokeText(line,WALLPAPER_WIDTH/2,y,WALLPAPER_TEXT_WIDTH);ctx.fillText(line,WALLPAPER_WIDTH/2,y,WALLPAPER_TEXT_WIDTH)}});
   const brandLum=sampleWallpaperLuminance(ctx,280,1700,520,160),brandLight=brandLum<.5,brandColor=brandLight?'rgba(255,249,240,.43)':'rgba(36,25,16,.43)';ctx.fillStyle=brandColor;ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.font='300 24px "Noto Serif TC",serif';ctx.fillText('生活色彩整理桌',WALLPAPER_WIDTH/2,1784);ctx.font='italic 32px "Cormorant Garamond",serif';ctx.fillText('Life Color Studio',WALLPAPER_WIDTH/2,1830);
   canvas.wallpaperMeta={width:canvas.width,height:canvas.height,fontSize:layout.fontSize,lineCount:layout.lines.length,lines:layout.lines,quoteTop,quoteBottom:quoteTop+totalHeight,brandBottom:1830,items:normalized.items.map(item=>({colorIds:item.colorIds,layout:item.layout}))};return canvas
 }
-function createWallpaperCanvas(quote=session.wallpaperQuote||''){return createWallpaperCanvasFromSnapshot(quote,externalWallpaperData?.snapshot||session.after,externalWallpaperData?.fontSize||session.wallpaperFontSize||60)}
+function createWallpaperCanvas(quote=session.wallpaperQuote||''){return createWallpaperCanvasFromSnapshot(quote,externalWallpaperData?.snapshot||session.after,externalWallpaperData?.fontSize||session.wallpaperFontSize||84)}
 function encodeWallpaperPayload(value){const bytes=new TextEncoder().encode(JSON.stringify(value));let binary='';bytes.forEach(byte=>binary+=String.fromCharCode(byte));return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
 function decodeWallpaperPayload(value){const base64=value.replace(/-/g,'+').replace(/_/g,'/').padEnd(Math.ceil(value.length/4)*4,'=');const binary=atob(base64),bytes=Uint8Array.from(binary,char=>char.charCodeAt(0));return JSON.parse(new TextDecoder().decode(bytes))}
-function wallpaperHandoffUrl(quote,snapshot,fontSize=60){
-  if(!/^https?:$/.test(location.protocol))return'';const normalized=normalizeWallpaperSnapshot(snapshot);if(!normalized)return'';const url=new URL(location.href);url.hash='';url.search='';url.searchParams.set('wallpaper',encodeWallpaperPayload({q:String(quote||'').slice(0,80),f:clamp(Number(fontSize)||60,40,84),s:normalized}));return url.href
+function wallpaperHandoffUrl(quote,snapshot,fontSize=84){
+  if(!/^https?:$/.test(location.protocol))return'';const normalized=normalizeWallpaperSnapshot(snapshot);if(!normalized)return'';const url=new URL(location.href);url.hash='';url.search='';url.searchParams.set('wallpaper',encodeWallpaperPayload({q:String(quote||'').slice(0,80),f:clamp(Number(fontSize)||84,48,128),s:normalized}));return url.href
 }
 function readWallpaperHandoff(){
-  const encoded=new URLSearchParams(location.search).get('wallpaper');if(!encoded||encoded.length>12000)return null;try{const data=decodeWallpaperPayload(encoded),snapshot=normalizeWallpaperSnapshot(data.s);return snapshot?{quote:String(data.q||'').slice(0,80),fontSize:clamp(Number(data.f)||60,40,84),snapshot}:null}catch(error){return null}
+  const encoded=new URLSearchParams(location.search).get('wallpaper');if(!encoded||encoded.length>12000)return null;try{const data=decodeWallpaperPayload(encoded),snapshot=normalizeWallpaperSnapshot(data.s);return snapshot?{quote:String(data.q||'').slice(0,80),fontSize:clamp(Number(data.f)||84,48,128),snapshot}:null}catch(error){return null}
 }
 function externalBrowserHref(url){if(!url)return'';if(/Android/i.test(navigator.userAgent)&&/\bLine\//i.test(navigator.userAgent)){const parsed=new URL(url),fallback=encodeURIComponent(url);return`intent://${parsed.host}${parsed.pathname}${parsed.search}#Intent;scheme=${parsed.protocol.slice(0,-1)};package=com.android.chrome;S.browser_fallback_url=${fallback};end`}return url}
 function updateWallpaperPreview(){
-  const quoteInput=document.getElementById('wallpaperQuote'),quote=quoteInput.value,fontControl=document.getElementById('wallpaperFontSize'),preferredFontSize=clamp(Number(fontControl.value)||60,40,84),shareButton=document.getElementById('shareExportBtn'),downloadButton=document.getElementById('downloadExportBtn'),externalLink=document.getElementById('externalExportLink'),guide=document.getElementById('exportGuide'),snapshot=externalWallpaperData?.snapshot||session.after;
+  const quoteInput=document.getElementById('wallpaperQuote'),quote=quoteInput.value,fontControl=document.getElementById('wallpaperFontSize'),preferredFontSize=clamp(Number(fontControl.value)||84,48,128),shareButton=document.getElementById('shareExportBtn'),downloadButton=document.getElementById('downloadExportBtn'),externalLink=document.getElementById('externalExportLink'),guide=document.getElementById('exportGuide'),snapshot=externalWallpaperData?.snapshot||session.after;
   if(!externalWallpaperData){session.wallpaperQuote=quote;session.wallpaperFontSize=preferredFontSize;saveSession()}else externalWallpaperData.fontSize=preferredFontSize;
   document.getElementById('wallpaperQuoteCount').textContent=`${quote.length} / 80`;const canvas=createWallpaperCanvasFromSnapshot(quote,snapshot,preferredFontSize);if(!canvas)return;document.getElementById('wallpaperFontSizeValue').textContent=`${canvas.wallpaperMeta.fontSize} px`;
   const name=`生活色彩桌布-${new Date().toISOString().slice(0,10)}.png`,url=canvas.toDataURL('image/png'),hasQuote=Boolean(quote.trim()),isLine=/\bLine\//i.test(navigator.userAgent)||/LIFF/i.test(navigator.userAgent),handoffUrl=wallpaperHandoffUrl(quote,snapshot,preferredFontSize),preview=document.getElementById('exportImage');
@@ -855,8 +855,8 @@ function updateWallpaperPreview(){
 }
 function triggerExportDownload(){if(!latestExport||!document.getElementById('wallpaperQuote').value.trim())return;const link=document.createElement('a');link.download=latestExport.name;link.href=latestExport.blobUrl||latestExport.url;document.body.appendChild(link);link.click();link.remove()}
 function closeExportPreview(){document.getElementById('exportOverlay').classList.remove('visible');if(exportOriginalUrl){history.replaceState(history.state,'',exportOriginalUrl);exportOriginalUrl=''}}
-async function openWallpaperPreview(quote,focus=true){const input=document.getElementById('wallpaperQuote'),fontControl=document.getElementById('wallpaperFontSize');input.value=quote||'';fontControl.value=String(externalWallpaperData?.fontSize||session.wallpaperFontSize||60);document.getElementById('exportOverlay').classList.add('visible');if(document.fonts?.ready)await document.fonts.ready;updateWallpaperPreview();if(focus)setTimeout(()=>input.focus({preventScroll:true}),120)}
-document.getElementById('exportBtn').addEventListener('click',()=>{externalWallpaperData=null;openWallpaperPreview(session.wallpaperQuote||'')});
+async function openWallpaperPreview(quote,focus=false){const input=document.getElementById('wallpaperQuote'),fontControl=document.getElementById('wallpaperFontSize');input.value=quote||'';fontControl.value=String(externalWallpaperData?.fontSize||session.wallpaperFontSize||84);document.getElementById('exportOverlay').classList.add('visible');if(document.fonts?.ready)await document.fonts.ready;updateWallpaperPreview();if(focus)setTimeout(()=>input.focus({preventScroll:true}),120)}
+document.getElementById('exportBtn').addEventListener('click',()=>{externalWallpaperData=null;openWallpaperPreview(session.wallpaperQuote||'',false)});
 document.getElementById('wallpaperQuote').addEventListener('input',()=>{clearTimeout(wallpaperPreviewTimer);wallpaperPreviewTimer=setTimeout(updateWallpaperPreview,120)});
 document.getElementById('wallpaperFontSize').addEventListener('input',()=>{clearTimeout(wallpaperPreviewTimer);wallpaperPreviewTimer=setTimeout(updateWallpaperPreview,60)});
 function changeWallpaperFontSize(delta){const control=document.getElementById('wallpaperFontSize');control.value=String(clamp(Number(control.value)+delta,Number(control.min),Number(control.max)));updateWallpaperPreview()}
