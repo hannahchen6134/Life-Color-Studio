@@ -115,6 +115,36 @@ button{touch-action:manipulation}
 .confirm-glow{width:230px;height:230px;display:block;margin:0 auto -4px}
 .confirm-colors{font-family:'Cormorant Garamond','Noto Serif TC',serif;font-size:.95rem;letter-spacing:.12em;color:#51402B}
 
+/* 第一次進入整理桌：用一個短頁面說清楚空間操作，不讓教學永久佔據畫布。 */
+#deskTutorialScreen{overflow-y:auto;overscroll-behavior:contain;padding:calc(28px + env(safe-area-inset-top)) 32px calc(28px + env(safe-area-inset-bottom));background:var(--workspace);color:rgba(255,249,239,.92)}
+.desk-tutorial-content{width:100%;max-width:580px;margin:auto;text-align:center}
+.desk-tutorial-content .eyebrow{color:rgba(216,173,98,.72)}
+.desk-tutorial-title{font-size:clamp(1.2rem,5.4vw,1.55rem);font-weight:600;line-height:1.6;letter-spacing:.08em;text-wrap:balance}
+.desk-tutorial-ops{margin:10px auto 0;font-size:.72rem;font-weight:400;line-height:1.8;letter-spacing:.055em;color:rgba(255,249,239,.74)}
+.tutorial-demo-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px;margin:24px auto 22px;max-width:430px}
+.tutorial-demo{min-width:0;border-top:1px solid rgba(255,249,239,.1);padding-top:9px}
+.tutorial-demo-label{font-size:.6rem;font-weight:300;letter-spacing:.12em;color:rgba(255,249,239,.55)}
+.tutorial-stage{position:relative;height:72px;overflow:hidden;margin-top:2px}
+.tutorial-glow{position:absolute;left:50%;top:50%;width:66px;height:66px;border-radius:50%;background:radial-gradient(circle,rgba(112,184,176,.92) 0%,rgba(80,144,160,.64) 28%,rgba(80,144,160,.2) 58%,rgba(80,144,160,0) 78%);filter:blur(2.5px);mix-blend-mode:screen;transform:translate(-50%,-50%);will-change:transform}
+.tutorial-glow.warm{background:radial-gradient(circle,rgba(224,112,88,.9) 0%,rgba(204,46,96,.57) 30%,rgba(204,46,96,.18) 58%,rgba(204,46,96,0) 78%)}
+.tutorial-glow.soft{background:radial-gradient(circle,rgba(200,180,208,.9) 0%,rgba(168,160,192,.58) 30%,rgba(168,160,192,.18) 58%,rgba(168,160,192,0) 78%)}
+.demo-move{animation:tutorialMove 3.8s cubic-bezier(.65,0,.35,1) infinite}
+.demo-scale{animation:tutorialScale 3.8s cubic-bezier(.65,0,.35,1) infinite}
+.demo-distance-a,.demo-overlap-a{left:42%}
+.demo-distance-b,.demo-overlap-b{left:58%}
+.demo-distance-a{animation:tutorialDistanceA 4.2s cubic-bezier(.65,0,.35,1) infinite}
+.demo-distance-b{animation:tutorialDistanceB 4.2s cubic-bezier(.65,0,.35,1) infinite}
+.demo-overlap-a{animation:tutorialOverlapA 4.2s cubic-bezier(.65,0,.35,1) infinite}
+.demo-overlap-b{animation:tutorialOverlapB 4.2s cubic-bezier(.65,0,.35,1) infinite}
+@keyframes tutorialMove{0%,100%{transform:translate(-50%,-50%) translateX(-24px)}50%{transform:translate(-50%,-50%) translateX(24px)}}
+@keyframes tutorialScale{0%,100%{transform:translate(-50%,-50%) scale(.68)}50%{transform:translate(-50%,-50%) scale(1.2)}}
+@keyframes tutorialDistanceA{0%,100%{transform:translate(-50%,-50%) translateX(-4px)}50%{transform:translate(-50%,-50%) translateX(-24px)}}
+@keyframes tutorialDistanceB{0%,100%{transform:translate(-50%,-50%) translateX(4px)}50%{transform:translate(-50%,-50%) translateX(24px)}}
+@keyframes tutorialOverlapA{0%,100%{transform:translate(-50%,-50%) translateX(-17px)}55%{transform:translate(-50%,-50%) translateX(8px)}}
+@keyframes tutorialOverlapB{0%,100%{transform:translate(-50%,-50%) translateX(17px)}55%{transform:translate(-50%,-50%) translateX(-8px)}}
+.desk-tutorial-copy{margin:0 auto;max-width:470px;font-size:.7rem;font-weight:300;line-height:1.95;letter-spacing:.035em;color:rgba(255,249,239,.64);text-align:left}
+.desk-tutorial-actions{display:flex;justify-content:center;margin-top:24px}
+
 /* ④～⑪ 整理桌 */
 #deskScreen{flex-direction:column;overflow:hidden;background:var(--workspace);color:rgba(255,249,239,.92)}
 .desk-head{flex:0 0 auto;padding:calc(12px + env(safe-area-inset-top)) 24px 8px;text-align:center;background:var(--workspace)}
@@ -127,6 +157,8 @@ button{touch-action:manipulation}
 .gesture-hint.hidden{opacity:0}
 .undo-btn{position:absolute;z-index:1000;left:12px;top:10px;width:44px;height:44px;border:0;background:transparent;color:rgba(255,248,237,.64);font-size:1.18rem;cursor:pointer;border-radius:50%}
 .undo-btn:disabled{opacity:.2}
+.desk-help-btn{position:absolute;z-index:1000;right:10px;top:10px;min-width:92px;min-height:44px;border:0;border-radius:999px;padding:8px 9px;background:rgba(13,10,7,.34);color:rgba(255,248,237,.64);font-size:.6rem;font-weight:300;letter-spacing:.055em;cursor:pointer;backdrop-filter:blur(5px)}
+.desk-help-btn:active{color:rgba(255,248,237,.92)}
 .parking-zone{display:none;position:absolute;z-index:2;left:12px;right:12px;bottom:10px;height:82px;border-top:1px solid rgba(255,245,225,.16);background:transparent;color:rgba(255,248,237,.5);text-align:center;padding-top:11px;pointer-events:none;transition:border-color .2s ease,color .2s ease,background .2s ease}
 .parking-zone.visible{display:block}
 .parking-zone.drag-over{border-color:rgba(225,190,125,.58);color:rgba(255,248,237,.84);background:linear-gradient(to bottom,transparent,rgba(192,136,58,.08))}
@@ -262,7 +294,7 @@ button{touch-action:manipulation}
 @media(max-width:380px){.after-reflection-workspace{min-height:300px}.after-reflection-panel{padding-top:26px}}
 @media(max-height:700px){.desk-head{padding-top:calc(8px + env(safe-area-inset-top));padding-bottom:6px}.desk-wrap{padding-left:16px;padding-right:16px}.workspace{min-height:390px}.lightfield-canvas{width:154px;height:154px}.desk-footer{padding-top:8px}}
 @media(min-width:700px){.color-grid{grid-template-columns:repeat(10,minmax(0,1fr));gap:11px;max-width:620px}.desk-wrap{max-width:660px;align-self:center}.lightfield-canvas{width:184px;height:184px}.result-workspace{height:min(62vh,560px);min-height:430px}.export-overlay{align-items:center}}
-@media(prefers-reduced-motion:reduce){.reflection-opening *{animation:none!important;transition:none!important;opacity:1!important;filter:none!important;transform:none!important}}
+@media(prefers-reduced-motion:reduce){.reflection-opening *,.tutorial-glow{animation:none!important;transition:none!important;opacity:1!important;filter:none!important}.demo-distance-a,.demo-overlap-a{transform:translate(-50%,-50%) translateX(-9px)}.demo-distance-b,.demo-overlap-b{transform:translate(-50%,-50%) translateX(9px)}}
 </style>
 </head>
 <body>
@@ -271,9 +303,9 @@ button{touch-action:manipulation}
   <div class="content input-content">
     <header class="page-head">
       <div class="eyebrow">Life Color Studio</div>
-      <h1 class="page-title">今天想用色彩整理什麼？</h1>
+      <h1 class="page-title">把腦中同時存在的事情，排成一張看得見的圖。</h1>
     </header>
-    <p class="lead">先寫下 2～6 件最近佔據心思的事。<br>接著替每件事選一個貼近感受的顏色，再排出「現在的樣子」。</p>
+    <p class="lead">先寫下最近佔據你注意力的 2～6 件事情。接著替它們選一個顏色，再用移動、縮放、靠近與重疊，整理它們現在的關係。</p>
     <div class="topic-list" id="topicList"></div>
     <p class="subtle-note input-edit-note">點選欄位裡的文字，就可以直接修改。</p>
     <button class="btn-secondary add-topic" id="addTopicBtn">＋ 再加一件事情</button>
@@ -316,11 +348,39 @@ button{touch-action:manipulation}
       <div class="eyebrow">Life Color Studio</div>
       <h1 class="page-title">把這些事情放上整理桌</h1>
     </header>
-    <p class="lead">用一根手指移動、兩根手指改變大小。<br>先排出它們此刻在生活裡的樣子。</p>
+    <p class="lead">接下來可以改變每件事情的大小、距離與位置，排出它們此刻在生活裡的樣子。</p>
     <div class="review-grid" id="reviewGrid"></div>
     <div class="actions">
       <button class="btn-primary" id="enterDeskBtn">開始排出現在的樣子</button>
     </div>
+  </div>
+</section>
+
+<section class="screen" id="deskTutorialScreen">
+  <div class="desk-tutorial-content">
+    <div class="eyebrow">How to Arrange</div>
+    <h1 class="desk-tutorial-title">把它們排成現在的樣子。</h1>
+    <p class="desk-tutorial-ops">拖曳移動・雙指縮放・靠近或拉遠・可以重疊</p>
+    <div class="tutorial-demo-grid" aria-label="整理桌操作示範">
+      <div class="tutorial-demo">
+        <div class="tutorial-demo-label">拖曳移動</div>
+        <div class="tutorial-stage" aria-hidden="true"><span class="tutorial-glow demo-move"></span></div>
+      </div>
+      <div class="tutorial-demo">
+        <div class="tutorial-demo-label">放大縮小</div>
+        <div class="tutorial-stage" aria-hidden="true"><span class="tutorial-glow warm demo-scale"></span></div>
+      </div>
+      <div class="tutorial-demo">
+        <div class="tutorial-demo-label">靠近或拉遠</div>
+        <div class="tutorial-stage" aria-hidden="true"><span class="tutorial-glow demo-distance-a"></span><span class="tutorial-glow soft demo-distance-b"></span></div>
+      </div>
+      <div class="tutorial-demo">
+        <div class="tutorial-demo-label">可以重疊</div>
+        <div class="tutorial-stage" aria-hidden="true"><span class="tutorial-glow warm demo-overlap-a"></span><span class="tutorial-glow soft demo-overlap-b"></span></div>
+      </div>
+    </div>
+    <p class="desk-tutorial-copy">最近越佔你注意力的，可以放大一點；彼此有關的，可以靠近或重疊。沒有標準答案，照現在看起來最像的方式排就好。</p>
+    <div class="desk-tutorial-actions"><button class="btn-primary" id="startDeskTutorialBtn">開始整理</button></div>
   </div>
 </section>
 
@@ -333,6 +393,7 @@ button{touch-action:manipulation}
   <div class="desk-wrap">
     <div class="workspace" id="workspace">
       <button class="undo-btn" id="undoBtn" aria-label="復原上一步" title="復原">↶</button>
+      <button class="desk-help-btn" id="deskHelpBtn" aria-label="重新查看整理桌操作提示">？ 操作提示</button>
       <div class="gesture-hint" id="gestureHint">單指移動・雙指縮放</div>
       <div class="parking-zone" id="parkingZone">
         <div class="parking-title">先放著</div>
@@ -467,13 +528,13 @@ const ACTIVITY_PROMPTS=[
   '如果今天只留下一個發現，你最想留下什麼？',
   '接下來七天，你想先做哪一個小調整？'
 ];
-let textureId=0,deskRAF=0,resultRAF=0,mixRAF=0,mixGeneration=0,resultRenderGeneration=0,deskObjects=[],undoStack=[],topLayer=20,labelTimer=0,activeGestureObject=null,latestExport=null;
+let textureId=0,deskRAF=0,resultRAF=0,mixRAF=0,mixGeneration=0,resultRenderGeneration=0,deskObjects=[],undoStack=[],pendingUndoRestore=null,topLayer=20,labelTimer=0,activeGestureObject=null,latestExport=null;
 let reflectionTypeToken=0,reflectionTyping=false;
 let afterReflectionView='after';
 
 const blankBeforeReflection=()=>({introSeen:false,uiStep:1,wantsAdjustment:null,firstNotice:null,unexpectedItem:null,unexpectedObservation:null,relatedItem:null,wantToLookAgain:null,firstFeeling:'',completedAt:null});
 const blankAfterReflection=()=>({uiStep:1,biggestDifference:'',finalDiscovery:'',nextSevenDays:'',completedAt:null});
-const blankSession=()=>({step:'input',draftNames:['',''],items:[],currentIndex:0,colorDraft:{first:null,second:null,choosingSecond:false,returnToReview:false},before:null,beforeReflection:null,after:null,afterReflection:null,resultView:'after',promptIndex:0});
+const blankSession=()=>({step:'input',draftNames:['',''],items:[],currentIndex:0,colorDraft:{first:null,second:null,choosingSecond:false,returnToReview:false},before:null,beforeReflection:null,after:null,afterReflection:null,resultView:'after',promptIndex:0,deskTutorialSeen:false,tutorialReturnStep:'before'});
 let session=loadSession();
 function loadSession(){try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null')||{};if(!saved.afterReflection&&saved.afterFinalReflection)saved.afterReflection=saved.afterFinalReflection;if(saved.step==='afterReflection')saved.step='result';return {...blankSession(),...saved}}catch(error){return blankSession()}}
 function saveSession(){localStorage.setItem(STORAGE_KEY,JSON.stringify(session))}
@@ -550,11 +611,16 @@ function renderReview(){
 }
 document.getElementById('enterDeskBtn').addEventListener('click',()=>{session.items.forEach(item=>item.layout=null);session.step='before';session.before=null;session.after=null;saveSession();render()});
 
+function renderDeskTutorial(){showScreen('deskTutorialScreen');document.getElementById('startDeskTutorialBtn').textContent=session.deskTutorialSeen?'回到整理桌':'開始整理'}
+function openDeskTutorial(){pendingUndoRestore=clone(undoStack);session.tutorialReturnStep=['before','between','after'].includes(session.step)?session.step:'before';session.step='tutorial';saveSession();render()}
+document.getElementById('deskHelpBtn').addEventListener('click',openDeskTutorial);
+document.getElementById('startDeskTutorialBtn').addEventListener('click',()=>{session.deskTutorialSeen=true;session.step=session.tutorialReturnStep||'before';saveSession();render()});
+
 function initialLayout(count,width,height,index){const patterns={2:[[-.2,-.1],[.2,.12]],3:[[-.23,-.2],[.22,-.02],[-.12,.22]],4:[[-.24,-.22],[.22,-.15],[-.2,.13],[.2,.23]],5:[[-.24,-.24],[.22,-.18],[-.18,0],[.22,.1],[-.04,.27]],6:[[-.24,-.27],[.22,-.2],[-.2,-.04],[.24,.08],[-.23,.23],[.19,.29]]};const point=(patterns[count]||patterns[6])[index];return{x:point[0]*width,y:point[1]*height,scale:1,z:index+1,inParking:false}}
 function captureSnapshot(){const rect=document.getElementById('workspace').getBoundingClientRect();return{width:rect.width,height:rect.height,items:session.items.map(item=>({id:item.id,name:item.name,colorIds:[...item.colorIds],layout:clone(item.layout)}))}}
 function restoreSnapshot(snapshot){snapshot.items.forEach(saved=>{const item=session.items.find(candidate=>candidate.id===saved.id);if(item)item.layout=clone(saved.layout)})}
 function renderDesk(){
-  showScreen('deskScreen');renderFixedLegend('deskLegend');cancelAnimationFrame(deskRAF);deskObjects=[];undoStack=[];const after=session.step==='after',between=session.step==='between';document.getElementById('deskPhase').textContent=after?'想靠近的樣子':'現在的樣子';document.getElementById('deskGuide').textContent=after?'如果只是比現在舒服一點，你希望它們怎麼存在？':'';document.getElementById('parkingZone').classList.toggle('visible',after);document.getElementById('parkingZone').classList.remove('drag-over');document.getElementById('betweenPanel').classList.toggle('visible',between);document.querySelector('.desk-footer').classList.toggle('hidden',between);document.getElementById('undoBtn').style.display=between?'none':'block';document.getElementById('saveStageBtn').textContent=after?'完成整理':'留下現在的樣子';document.getElementById('gestureHint').classList.toggle('hidden',between);document.getElementById('objectLabel').classList.remove('visible');
+  showScreen('deskScreen');renderFixedLegend('deskLegend');cancelAnimationFrame(deskRAF);deskObjects=[];undoStack=pendingUndoRestore||[];pendingUndoRestore=null;const after=session.step==='after',between=session.step==='between';document.getElementById('deskPhase').textContent=after?'想靠近的樣子':'現在的樣子';document.getElementById('deskGuide').textContent=after?'如果只是比現在舒服一點，你希望它們怎麼存在？':'把它們排成現在的樣子。';document.getElementById('parkingZone').classList.toggle('visible',after);document.getElementById('parkingZone').classList.remove('drag-over');document.getElementById('betweenPanel').classList.toggle('visible',between);document.querySelector('.desk-footer').classList.toggle('hidden',between);document.getElementById('undoBtn').style.display=between?'none':'block';document.getElementById('saveStageBtn').textContent=after?'完成整理':'留下現在的樣子';document.getElementById('gestureHint').classList.toggle('hidden',between);document.getElementById('objectLabel').classList.remove('visible');
   const workspace=document.getElementById('workspace');workspace.querySelectorAll('.lightfield-object').forEach(element=>element.remove());requestAnimationFrame(()=>{const rect=workspace.getBoundingClientRect();session.items.forEach((item,index)=>{if(!item.layout)item.layout=initialLayout(session.items.length,rect.width,rect.height,index);const object=createDeskObject(item,index);if(between)object.element.style.pointerEvents='none'});saveSession();updateUndo();if(!between)setTimeout(()=>document.getElementById('gestureHint').classList.add('hidden'),3600);animateDesk()});
 }
 function createDeskObject(item,index){
@@ -669,7 +735,7 @@ function requestRestart(){document.getElementById('confirmOverlay').classList.ad
 function closeRestart(){document.getElementById('confirmOverlay').classList.remove('visible')}
 document.getElementById('restartDeskBtn').addEventListener('click',requestRestart);document.getElementById('restartResultBtn').addEventListener('click',requestRestart);document.getElementById('reflectionHomeBtn').addEventListener('click',requestRestart);document.getElementById('afterReflectionHomeBtn').addEventListener('click',requestRestart);document.getElementById('cancelRestartBtn').addEventListener('click',closeRestart);document.getElementById('confirmRestartBtn').addEventListener('click',()=>{localStorage.removeItem(STORAGE_KEY);session=blankSession();closeRestart();render()});
 
-function render(){cancelAnimationFrame(deskRAF);cancelAnimationFrame(resultRAF);cancelAnimationFrame(mixRAF);mixRAF=0;mixGeneration++;resultRAF=0;resultRenderGeneration++;reflectionTypeToken++;reflectionTyping=false;if(session.step==='confirm')session.step='color';if(session.step==='input')renderInput();else if(session.step==='color')renderColor();else if(session.step==='mix')renderMix();else if(session.step==='review')renderReview();else if(session.step==='before'||session.step==='between'||session.step==='after')renderDesk();else if(session.step==='reflection')renderReflection();else if(session.step==='afterReflection')renderAfterReflection();else if(session.step==='result')renderResult();else if(session.step==='prompts')renderPromptScreen();else{session=blankSession();renderInput()}window.__ready=true}
+function render(){cancelAnimationFrame(deskRAF);cancelAnimationFrame(resultRAF);cancelAnimationFrame(mixRAF);mixRAF=0;mixGeneration++;resultRAF=0;resultRenderGeneration++;reflectionTypeToken++;reflectionTyping=false;if(session.step==='confirm')session.step='color';if(session.step==='before'&&!session.deskTutorialSeen){session.tutorialReturnStep='before';session.step='tutorial';saveSession()}if(session.step==='input')renderInput();else if(session.step==='color')renderColor();else if(session.step==='mix')renderMix();else if(session.step==='review')renderReview();else if(session.step==='tutorial')renderDeskTutorial();else if(session.step==='before'||session.step==='between'||session.step==='after')renderDesk();else if(session.step==='reflection')renderReflection();else if(session.step==='afterReflection')renderAfterReflection();else if(session.step==='result')renderResult();else if(session.step==='prompts')renderPromptScreen();else{session=blankSession();renderInput()}window.__ready=true}
 window.__studio={getState:()=>clone(session),reset:()=>{localStorage.removeItem(STORAGE_KEY);session=blankSession();render()},setStep:step=>{session.step=step;saveSession();render()},getAnimationDebug:()=>({resultRAF,resultRenderGeneration,resultObjects:document.querySelectorAll('.result-object').length})};
 addEventListener('resize',()=>{if(session.step==='before'||session.step==='after')deskObjects.forEach(applyObject)});
 render();
