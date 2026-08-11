@@ -16,7 +16,7 @@
   --workspace:#0D0A07;--edge:rgba(136,105,60,.22);--radius:22px;
 }
 html,body{height:100%;overflow:hidden}
-html{height:-webkit-fill-available}
+html{height:-webkit-fill-available;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{
   min-height:-webkit-fill-available;color:var(--ink);
   font-family:'Noto Serif TC',serif;
@@ -28,14 +28,14 @@ button{touch-action:manipulation}
 .screen.active{display:flex}
 .warm-screen{overflow-y:auto;overscroll-behavior:contain;padding:calc(28px + env(safe-area-inset-top)) 32px calc(28px + env(safe-area-inset-bottom));flex-direction:column;align-items:center}
 .content{width:100%;max-width:620px;margin:auto}
-.page-head{text-align:center;margin-bottom:28px}
+.page-head{text-align:center;margin-bottom:22px}
 .eyebrow{font-family:'EB Garamond',serif;font-size:.65rem;letter-spacing:.48em;text-transform:uppercase;color:var(--gold);margin-bottom:.7rem}
-.page-title{font-size:clamp(1.55rem,6.3vw,2.08rem);font-weight:600;letter-spacing:.12em;line-height:1.48;color:#211508}
-.page-en{font-family:'Cormorant Garamond',serif;font-size:.84rem;font-style:italic;font-weight:300;letter-spacing:.16em;color:#4A3824;margin-top:.28rem}
-.lead{font-size:.86rem;font-weight:300;line-height:2;letter-spacing:.06em;text-align:center;color:#4E402F;margin:0 auto 24px;max-width:440px}
+.page-title{font-size:clamp(1.34rem,5.4vw,1.82rem);font-weight:600;letter-spacing:.085em;line-height:1.48;color:#211508;text-wrap:balance}
+.page-en{font-family:'Cormorant Garamond',serif;font-size:.76rem;font-style:italic;font-weight:300;letter-spacing:.13em;color:#66543E;margin-top:.3rem}
+.lead{font-size:.76rem;font-weight:300;line-height:1.95;letter-spacing:.045em;text-align:center;color:#625342;margin:0 auto 22px;max-width:420px}
 .btn-primary{
   min-height:50px;border:0;border-radius:60px;padding:14px 32px;cursor:pointer;
-  color:#fff;font-size:.76rem;letter-spacing:.2em;font-weight:400;
+  color:#fff;font-size:.7rem;letter-spacing:.16em;font-weight:400;
   background:linear-gradient(135deg,#9A6C28,#C0883A,#9A6C28);
   box-shadow:0 6px 28px rgba(150,100,20,.26),inset 0 1px 0 rgba(255,255,255,.18);
   transition:transform .25s ease,filter .25s ease,opacity .25s ease;
@@ -52,26 +52,27 @@ button{touch-action:manipulation}
 .subtle-note{font-size:.68rem;line-height:1.8;letter-spacing:.05em;color:#796A57;text-align:center}
 
 /* ① 輸入事情 */
-.input-content{max-width:520px}
-#inputScreen .page-head{margin-bottom:18px}
-#inputScreen .lead{margin-bottom:34px}
-#inputScreen .actions{margin-top:36px}
-.topic-list{display:grid;gap:16px;margin:0 0 18px}
-.topic-row{display:grid;grid-template-columns:1fr 44px;gap:10px;align-items:center}
+.input-content{max-width:500px;margin:clamp(58px,10dvh,96px) auto auto}
+#inputScreen .page-head{margin-bottom:14px}
+#inputScreen .lead{margin-bottom:28px}
+#inputScreen .actions{margin-top:30px}
+.topic-list{display:grid;gap:12px;margin:0 0 18px}
+.topic-row{display:block}
+.topic-row.removable{display:grid;grid-template-columns:1fr 50px;gap:8px;align-items:center}
 .topic-input{
-  width:100%;min-height:54px;border-radius:16px;border:1px solid rgba(136,105,60,.18);
-  padding:13px 17px;background:rgba(255,255,255,.46);color:var(--ink);
-  outline:none;box-shadow:0 8px 26px rgba(70,45,15,.032);letter-spacing:.05em;
+  width:100%;min-height:50px;border-radius:14px;border:1px solid rgba(136,105,60,.16);
+  padding:12px 16px;background:rgba(255,255,255,.42);color:var(--ink);font-size:.78rem;
+  outline:none;box-shadow:0 7px 22px rgba(70,45,15,.028);letter-spacing:.04em;
 }
 .topic-input:focus{border-color:rgba(154,112,48,.62);box-shadow:0 0 0 3px rgba(154,112,48,.08)}
-.remove-topic{width:44px;height:44px;border:0;background:transparent;color:#9B8B78;font-size:1.1rem;cursor:pointer}
+.remove-topic{min-width:50px;height:44px;border:0;background:transparent;color:#9B8B78;font-size:.62rem;letter-spacing:.04em;cursor:pointer}
 .add-topic{display:block;margin:10px auto 0}
 #topicCountNote:empty{display:none}
 
 /* ② 原版方形色票 */
 #colorScreen{padding:0;overflow:hidden;flex-direction:column}
 .color-head{flex:0 0 auto;width:100%;padding:calc(16px + env(safe-area-inset-top)) 32px 8px;text-align:center}
-.color-prompt{font-size:clamp(1.08rem,4.6vw,1.4rem);font-weight:600;letter-spacing:.045em;line-height:1.68;margin-bottom:3px;color:#25180B}
+.color-prompt{font-size:clamp(1rem,4.1vw,1.22rem);font-weight:600;letter-spacing:.035em;line-height:1.62;margin-bottom:3px;color:#25180B;text-wrap:balance}
 .color-mode{font-size:.68rem;color:#856D4E;letter-spacing:.08em;min-height:1.3em}
 .selection-preview{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:12px;min-height:78px;padding:7px 32px 5px;border-top:1px solid rgba(154,112,48,.11);background:rgba(248,243,234,.88)}
 .mini-glow{width:72px;height:72px;display:none;flex:0 0 auto}
@@ -79,10 +80,10 @@ button{touch-action:manipulation}
 .selected-copy{font-size:.7rem;line-height:1.8;color:#5C4B37;letter-spacing:.05em;min-width:0}
 .selected-copy strong{font-weight:400;color:#2F2113}
 .palette-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:14px 32px 18px;-webkit-overflow-scrolling:touch}
-.color-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;width:100%;max-width:700px;margin:0 auto}
+.color-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;width:100%;max-width:312px;margin:0 auto}
 .cc{position:relative;overflow:hidden;border-radius:12px;cursor:pointer;border:1.5px solid rgba(255,255,255,.55);aspect-ratio:1;box-shadow:0 2px 8px rgba(140,120,100,.1),inset 0 1px 0 rgba(255,255,255,.5);transition:transform .38s cubic-bezier(.23,1,.32,1),box-shadow .38s ease;padding:0}
-.cc.sel{border-color:rgba(255,255,255,.95);box-shadow:0 0 0 4px rgba(184,144,74,.6),0 0 20px rgba(184,144,74,.4),0 8px 24px rgba(140,120,100,.28);transform:scale(1.15);z-index:3;animation:selectBounce .4s cubic-bezier(.34,1.56,.64,1)}
-@keyframes selectBounce{0%{transform:scale(1)}50%{transform:scale(1.22)}100%{transform:scale(1.15)}}
+.cc.sel{border-color:rgba(255,255,255,.95);box-shadow:0 0 0 3px rgba(184,144,74,.58),0 0 15px rgba(184,144,74,.28),0 6px 18px rgba(140,120,100,.2);transform:translateY(-1px);z-index:3;animation:selectBounce .36s cubic-bezier(.34,1.56,.64,1)}
+@keyframes selectBounce{0%{transform:translateY(0)}55%{transform:translateY(-2px)}100%{transform:translateY(-1px)}}
 .cc-bg,.cc-tex,.cc-glass,.cc-glow{position:absolute;inset:0}
 .cc-bg{transition:transform .5s ease}
 @media(hover:hover){.cc:hover{transform:scale(1.12);box-shadow:0 0 0 3px rgba(255,255,255,.7),0 6px 20px rgba(140,120,100,.22);z-index:2}.cc:hover .cc-bg{transform:scale(1.08)}}
@@ -137,7 +138,7 @@ button{touch-action:manipulation}
 .reflection-content{width:100%;max-width:620px;margin:0 auto;padding-bottom:calc(18px + env(safe-area-inset-bottom))}
 .reflection-home{position:fixed;z-index:50;top:calc(8px + env(safe-area-inset-top));left:32px;min-width:72px;min-height:44px;border:0;background:transparent;color:#82715C;font-size:.65rem;letter-spacing:.06em;cursor:pointer}
 .reflection-opening{text-align:center;min-height:72px;margin:2px auto 14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#2A1B0E;cursor:pointer}
-.reflection-opening p{font-size:clamp(.92rem,4vw,1.08rem);font-weight:500;line-height:1.8;letter-spacing:.08em;min-height:1.8em}
+.reflection-opening p{font-size:clamp(.84rem,3.7vw,.98rem);font-weight:500;line-height:1.8;letter-spacing:.065em;min-height:1.8em}
 .reflection-opening p:last-child{color:#5D4932;font-weight:300}
 .handwritten-chunk{display:inline-block;opacity:0;filter:blur(1.2px);transform:translate(var(--ink-x,0),var(--ink-y,3px)) rotate(var(--ink-r,0deg));animation:handwrittenReveal .46s cubic-bezier(.16,1,.3,1) forwards;will-change:opacity,transform,filter}
 @keyframes handwrittenReveal{58%{opacity:.78;filter:blur(.25px)}100%{opacity:1;filter:blur(0);transform:translate(0,0) rotate(0)}}
@@ -146,7 +147,7 @@ button{touch-action:manipulation}
 .reflection-dots{display:flex;justify-content:center;gap:8px;margin-bottom:20px}
 .reflection-dot{width:5px;height:5px;border-radius:50%;background:rgba(154,112,48,.2);transition:transform .25s ease,background .25s ease}
 .reflection-dot.active{background:rgba(154,112,48,.8);transform:scale(1.25)}
-.reflection-question{font-size:clamp(1.05rem,4.6vw,1.3rem);font-weight:600;line-height:1.65;letter-spacing:.055em;text-align:center;color:#26180B}
+.reflection-question{font-size:clamp(.96rem,4.15vw,1.14rem);font-weight:600;line-height:1.65;letter-spacing:.045em;text-align:center;color:#26180B;text-wrap:balance}
 .reflection-helper{margin:7px auto 18px;max-width:420px;font-size:.68rem;font-weight:300;line-height:1.8;letter-spacing:.04em;text-align:center;color:#7A6A57}
 .reflection-options{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
 .reflection-chip{position:relative;min-height:44px;max-width:100%;padding:10px 16px;border:1px solid rgba(145,105,50,.2);border-radius:999px;background:rgba(255,255,255,.42);color:#59442A;font-size:.72rem;line-height:1.45;letter-spacing:.04em;text-align:center;cursor:pointer;transition:border-color .2s ease,background .2s ease,box-shadow .2s ease}
@@ -199,13 +200,16 @@ button{touch-action:manipulation}
 .export-sheet .actions{margin-top:16px}
 
 /* 全部選色完成後，只出現一次的總覽儀式。 */
-.review-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:24px 0 8px}
-.review-item{position:relative;min-height:190px;border:1px solid rgba(154,112,48,.16);border-radius:18px;background:rgba(255,255,255,.34);padding:10px;text-align:center;box-shadow:0 8px 28px rgba(70,45,15,.045)}
+.review-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0 8px}
+.review-item{position:relative;min-height:154px;border:1px solid rgba(154,112,48,.14);border-radius:17px;background:rgba(255,255,255,.3);padding:8px;text-align:center;box-shadow:0 7px 24px rgba(70,45,15,.035)}
 .review-item:last-child:nth-child(odd){grid-column:1/-1;width:calc(50% - 6px);justify-self:center}
-.review-glow{display:block;width:128px;height:128px;margin:0 auto -8px}
-.review-name{font-size:.82rem;font-weight:600;letter-spacing:.1em;color:#2A1C0F}
+.review-glow{display:block;width:100px;height:100px;margin:0 auto -3px}
+.review-name{font-size:.74rem;font-weight:600;letter-spacing:.075em;color:#2A1C0F}
 .review-colors{font-size:.58rem;letter-spacing:.04em;color:#786850;margin-top:4px;min-height:1.3em}
 .review-edit{position:absolute;right:5px;top:5px;min-width:44px;height:44px;border:0;background:transparent;color:#927C61;font-size:.6rem;cursor:pointer}
+#reviewScreen .content{margin:clamp(42px,7dvh,70px) auto auto}
+#reviewScreen .page-head{margin-bottom:12px}
+#reviewScreen .actions{margin-top:22px}
 
 /* Before → After：保留桌面，先用短轉場說明階段改變。 */
 .between-panel{display:none;position:absolute;z-index:2000;inset:0;align-items:center;justify-content:center;padding:30px;background:rgba(13,10,7,.68);backdrop-filter:blur(9px)}
@@ -220,11 +224,11 @@ button{touch-action:manipulation}
 .confirm-pop{width:min(100%,330px);padding:22px;border-radius:18px;background:rgba(250,246,240,.98);box-shadow:0 18px 60px rgba(40,25,8,.22);text-align:center}
 .confirm-pop p{font-size:.8rem;line-height:1.8;letter-spacing:.05em}
 
-@media(max-width:380px){.warm-screen,.color-head,.palette-scroll,.color-footer{padding-left:32px;padding-right:32px}.color-grid{gap:9px}.lightfield-canvas{width:158px;height:158px}.desk-footer{gap:6px}.desk-footer .btn-primary{padding-left:24px;padding-right:24px}}
+@media(max-width:380px){.warm-screen,.color-head,.palette-scroll,.color-footer{padding-left:32px;padding-right:32px}.color-grid{gap:6px}.lightfield-canvas{width:158px;height:158px}.desk-footer{gap:6px}.desk-footer .btn-primary{padding-left:24px;padding-right:24px}}
 @media(max-width:380px){.reflection-workspace{min-height:300px}.reflection-panel{padding-top:26px}.reflection-options{gap:8px}.reflection-chip{padding-left:14px;padding-right:14px}}
 @media(max-width:380px){.after-reflection-workspace{min-height:300px}.after-reflection-panel{padding-top:26px}}
 @media(max-height:700px){.desk-head{padding-top:calc(8px + env(safe-area-inset-top));padding-bottom:6px}.desk-wrap{padding-left:16px;padding-right:16px}.workspace{min-height:390px}.lightfield-canvas{width:154px;height:154px}.desk-footer{padding-top:8px}}
-@media(min-width:700px){.color-grid{grid-template-columns:repeat(10,minmax(0,1fr));gap:12px}.desk-wrap{max-width:660px;align-self:center}.lightfield-canvas{width:184px;height:184px}.export-overlay{align-items:center}}
+@media(min-width:700px){.color-grid{grid-template-columns:repeat(10,minmax(0,1fr));gap:11px;max-width:620px}.desk-wrap{max-width:660px;align-self:center}.lightfield-canvas{width:184px;height:184px}.export-overlay{align-items:center}}
 @media(prefers-reduced-motion:reduce){.reflection-opening *{animation:none!important;transition:none!important;opacity:1!important;filter:none!important;transform:none!important}}
 </style>
 </head>
@@ -233,13 +237,14 @@ button{touch-action:manipulation}
 <section class="screen warm-screen" id="inputScreen">
   <div class="content input-content">
     <header class="page-head">
+      <div class="eyebrow">Life Color Studio</div>
       <h1 class="page-title">今天想整理什麼？</h1>
     </header>
-    <p class="lead">寫下此刻待在心裡的幾件事。<br>不用分類，也不用先想好答案。</p>
+    <p class="lead">先寫下 2～6 件最近佔據心思的事。<br>接著替它們選色，再用手排出「現在的樣子」。</p>
     <div class="topic-list" id="topicList"></div>
     <button class="btn-secondary add-topic" id="addTopicBtn">＋ 再加一件事情</button>
     <p class="subtle-note" id="topicCountNote"></p>
-    <div class="actions"><button class="btn-primary" id="startColorBtn">開始替它們選色</button></div>
+    <div class="actions"><button class="btn-primary" id="startColorBtn">下一步・替它們選色</button></div>
   </div>
 </section>
 
@@ -260,14 +265,13 @@ button{touch-action:manipulation}
 <section class="screen warm-screen" id="reviewScreen">
   <div class="content">
     <header class="page-head">
-      <div class="eyebrow">Step 3 · Ready</div>
-      <h1 class="page-title">你的色彩已經準備好了</h1>
-      <p class="page-en">Everything is ready to be arranged.</p>
+      <div class="eyebrow">Life Color Studio</div>
+      <h1 class="page-title">把這些事情放上整理桌</h1>
     </header>
-    <p class="lead">先看一眼它們。接下來，你可以用手移動、靠近、拉遠，看看它們現在怎麼存在。</p>
+    <p class="lead">用一根手指移動、兩根手指改變大小。<br>先排出它們此刻在生活裡的樣子。</p>
     <div class="review-grid" id="reviewGrid"></div>
     <div class="actions">
-      <button class="btn-primary" id="enterDeskBtn">進入生活色彩整理桌</button>
+      <button class="btn-primary" id="enterDeskBtn">開始排出現在的樣子</button>
     </div>
   </div>
 </section>
@@ -393,7 +397,7 @@ const MVP_COLOR_IDS=[
 const CARD_BY_ID=new Map(PALETTE.map(card=>[card.id,card]));
 if(MVP_COLOR_IDS.length!==60||new Set(MVP_COLOR_IDS).size!==60||MVP_COLOR_IDS.some(id=>!CARD_BY_ID.has(id)))throw new Error('MVP 60 色清單不完整');
 const STORAGE_KEY='lifeColorStudio.session.v3';
-const MIN_SCALE=.18,MAX_SCALE=4.2,OBJECT_SIZE=170,MIN_HIT_SIZE=44;
+const MIN_SCALE=.18,MAX_SCALE=4.2,OBJECT_SIZE=170,MIN_HIT_SIZE=44,PINCH_SENSITIVITY=1.32;
 let textureId=0,deskRAF=0,resultRAF=0,resultRenderGeneration=0,deskObjects=[],undoStack=[],topLayer=20,labelTimer=0,activeGestureObject=null,latestExport=null;
 let reflectionTypeToken=0,reflectionTyping=false;
 let afterReflectionView='after';
@@ -433,7 +437,7 @@ function renderGlow(canvas,colorIds,time=4200){
 function renderInput(){
   showScreen('inputScreen');const list=document.getElementById('topicList');list.innerHTML='';
   session.draftNames=(session.draftNames?.length?session.draftNames:['','']).slice(0,6);while(session.draftNames.length<2)session.draftNames.push('');
-  session.draftNames.forEach((value,index)=>{const row=document.createElement('div');row.className='topic-row';row.innerHTML=`<input class="topic-input" maxlength="24" placeholder="例如：工作、休息、收入" value="${escapeHtml(value)}"><button class="remove-topic" aria-label="移除這一項">×</button>`;const input=row.querySelector('input');input.addEventListener('input',()=>{session.draftNames[index]=input.value;updateTopicControls();saveSession()});row.querySelector('button').addEventListener('click',()=>{if(session.draftNames.length<=2)return;session.draftNames.splice(index,1);saveSession();renderInput()});list.appendChild(row)});
+  session.draftNames.forEach((value,index)=>{const removable=session.draftNames.length>2,row=document.createElement('div');row.className=`topic-row${removable?' removable':''}`;row.innerHTML=`<input class="topic-input" maxlength="24" placeholder="例如：工作、休息、收入" value="${escapeHtml(value)}">${removable?'<button class="remove-topic" aria-label="移除這一項">移除</button>':''}`;const input=row.querySelector('input');input.addEventListener('input',()=>{session.draftNames[index]=input.value;updateTopicControls();saveSession()});row.querySelector('button')?.addEventListener('click',()=>{session.draftNames.splice(index,1);saveSession();renderInput()});list.appendChild(row)});
   document.getElementById('addTopicBtn').style.display=session.draftNames.length<6?'block':'none';updateTopicControls();
 }
 function escapeHtml(text=''){return text.replace(/[&<>"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[char]))}
@@ -491,13 +495,13 @@ function objectPointerDown(object,event){
   target.pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});try{target.element.setPointerCapture(event.pointerId)}catch(error){}
   target.item.layout.z=++topLayer;target.element.style.zIndex=target.item.layout.z;target.element.classList.add('active');beginObjectGesture(target)
 }
-function objectPointerMove(object,event){if(!object.pointers.has(event.pointerId))return;event.preventDefault();event.stopPropagation();object.pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});const points=[...object.pointers.values()],layout=object.item.layout;if(points.length===1&&object.gesture?.type==='drag'){const nx=object.gesture.startX+points[0].x-object.gesture.startPoint.x,ny=object.gesture.startY+points[0].y-object.gesture.startPoint.y;if(Math.hypot(nx-object.gesture.startX,ny-object.gesture.startY)>5)object.moved=true;layout.x=nx;layout.y=ny}else if(points.length>=2){if(object.gesture?.type!=='pinch')beginObjectGesture(object);const [a,b]=points,mid=midpoint(a,b);layout.scale=clamp(object.gesture.startScale*distance(a,b)/object.gesture.startDistance,MIN_SCALE,MAX_SCALE);layout.x=object.gesture.startX+mid.x-object.gesture.startMid.x;layout.y=object.gesture.startY+mid.y-object.gesture.startMid.y;object.moved=true}if(session.step==='after'){const rect=document.getElementById('parkingZone').getBoundingClientRect();document.getElementById('parkingZone').classList.toggle('drag-over',event.clientY>=rect.top&&event.clientY<=rect.bottom)}applyObject(object)}
+function objectPointerMove(object,event){if(!object.pointers.has(event.pointerId))return;event.preventDefault();event.stopPropagation();object.pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});const points=[...object.pointers.values()],layout=object.item.layout;if(points.length===1&&object.gesture?.type==='drag'){const nx=object.gesture.startX+points[0].x-object.gesture.startPoint.x,ny=object.gesture.startY+points[0].y-object.gesture.startPoint.y;if(Math.hypot(nx-object.gesture.startX,ny-object.gesture.startY)>5)object.moved=true;layout.x=nx;layout.y=ny}else if(points.length>=2){if(object.gesture?.type!=='pinch')beginObjectGesture(object);const [a,b]=points,mid=midpoint(a,b),ratio=Math.max(.01,distance(a,b)/object.gesture.startDistance);layout.scale=clamp(object.gesture.startScale*Math.pow(ratio,PINCH_SENSITIVITY),MIN_SCALE,MAX_SCALE);layout.x=object.gesture.startX+mid.x-object.gesture.startMid.x;layout.y=object.gesture.startY+mid.y-object.gesture.startMid.y;object.moved=true}if(session.step==='after'){const rect=document.getElementById('parkingZone').getBoundingClientRect();document.getElementById('parkingZone').classList.toggle('drag-over',event.clientY>=rect.top&&event.clientY<=rect.bottom)}applyObject(object)}
 function objectPointerEnd(object,event){if(!object.pointers.has(event.pointerId))return;event.preventDefault();event.stopPropagation();object.pointers.delete(event.pointerId);if(object.pointers.size){beginObjectGesture(object);return}object.element.classList.remove('active');object.gesture=null;if(activeGestureObject===object)activeGestureObject=null;const zone=document.getElementById('parkingZone');zone.classList.remove('drag-over');if(session.step==='after'){const rect=zone.getBoundingClientRect();object.item.layout.inParking=event.clientY>=rect.top&&event.clientY<=rect.bottom}else object.item.layout.inParking=false;if(object.moved){undoStack.push({itemId:object.item.id,layout:object.startLayout});if(undoStack.length>50)undoStack.shift();updateUndo();saveSession()}else if(performance.now()-object.downAt<500)showObjectLabel(object);applyObject(object)}
 function applyObject(object){const rect=document.getElementById('workspace').getBoundingClientRect(),layout=object.item.layout,allow=OBJECT_SIZE*layout.scale*.15;layout.x=clamp(layout.x,-rect.width/2-allow,rect.width/2+allow);layout.y=clamp(layout.y,-rect.height/2-allow,rect.height/2+allow);object.element.style.setProperty('--hit-diameter',`${Math.max(OBJECT_SIZE,MIN_HIT_SIZE/layout.scale)}px`);object.element.style.transform=`translate(-50%,-50%) translate3d(${layout.x}px,${layout.y}px,0) scale(${layout.scale})`;object.element.style.zIndex=layout.z;object.element.classList.toggle('parked',Boolean(layout.inParking))}
 function animateDesk(now=4200){deskObjects.forEach(object=>renderGlow(object.canvas,object.item.colorIds,now));deskRAF=requestAnimationFrame(time=>animateDesk(time))}
 function showObjectLabel(object){const label=document.getElementById('objectLabel'),workspace=document.getElementById('workspace').getBoundingClientRect(),element=object.element.getBoundingClientRect();label.querySelector('strong').textContent=object.item.name;label.querySelector('span').textContent=colorNames(object.item.colorIds);label.style.left=`${element.left+element.width/2-workspace.left}px`;label.style.top=`${element.top-workspace.top}px`;label.classList.add('visible');clearTimeout(labelTimer);labelTimer=setTimeout(hideObjectLabel,2800)}
 function hideObjectLabel(){document.getElementById('objectLabel').classList.remove('visible')}
-document.getElementById('workspace').addEventListener('pointerdown',event=>{if(event.target.id==='workspace')hideObjectLabel()});
+document.getElementById('workspace').addEventListener('pointerdown',event=>{if(event.pointerType==='touch'&&activeGestureObject?.pointers.size&&!activeGestureObject.pointers.has(event.pointerId)){objectPointerDown(activeGestureObject,event);return}if(event.target.id==='workspace')hideObjectLabel()},{passive:false});
 document.getElementById('undoBtn').addEventListener('click',()=>{const action=undoStack.pop();if(!action)return;const item=session.items.find(candidate=>candidate.id===action.itemId);if(item){item.layout=clone(action.layout);const object=deskObjects.find(candidate=>candidate.item.id===item.id);if(object)applyObject(object);saveSession()}updateUndo()});
 function updateUndo(){document.getElementById('undoBtn').disabled=!undoStack.length}
 document.getElementById('saveStageBtn').addEventListener('click',()=>{if(session.step==='before'){session.before=captureSnapshot();session.beforeReflection=blankBeforeReflection();session.step='reflection';undoStack=[];saveSession();render()}else{session.after=captureSnapshot();session.afterReflection=blankAfterReflection();afterReflectionView='after';session.step='afterReflection';session.resultView='after';saveSession();render()}});
@@ -524,20 +528,20 @@ function renderReflectionQuestion(){
   const data=ensureBeforeReflection(),panel=document.getElementById('reflectionPanel'),step=Math.max(1,data.uiStep||1);panel.innerHTML=reflectionProgress(step);
   const title=document.createElement('h2'),helper=document.createElement('p'),options=document.createElement('div');title.className='reflection-question';helper.className='reflection-helper';options.className='reflection-options';panel.append(title,helper,options);
   if(step===1){
-    title.textContent='第一眼，你最先注意到哪一個？';helper.textContent='不用解釋，只看看你的視線先停在哪裡。';session.items.forEach(item=>options.appendChild(reflectionItemButton(item,data.firstNotice===item.id,()=>{data.firstNotice=item.id;saveSession();renderReflectionQuestion()})));addReflectionNext(panel,'繼續看看',Boolean(data.firstNotice),()=>setReflectionStep(2));return
+    title.textContent='第一眼，你最先注意到哪一個？';helper.textContent='不用解釋，只看看你的視線先停在哪裡。';session.items.forEach(item=>options.appendChild(reflectionItemButton(item,data.firstNotice===item.id,()=>{data.firstNotice=item.id;saveSession();renderReflectionQuestion()})));addReflectionNext(panel,'下一題・看看意外之處',Boolean(data.firstNotice),()=>setReflectionStep(2));return
   }
   if(step===2){
     title.textContent='有哪個地方，跟你原本想的不太一樣？';helper.textContent='先選一件事情，再選一個最接近的描述。';session.items.forEach(item=>options.appendChild(reflectionItemButton(item,data.unexpectedItem===item.id,()=>{data.unexpectedItem=item.id;data.unexpectedObservation=null;data.relatedItem=null;saveSession();renderReflectionQuestion()})));
     if(data.unexpectedItem){const follow=document.createElement('div'),subtitle=document.createElement('p'),observationOptions=document.createElement('div');follow.className='reflection-followup';subtitle.className='reflection-subtitle';subtitle.textContent='哪一個描述最接近？';observationOptions.className='reflection-options';[['larger','比想像中大'],['smaller','比想像中小'],['closer','比想像中靠近'],['farther','比想像中遠'],['overlap','跟另一件事情疊在一起'],['none','沒有特別意外']].forEach(([value,label])=>observationOptions.appendChild(reflectionChip(label,data.unexpectedObservation===value,()=>{data.unexpectedObservation=value;if(value!=='overlap')data.relatedItem=null;saveSession();renderReflectionQuestion()})));follow.append(subtitle,observationOptions);panel.appendChild(follow)}
     if(data.unexpectedObservation==='overlap'){const related=document.createElement('div'),subtitle=document.createElement('p'),relatedOptions=document.createElement('div');related.className='reflection-followup';subtitle.className='reflection-subtitle';subtitle.textContent='和哪一件事情疊在一起？';relatedOptions.className='reflection-options';session.items.filter(item=>item.id!==data.unexpectedItem).forEach(item=>relatedOptions.appendChild(reflectionItemButton(item,data.relatedItem===item.id,()=>{data.relatedItem=item.id;saveSession();renderReflectionQuestion()})));related.append(subtitle,relatedOptions);panel.appendChild(related)}
-    addReflectionNext(panel,'繼續看看',Boolean(data.unexpectedItem&&data.unexpectedObservation&&(data.unexpectedObservation!=='overlap'||data.relatedItem)),()=>setReflectionStep(3));return
+    addReflectionNext(panel,'下一題・看看想多留意的地方',Boolean(data.unexpectedItem&&data.unexpectedObservation&&(data.unexpectedObservation!=='overlap'||data.relatedItem)),()=>setReflectionStep(3));return
   }
   if(step===3){
     title.textContent='看完這張圖，哪個地方讓你最想再多看一下？';helper.textContent='只選一個現在最想多停留一下的地方。';session.items.forEach(item=>options.appendChild(reflectionItemButton(item,data.wantToLookAgain===`item:${item.id}`,()=>{data.wantToLookAgain=`item:${item.id}`;saveSession();renderReflectionQuestion()})));[['relationship','兩件事情的關係'],['size','大小'],['distance','距離'],['overlap','重疊'],['whole','整體畫面'],['unknown','我現在還不知道']].forEach(([value,label])=>options.appendChild(reflectionChip(label,data.wantToLookAgain===value,()=>{data.wantToLookAgain=value;saveSession();renderReflectionQuestion()})));addReflectionNext(panel,'留下一句感受',Boolean(data.wantToLookAgain),()=>setReflectionStep(4));return
   }
-  title.textContent='看完之後，我現在最明顯的感覺是……';helper.textContent='選填，一句話就好。也可以先留白。';options.remove();const textarea=document.createElement('textarea'),count=document.createElement('span');textarea.className='reflection-feeling';textarea.maxLength=50;textarea.rows=3;textarea.placeholder='例如：有點擠。';textarea.value=data.firstFeeling||'';count.className='reflection-count';count.textContent=`${textarea.value.length} / 50`;textarea.addEventListener('input',()=>{data.firstFeeling=textarea.value;count.textContent=`${textarea.value.length} / 50`;saveSession()});panel.append(textarea,count);addReflectionNext(panel,'帶著這個發現，繼續',true,()=>{data.firstFeeling=textarea.value.trim();data.completedAt=new Date().toISOString();session.step='after';undoStack=[];saveSession();render()})
+  title.textContent='看完之後，我現在最明顯的感覺是……';helper.textContent='選填，一句話就好。也可以先留白。';options.remove();const textarea=document.createElement('textarea'),count=document.createElement('span');textarea.className='reflection-feeling';textarea.maxLength=50;textarea.rows=3;textarea.placeholder='例如：有點擠。';textarea.value=data.firstFeeling||'';count.className='reflection-count';count.textContent=`${textarea.value.length} / 50`;textarea.addEventListener('input',()=>{data.firstFeeling=textarea.value;count.textContent=`${textarea.value.length} / 50`;saveSession()});panel.append(textarea,count);addReflectionNext(panel,'帶著發現・重新安排',true,()=>{data.firstFeeling=textarea.value.trim();data.completedAt=new Date().toISOString();session.step='after';undoStack=[];saveSession();render()})
 }
-document.getElementById('reflectionScreen').addEventListener('click',event=>{if(reflectionTyping){event.preventDefault();finishReflectionIntro()}},true);
+document.getElementById('reflectionOpening').addEventListener('click',event=>{if(reflectionTyping){event.preventDefault();finishReflectionIntro()}});
 
 function ensureAfterReflection(){session.afterReflection={...blankAfterReflection(),...(session.afterReflection||{})};return session.afterReflection}
 function renderAfterReflectionSnapshot(){
