@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400&family=EB+Garamond:wght@400&display=swap" rel="stylesheet">
-<script src="palette-105.js?v=20260812-home-entry-3"></script>
+<script src="palette-105.js?v=20260812-home-entry-4"></script>
 <style>
 /* 母版 design tokens：直接沿用既有情緒色票的字體、暖白、金色按鈕與留白。 */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -76,10 +76,9 @@ button{touch-action:manipulation;white-space:nowrap}
 .add-topic{display:block;margin:10px auto 0}
 .input-edit-note{margin:-7px auto 14px;color:#978874}
 #topicCountNote:empty{display:none}
-.resume-journey{display:none;margin:0 auto 24px;padding:14px 18px;border:1px solid rgba(145,105,50,.16);border-radius:16px;background:rgba(255,255,255,.34);text-align:center}
+.resume-journey{display:none;position:relative;z-index:2;margin:0 auto 24px;text-align:center;pointer-events:auto}
 .resume-journey.visible{display:block}
-.resume-journey p{margin:0 0 9px;color:#7D6B55;font-size:.64rem;line-height:1.7;letter-spacing:.04em}
-.resume-journey button{min-height:44px;border:0;background:transparent;color:#745427;font-size:.68rem;letter-spacing:.08em;cursor:pointer}
+.resume-journey button{min-height:44px;border:1px solid rgba(145,105,50,.24);border-radius:999px;padding:10px 20px;background:rgba(255,255,255,.34);color:#745427;font-size:.68rem;letter-spacing:.08em;cursor:pointer;pointer-events:auto;touch-action:manipulation}
 
 /* ② 原版方形色票 */
 #colorScreen{padding:0;overflow:hidden;flex-direction:column}
@@ -415,7 +414,7 @@ button{touch-action:manipulation;white-space:nowrap}
     </header>
     <p class="lead">每月一次，重新梳理生活重心與優先順序。寫下最近需要你分配時間或心力的 2～6 件事。</p>
     <p class="subtle-note input-example">工作、健康、家人、休息、新計畫……都可以。</p>
-    <div class="resume-journey" id="resumeJourney"><p>剛才的整理進度還在。</p><button id="resumeJourneyBtn" type="button">繼續剛才的整理</button></div>
+    <div class="resume-journey" id="resumeJourney"><button id="resumeJourneyBtn" type="button">繼續剛才的整理</button></div>
     <div class="topic-list" id="topicList"></div>
     <p class="subtle-note input-edit-note">點選欄位裡的文字，就可以直接修改。</p>
     <button class="btn-secondary add-topic" id="addTopicBtn">＋ 再加一件事情</button>
@@ -689,7 +688,7 @@ button{touch-action:manipulation;white-space:nowrap}
 
 <script>
 const PALETTE=window.LIFE_COLOR_PALETTE||[];
-const APP_VERSION='20260812-home-entry-3';
+const APP_VERSION='20260812-home-entry-4';
 if(PALETTE.length!==105)document.body.innerHTML='<p style="padding:32px">色票資料載入失敗，請確認 palette-105.js 與本頁放在同一資料夾。</p>';
 
 const COLOR_ORDER=["c84","c81","c86","c85","c79","c80","c82","c83","c5","c1","c12","c87","c15","c16","c88","c17","c22","c93","c6","c7","c9","c91","c2","c4","c3","c8","c10","c23","c24","c89","c90","c25","c29","c94","c11","c38","c27","c26","c42","c44","c43","c45","c41","c40","c102","c103","c92","c34","c21","c35","c36","c37","c39","c104","c105","c95","c96","c97","c46","c49","c47","c48","c50","c52","c51","c56","c54","c55","c53","c58","c57","c61","c60","c59","c99","c98","c62","c68","c64","c66","c63","c65","c67","c69","c101","c100","c74","c73","c72","c71","c77","c78","c76","c75","c70","c19","c18","c31","c32","c14","c28","c33","c20","c30","c13"];
@@ -707,7 +706,7 @@ const CARD_BY_ID=new Map(PALETTE.map(card=>[card.id,card]));
 if(MVP_COLOR_IDS.length!==60||new Set(MVP_COLOR_IDS).size!==60||MVP_COLOR_IDS.some(id=>!CARD_BY_ID.has(id)))throw new Error('MVP 60 色清單不完整');
 const STORAGE_KEY='lifeColorStudio.session.v3';
 const MONTHLY_STORAGE_KEY='lifeColorStudio.monthlySessions';
-const MIN_SCALE=.18,MAX_SCALE=4.2,OBJECT_SIZE=170,MIN_HIT_SIZE=44,PINCH_GROW_SENSITIVITY=1.25,PINCH_SHRINK_SENSITIVITY=1.58;
+const MIN_SCALE=.18,MAX_SCALE=7.2,OBJECT_SIZE=170,MIN_HIT_SIZE=44,PINCH_GROW_SENSITIVITY=1.25,PINCH_SHRINK_SENSITIVITY=1.58;
 const ACTIVITY_PROMPTS=[
   ['整理前後，最大的差別是什麼？'],
   ['你這個月最想把時間和心力留給什麼？'],
@@ -741,6 +740,8 @@ function showScreen(id){document.querySelectorAll('.screen').forEach(screen=>scr
 function requestHome(){document.getElementById('homeConfirmOverlay').classList.add('visible')}
 function closeHomeConfirm(){document.getElementById('homeConfirmOverlay').classList.remove('visible')}
 function goHome(preserveStep=true){if(preserveStep&&session.step!=='input')session.pausedStep=session.step;session.step='input';saveSession();closeHomeConfirm();closeExportPreview();render()}
+function clearForcedHomeUrl(){const url=new URL(location.href);if(url.searchParams.get('home')!=='1')return;url.searchParams.delete('home');history.replaceState(history.state,'',url.href)}
+function resumableStep(){const step=session.pausedStep,validSteps=new Set(['color','mix','review','tutorial','before','between','sorting','after','reflection','afterReflection','result','prompts']);if(!validSteps.has(step))return null;if(!Array.isArray(session.items)||session.items.length<2)return null;return step}
 
 function lhex(hex,amount){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);const t=value=>clamp(value,0,255).toString(16).padStart(2,'0');return '#'+t(r+amount)+t(g+amount)+t(b+amount)}
 function getTex(type,hex){
@@ -767,7 +768,7 @@ function renderGlow(canvas,colorIds,time=4200){const ctx=getSrgbContext(canvas,t
 
 function renderInput(){
   showScreen('inputScreen');const list=document.getElementById('topicList');list.innerHTML='';
-  document.getElementById('resumeJourney').classList.toggle('visible',Boolean(session.pausedStep));
+  document.getElementById('resumeJourney').classList.toggle('visible',Boolean(resumableStep()));
   session.draftNames=(session.draftNames?.length?session.draftNames:['','']).slice(0,6);while(session.draftNames.length<2)session.draftNames.push('');
   session.draftNames.forEach((value,index)=>{const removable=session.draftNames.length>2,row=document.createElement('div');row.className=`topic-row${removable?' removable':''}`;row.innerHTML=`<input class="topic-input" maxlength="24" placeholder="例如：工作、休息、收入" value="${escapeHtml(value)}">${removable?'<button class="remove-topic" aria-label="刪除這一項">刪除這項</button>':''}`;const input=row.querySelector('input');input.addEventListener('input',()=>{session.draftNames[index]=input.value;updateTopicControls();saveSession()});row.querySelector('button')?.addEventListener('click',()=>{session.draftNames.splice(index,1);saveSession();renderInput()});list.appendChild(row)});
   document.getElementById('addTopicBtn').style.display=session.draftNames.length<6?'block':'none';updateTopicControls();
@@ -776,7 +777,7 @@ function escapeHtml(text=''){return text.replace(/[&<>"]/g,char=>({'&':'&amp;','
 function updateTopicControls(){const filled=session.draftNames.map(name=>name.trim()).filter(Boolean);document.getElementById('topicCountNote').textContent=filled.length===1?'再寫下一件，就可以開始。':'';document.getElementById('startColorBtn').disabled=filled.length<2||filled.length>6}
 document.getElementById('addTopicBtn').addEventListener('click',()=>{if(session.draftNames.length<6){session.draftNames.push('');saveSession();renderInput()}});
 document.getElementById('startColorBtn').addEventListener('click',()=>{const names=session.draftNames.map(name=>name.trim()).filter(Boolean);if(names.length<2)return;session.pausedStep=null;session.items=names.map((name,index)=>({id:`item-${Date.now()}-${index}`,name,colorIds:[],layout:null}));session.currentIndex=0;session.colorDraft={first:null,second:null,choosingSecond:false,returnToReview:false};session.step='color';saveSession();render()});
-document.getElementById('resumeJourneyBtn').addEventListener('click',()=>{if(!session.pausedStep)return;session.step=session.pausedStep;session.pausedStep=null;saveSession();render()});
+document.getElementById('resumeJourneyBtn').addEventListener('click',event=>{event.preventDefault();event.stopPropagation();const nextStep=resumableStep();if(!nextStep){session.pausedStep=null;saveSession();renderInput();return}clearForcedHomeUrl();session.step=nextStep;session.pausedStep=null;saveSession();render()});
 
 function buildPalette(){const grid=document.getElementById('colorGrid');grid.innerHTML='';MVP_COLOR_IDS.forEach(id=>{const entry=card(id);if(!entry)return;const button=document.createElement('button');button.className='cc';button.dataset.id=id;button.title=`${entry.zh}｜${entry.en}`;button.setAttribute('aria-label',`${entry.zh}，${entry.en}`);button.innerHTML=`<span class="cc-bg" style="background:linear-gradient(158deg,${entry.bg[0]},${entry.bg[1]})"></span><span class="cc-glass"></span><span class="cc-glow"></span><span class="cc-chk"></span>`;button.addEventListener('click',()=>selectColor(id));grid.appendChild(button)})}
 function selectColor(id){const draft=session.colorDraft;if(!draft.first){draft.first=id}else if(id===draft.first){if(draft.second){draft.first=draft.second;draft.second=null}else draft.first=null}else if(id===draft.second){draft.second=null}else draft.second=id;draft.choosingSecond=false;saveSession();updateColorSelection()}
